@@ -1,3 +1,4 @@
+button { font-family: inherit; cursor: pointer; }
 /* PahadiCart Customer App CSS - Mountain Emerald Design System */
 :root {
   --primary: #065f46;

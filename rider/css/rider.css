@@ -1,3 +1,4 @@
+button { font-family: inherit; cursor: pointer; }
 /* Pahadi Rider Mobile Cockpit CSS - Glove-Friendly Mountain Theme */
 :root {
   --primary: #10b981;

@@ -278,7 +278,45 @@
 
 /* Mobile Bottom Nav - Hidden on Desktop by default */
 .mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height, 62px);
+  background: rgba(10, 17, 34, 0.96);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: none;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 950;
+  padding: 0 8px;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--slate-400);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 10px;
+  transition: all var(--transition-fast);
+}
+
+.mobile-nav-item.active {
+  color: var(--primary-400);
+}
+
+.mobile-nav-item svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
 }
 
 /* Ecosystem Switcher Bar */
