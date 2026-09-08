@@ -525,7 +525,7 @@
 
 
 // HTML5 Live GPS Location Auto-Detection & Live Weather Sync for Customer App
-window.detectCustomerLiveLocation = async function() {
+window.detectCustomerLiveLocation = async function(preResolvedLoc, silent = false) {
   const btnText = document.getElementById('custGpsBtnText');
   if (btnText) btnText.textContent = 'Detecting GPS...';
 
@@ -536,7 +536,7 @@ window.detectCustomerLiveLocation = async function() {
   }
 
   try {
-    const loc = await window.PahadiLiveServices.detectUserLocation();
+    const loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
     if (btnText) btnText.textContent = '📍 ' + loc.nearestTown.name + ' (' + loc.lat.toFixed(2) + ', ' + loc.lng.toFixed(2) + ')';
 
     // Auto-switch to nearest Himachal Town
@@ -555,7 +555,7 @@ window.detectCustomerLiveLocation = async function() {
       weatherTextEl.innerText = loc.nearestTown.name + ' Weather: ' + weather.temp + '°C ' + weather.label + ' • 45m SLA';
     }
 
-    alert('📍 Location Auto-Detected!\n\n' +
+    if (!silent) alert('📍 Location Auto-Detected!\n\n' +
       'Coordinates: [' + loc.lat.toFixed(4) + ', ' + loc.lng.toFixed(4) + ']\n' +
       'Altitude: ' + loc.altitude + ' meters\n' +
       'Nearest Town Hub: ' + loc.nearestTown.name + ' (' + loc.distanceKm + ' km)\n' +

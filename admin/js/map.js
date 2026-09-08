@@ -10,6 +10,7 @@ function initGodViewMap(townId = "solan") {
 
   const town = PahadiMockDB.towns.find(t => t.id === townId) || PahadiMockDB.towns[0];
   currentTownId = town.id;
+  window.leafletMap = leafletMap;
 
   if (!leafletMap) {
     leafletMap = L.map('godViewMap', {
@@ -21,6 +22,7 @@ function initGodViewMap(townId = "solan") {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(leafletMap);
+    window.leafletMap = leafletMap;
   } else {
     leafletMap.flyTo(town.center, town.zoom, { duration: 1 });
   }
@@ -92,6 +94,7 @@ function initGodViewMap(townId = "solan") {
     markerLayers.push(marker);
   });
 
+  window.leafletMap = leafletMap;
   setTimeout(() => {
     if (leafletMap) leafletMap.invalidateSize();
   }, 200);
@@ -99,7 +102,7 @@ function initGodViewMap(townId = "solan") {
 
 
 // HTML5 Live GPS Auto-Detection for Admin Tower
-window.detectAdminLiveLocation = async function() {
+window.detectAdminLiveLocation = async function(preResolvedLoc) {
   const btnText = document.getElementById("detectGpsBtnText");
   if (btnText) btnText.textContent = "Detecting GPS...";
 
@@ -110,7 +113,7 @@ window.detectAdminLiveLocation = async function() {
   }
 
   try {
-    const loc = await window.PahadiLiveServices.detectUserLocation();
+    const loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
     if (btnText) btnText.textContent = "📍 GPS Synced (" + loc.lat.toFixed(2) + ", " + loc.lng.toFixed(2) + ")";
 
     if (leafletMap) {
