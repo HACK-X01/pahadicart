@@ -96,3 +96,57 @@ function initGodViewMap(townId = "solan") {
     if (leafletMap) leafletMap.invalidateSize();
   }, 200);
 }
+
+
+// HTML5 Live GPS Auto-Detection for Admin Tower
+window.detectAdminLiveLocation = async function() {
+  const btnText = document.getElementById("detectGpsBtnText");
+  if (btnText) btnText.textContent = "Detecting GPS...";
+
+  if (!window.PahadiLiveServices) {
+    alert("Live Services module initializing, please try again in a moment.");
+    if (btnText) btnText.textContent = "Detect My Live GPS";
+    return;
+  }
+
+  try {
+    const loc = await window.PahadiLiveServices.detectUserLocation();
+    if (btnText) btnText.textContent = "📍 GPS Synced (" + loc.lat.toFixed(2) + ", " + loc.lng.toFixed(2) + ")";
+
+    if (leafletMap) {
+      leafletMap.flyTo([loc.lat, loc.lng], 15, { duration: 1.5 });
+
+      if (window.adminUserMarker) {
+        leafletMap.removeLayer(window.adminUserMarker);
+      }
+
+      const gmapsUrl = window.PahadiLiveServices.getGoogleMapsUrl(loc.lat, loc.lng, 'My Live Admin Post');
+
+      const liveIcon = L.divIcon({
+        className: 'map-marker-live-user',
+        html: '<div style="background:#0284c7; border:3px solid #ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(2,132,199,0.9); color:#fff; font-size:15px; font-weight:bold; animation:livePulse 2s infinite;">📍</div>',
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+      });
+
+      window.adminUserMarker = L.marker([loc.lat, loc.lng], { icon: liveIcon }).addTo(leafletMap);
+      window.adminUserMarker.bindPopup(
+        "<div style=\"font-family:'Plus Jakarta Sans',sans-serif; color:#0f172a; padding:6px; min-width:200px;\">" +
+        "<h4 style=\"margin:0 0 4px 0; font-size:13px; font-weight:800; color:#0284c7;\">📍 You Are Here (Live GPS)</h4>" +
+        "<div style=\"font-size:11px; color:#475569;\">Coords: <b>" + loc.lat.toFixed(4) + ", " + loc.lng.toFixed(4) + "</b></div>" +
+        "<div style=\"font-size:11px; color:#475569;\">Accuracy: &plusmn;" + loc.accuracy + "m &bull; Alt: " + loc.altitude + "m</div>" +
+        "<div style=\"font-size:11px; color:#059669; font-weight:700; margin:4px 0;\">Nearest Himachal Hub: " + loc.nearestTown.name + " (" + loc.distanceKm + " km)</div>" +
+        "<a href=\"" + gmapsUrl + "\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block; margin-top:6px; background:#0284c7; color:#fff; padding:5px 12px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:700;\">🗺️ Open in Google Maps</a>" +
+        "</div>"
+      ).openPopup();
+    }
+
+    // Auto-fetch real-time weather for these coordinates
+    const weather = await window.PahadiLiveServices.fetchRealtimeWeather(loc.lat, loc.lng);
+    showToast("📍 Live GPS Synced! " + loc.lat.toFixed(3) + ", " + loc.lng.toFixed(3) + " (" + weather.temp + "°C • " + weather.label + ")");
+  } catch (err) {
+    console.error("GPS Detection error:", err);
+    if (btnText) btnText.textContent = "Detect My Live GPS";
+    showToast("⚠️ " + (err.message || "GPS detection failed. Using default town coords."));
+  }
+};

@@ -59,3 +59,52 @@ function setWeatherMode(mode) {
   updateMetricsDashboard();
   renderOrdersFeed();
 }
+
+
+// Real-Time Himachal Weather Sync via Open-Meteo REST API
+window.syncLiveWeatherForCurrentTown = async function(isManual = false) {
+  const syncBtnText = document.getElementById("autoSyncWeatherText");
+  if (syncBtnText) syncBtnText.textContent = "Syncing Open-Meteo...";
+
+  const townSelect = document.getElementById("townSelect");
+  const townId = townSelect ? townSelect.value : "solan";
+  const town = (PahadiMockDB.towns || []).find(t => t.id === townId) || { center: [30.9084, 77.0999], name: "Solan" };
+  const [lat, lng] = town.center;
+
+  try {
+    if (!window.PahadiLiveServices) {
+      throw new Error("Live Services module loading...");
+    }
+    const weather = await window.PahadiLiveServices.fetchRealtimeWeather(lat, lng);
+
+    const badgeText = document.getElementById("liveWeatherTelemetryText");
+    if (badgeText) {
+      badgeText.innerText = weather.temp + "°C • " + weather.label + " (Live)";
+    }
+
+    // Auto-set the weather mode protocol
+    setWeatherMode(weather.mode);
+
+    if (syncBtnText) syncBtnText.textContent = "Synced (" + weather.temp + "°C)";
+    setTimeout(() => {
+      if (syncBtnText) syncBtnText.textContent = "Sync Live Weather";
+    }, 3000);
+
+    if (isManual) {
+      showToast("⚡ Open-Meteo Synced for " + town.name + ": " + weather.temp + "°C (" + weather.label + ")");
+    }
+  } catch (err) {
+    console.error("Live weather error:", err);
+    if (syncBtnText) syncBtnText.textContent = "Sync Live Weather";
+    if (isManual) {
+      showToast("⚠️ Weather sync fallback: Standard clear mode active.");
+    }
+  }
+};
+
+// Initial auto-sync on load
+setTimeout(() => {
+  if (window.syncLiveWeatherForCurrentTown) {
+    window.syncLiveWeatherForCurrentTown(false);
+  }
+}, 800);

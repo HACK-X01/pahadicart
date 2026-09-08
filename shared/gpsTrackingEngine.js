@@ -129,6 +129,11 @@
           '</div>',
 
           '<!-- Footer Actions -->',
+          '<div style="padding:8px 20px; background:#070d18; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:center;">' +
+            '<a href="https://www.google.com/maps/dir/?api=1&destination=' + trail.coords[trail.coords.length-1][0] + ',' + trail.coords[trail.coords.length-1][1] + '" target="_blank" rel="noopener" style="background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#38bdf8; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">' +
+              '<span>🗺️</span> Open Destination in Google Maps (Turn-by-Turn)' +
+            '</a>' +
+          '</div>',
           '<div style="padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:#0b1322;">',
             '<div style="font-size:11.5px; color:#cbd5e1;">',
               '🪜 <strong>Drop Guidance:</strong> ' + (order.customer && order.customer.staircaseDetails || 'Descend 25 stairs from roadside'),

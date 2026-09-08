@@ -175,6 +175,12 @@
           <!-- Mini Map -->
           <div class="mission-map" id="riderMissionMap"></div>
 
+          <!-- Google Maps Universal Turn-by-Turn Deep Link Button -->
+          <a href="https://www.google.com/maps/dir/?api=1&destination=30.9110,77.1040" target="_blank" rel="noopener" class="btn-action" style="background:linear-gradient(135deg, rgba(16,185,129,0.25), rgba(5,150,105,0.35)); border:1px solid #10b981; color:#34d399; font-weight:800; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin:12px 0; padding:12px; border-radius:10px; font-size:13px; box-shadow:0 4px 12px rgba(16,185,129,0.2);">
+            <span style="font-size:16px;">🗺️</span>
+            <span>Open Turn-by-Turn in Google Maps</span>
+          </a>
+
           <!-- Customer Contact Actions -->
           <div style="display: flex; gap: 10px; margin-bottom: 16px;">
             <a href="tel:${o.customerPhone}" class="btn-action" style="background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; text-decoration: none;">
@@ -276,6 +282,12 @@
           <div style="font-size:32px; margin-bottom:12px;">⛰️📦</div>
           <h3 style="font-size:18px; font-weight:800; margin-bottom:8px;">No Pending Multi-Orders to Batch</h3>
           <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">All proximate mountain orders in your town are currently single-assigned or delivered.</p>
+          <div style="margin-bottom:18px;">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=30.9110,77.1040" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#38bdf8; padding:10px 18px; border-radius:10px; font-weight:800; font-size:12.5px; text-decoration:none;">
+              <span>🗺️</span>
+              <span>Open Himachal Route in Google Maps</span>
+            </a>
+          </div>
           <button onclick="document.getElementById('batchedRouteModal').remove()" style="background:#10b981; color:#040813; border:none; padding:10px 24px; border-radius:10px; font-weight:800; cursor:pointer;">Close</button>
         </div>
       `;

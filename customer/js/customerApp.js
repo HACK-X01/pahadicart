@@ -522,3 +522,59 @@
 
   window.customerApp = new PahadiCustomerApp();
 })();
+
+
+// HTML5 Live GPS Location Auto-Detection & Live Weather Sync for Customer App
+window.detectCustomerLiveLocation = async function() {
+  const btnText = document.getElementById('custGpsBtnText');
+  if (btnText) btnText.textContent = 'Detecting GPS...';
+
+  if (!window.PahadiLiveServices) {
+    alert('Live services initializing, please tap again in a second.');
+    if (btnText) btnText.textContent = 'Detect My Location';
+    return;
+  }
+
+  try {
+    const loc = await window.PahadiLiveServices.detectUserLocation();
+    if (btnText) btnText.textContent = '📍 ' + loc.nearestTown.name + ' (' + loc.lat.toFixed(2) + ', ' + loc.lng.toFixed(2) + ')';
+
+    // Auto-switch to nearest Himachal Town
+    const townSelect = document.getElementById('townSelect');
+    if (townSelect && loc.nearestTown) {
+      townSelect.value = loc.nearestTown.id;
+      if (window.customerApp) {
+        window.customerApp.changeTown(loc.nearestTown.id);
+      }
+    }
+
+    // Auto-fetch real-time Open-Meteo weather
+    const weather = await window.PahadiLiveServices.fetchRealtimeWeather(loc.lat, loc.lng);
+    const weatherTextEl = document.getElementById('weatherStatusText');
+    if (weatherTextEl) {
+      weatherTextEl.innerText = loc.nearestTown.name + ' Weather: ' + weather.temp + '°C ' + weather.label + ' • 45m SLA';
+    }
+
+    alert('📍 Location Auto-Detected!\n\n' +
+      'Coordinates: [' + loc.lat.toFixed(4) + ', ' + loc.lng.toFixed(4) + ']\n' +
+      'Altitude: ' + loc.altitude + ' meters\n' +
+      'Nearest Town Hub: ' + loc.nearestTown.name + ' (' + loc.distanceKm + ' km)\n' +
+      'Live Weather: ' + weather.temp + '°C (' + weather.label + ')\n\n' +
+      'Catalog auto-synced with nearest mountain merchants.');
+  } catch (err) {
+    console.error('Customer GPS Error:', err);
+    if (btnText) btnText.textContent = 'Detect My Location';
+    alert('⚠️ ' + (err.message || 'Could not detect device GPS. Defaulting to Solan Hub.'));
+  }
+};
+
+// Auto-sync real-time weather for current town on customer load
+setTimeout(async () => {
+  if (window.PahadiLiveServices) {
+    const weather = await window.PahadiLiveServices.fetchRealtimeWeather(30.9084, 77.0999);
+    const weatherTextEl = document.getElementById('weatherStatusText');
+    if (weatherTextEl) {
+      weatherTextEl.innerText = 'Solan Weather: ' + weather.temp + '°C ' + weather.label + ' • Standard 45m SLA';
+    }
+  }
+}, 1000);

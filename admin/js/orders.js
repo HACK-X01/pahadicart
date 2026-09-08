@@ -109,6 +109,7 @@ function renderOrdersFeed(filterStatus = "all") {
             (order.status === 'placed' ? '<button class="btn btn-sm btn-primary" onclick="advanceOrderStatus(\'' + order.id + '\', \'preparing\')">Accept</button>' : '') +
             (order.status === 'preparing' ? '<button class="btn btn-sm btn-secondary" onclick="advanceOrderStatus(\'' + order.id + '\', \'in_transit\')">Dispatch</button>' : '') +
             (order.status === 'in_transit' ? '<button class="btn btn-sm btn-primary" onclick="advanceOrderStatus(\'' + order.id + '\', \'delivered\')">Verify OTP</button>' : '') +
+            '<button class="btn btn-sm btn-secondary" onclick="window.PahadiLiveServices && window.PahadiLiveServices.openOrderInGoogleMaps(\'' + order.id + '\', \'' + (order.deliveryAddress || '').replace(/'/g, "") + '\')" style="background:rgba(56,189,248,0.15); border-color:#38bdf8; color:#38bdf8; font-weight:700;">🗺️ Google Maps</button>' +
             '<button class="btn btn-sm btn-secondary" onclick="window.showTriadAudit(\'' + order.id + '\')" style="background:rgba(16,185,129,0.15); border-color:#10b981; color:#10b981; font-weight:700;">🔍 Triad Audit</button>' +
           '</div>' +
         '</div>' +
