@@ -178,6 +178,11 @@ function showToast(message) {
   const container = document.getElementById("toastContainer");
   if (!container) return;
 
+  // Limit to at most 2 toasts
+  while (container.children.length >= 2) {
+    container.removeChild(container.firstChild);
+  }
+
   const toast = document.createElement("div");
   toast.className = "toast";
   toast.innerHTML = '<span style="color:var(--primary-400);">🏔️</span> <span>' + message + '</span>';
@@ -188,5 +193,5 @@ function showToast(message) {
     toast.style.transform = "translateX(100%)";
     toast.style.transition = "all 0.3s ease";
     setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  }, 2200);
 }
