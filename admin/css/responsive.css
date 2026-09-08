@@ -46,31 +46,70 @@
   .top-header {
     padding: 0 12px;
     gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .header-left {
+    display: flex;
+    align-items: center;
     gap: 8px;
+    flex: 1;
     min-width: 0;
   }
   .town-selector-wrapper {
-    padding: 6px 10px;
-    max-width: 140px;
+    padding: 6px 12px;
+    max-width: 185px;
+    flex: 1;
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--slate-850);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-full);
+    box-sizing: border-box;
   }
   .town-select {
     font-size: 12px;
-    max-width: 90px;
-    text-overflow: ellipsis;
+    max-width: 140px;
+    width: 100%;
+    color: var(--slate-100);
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
   }
   .header-right {
+    display: flex;
+    align-items: center;
     gap: 6px;
     flex-shrink: 0;
   }
+  #headerSimBtn {
+    display: none !important;
+  }
   .weather-mode-pill {
-    padding: 6px 10px;
+    padding: 5px 9px;
     font-size: 11px;
-    max-width: 120px;
+    max-width: 110px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .chime-btn {
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .chime-btn .chime-label {
+    display: none;
   }
 
   :root {
@@ -123,8 +162,20 @@
   }
 
   .page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     width: 100%;
-    justify-content: space-between;
+  }
+  .page-actions .btn {
+    flex: 1 1 calc(50% - 6px);
+    justify-content: center;
+    padding: 9px 12px;
+    font-size: 12px;
+    min-height: 40px;
+  }
+  .page-actions .btn:first-child {
+    flex: 1 1 100%;
   }
 
   .page-title h2 {
@@ -257,5 +308,20 @@
 
   .order-meta {
     grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .weather-sub {
+    display: none;
+  }
+  .weather-toggle-group {
+    grid-template-columns: 1fr 1fr 1fr !important;
+    display: grid !important;
+  }
+  .weather-btn {
+    padding: 7px 4px !important;
+    font-size: 11px !important;
+    white-space: nowrap;
   }
 }

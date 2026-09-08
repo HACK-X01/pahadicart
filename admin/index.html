@@ -11,13 +11,13 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Leaflet CSS (OpenStreetMap - 100% Free & No API Key Required) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=2.6.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=2.7.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
   <!-- Pure Vanilla CSS Styling -->
-  <link rel="stylesheet" href="css/tokens.css?v=2.6.0">
-  <link rel="stylesheet" href="css/layout.css?v=2.6.0">
-  <link rel="stylesheet" href="css/components.css?v=2.6.0">
-  <link rel="stylesheet" href="css/responsive.css?v=2.6.0">
+  <link rel="stylesheet" href="css/tokens.css?v=2.7.0">
+  <link rel="stylesheet" href="css/layout.css?v=2.7.0">
+  <link rel="stylesheet" href="css/components.css?v=2.7.0">
+  <link rel="stylesheet" href="css/responsive.css?v=2.7.0">
   <link rel="manifest" href="../manifest.json">
 </head>
 <body>
@@ -38,6 +38,10 @@
     </div>
 
     <nav class="sidebar-nav">
+      <div class="nav-item sim-nav-drawer-btn" onclick="window.openSimModal()" style="background: linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(5,150,105,0.28) 100%); border: 1px solid rgba(16,185,129,0.4); color: #34d399; font-weight: 700; margin-bottom: 12px; box-shadow: 0 0 14px rgba(16,185,129,0.2); cursor: pointer;">
+        <span style="font-size: 16px;">⚡</span>
+        <span>1-Click Order Simulator</span>
+      </div>
       <div class="nav-section-title">Operations</div>
       <div class="nav-item active" data-tab="overview" onclick="switchTab('overview')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -128,7 +132,7 @@
       </div>
 
       <div class="header-right">
-        <button onclick="window.openSimModal()" class="btn btn-primary" style="padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #10b981 0%, #047857 100%); box-shadow:0 0 16px rgba(16,185,129,0.35); min-height:34px;">⚡ 1-Click Simulator</button>
+        <button id="headerSimBtn" onclick="window.openSimModal()" class="btn btn-primary desktop-sim-btn" style="padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #10b981 0%, #047857 100%); box-shadow:0 0 16px rgba(16,185,129,0.35); min-height:34px;">⚡ 1-Click Simulator</button>
         <!-- Weather Indicator Pill -->
         <div class="weather-mode-pill" id="weatherHeaderPill">
           ☀️ Weather: Clear &bull; Standard SLA
@@ -137,7 +141,7 @@
         <!-- Pahadi Chime Audio Toggle Button -->
         <button class="chime-btn active" id="chimeBtn" onclick="toggleChime()">
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-          <span>Ghanti Sound: ON</span>
+          <span class="chime-label">Ghanti Sound: ON</span>
         </button>
       </div>
     </header>
@@ -153,12 +157,16 @@
             <p>Real-time hill logistics, terrain ETA calculator & merchant command</p>
           </div>
           <div class="page-actions">
-            <button class="btn btn-secondary" onclick="simulateIncomingOrder()">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>+ Simulate Order</span>
+            <button class="btn btn-primary" onclick="window.openSimModal()" style="display:inline-flex; align-items:center; gap:8px; box-shadow:0 0 16px rgba(16,185,129,0.35);">
+              <span style="font-size:14px;">⚡</span>
+              <span>1-Click Simulator</span>
             </button>
-            <button class="btn btn-primary" onclick="initGodViewMap(document.getElementById('townSelect').value)">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <button class="btn btn-secondary" onclick="simulateIncomingOrder()" style="display:inline-flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>Simulate Order</span>
+            </button>
+            <button class="btn btn-secondary" onclick="initGodViewMap(document.getElementById('townSelect').value)" style="display:inline-flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span>Refresh Map</span>
             </button>
           </div>
@@ -171,9 +179,9 @@
             <p id="weatherStatusDesc">Roads clear. Standard 45–60 min delivery active across all hill corridors.</p>
           </div>
           <div class="weather-toggle-group">
-            <button class="weather-btn active" data-mode="clear">☀️ Clear (Standard)</button>
-            <button class="weather-btn" data-mode="rain">🌧️ Rain (+₹15 Surge)</button>
-            <button class="weather-btn" data-mode="snow">❄️ Snow (Safety Lock)</button>
+            <button class="weather-btn active" data-mode="clear">☀️ Clear <span class="weather-sub">(Standard)</span></button>
+            <button class="weather-btn" data-mode="rain">🌧️ Rain <span class="weather-sub">(+₹15 Surge)</span></button>
+            <button class="weather-btn" data-mode="snow">❄️ Snow <span class="weather-sub">(Safety Lock)</span></button>
           </div>
         </div>
 
@@ -1044,23 +1052,23 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <!-- Core & Extended Modules -->
-<script src="/shared/hillAudio.js?v=2.6.0"></script>
-<script src="/shared/eventBus.js?v=2.6.0"></script>
-<script src="/shared/dispatchEngine.js?v=2.6.0"></script>
-<script src="js/mockData.js?v=2.6.0"></script>
-<script src="js/map.js?v=2.6.0"></script>
-<script src="js/orders.js?v=2.6.0"></script>
-<script src="js/merchants.js?v=2.6.0"></script>
-<script src="js/riders.js?v=2.6.0"></script>
-<script src="js/safety.js?v=2.6.0"></script>
-<script src="js/support.js?v=2.6.0"></script>
-<script src="js/growth.js?v=2.6.0"></script>
-<script src="js/finance.js?v=2.6.0"></script>
-<script src="js/zones.js?v=2.6.0"></script>
-<script src="js/app.js?v=2.6.0"></script>
+<script src="/shared/hillAudio.js?v=2.7.0"></script>
+<script src="/shared/eventBus.js?v=2.7.0"></script>
+<script src="/shared/dispatchEngine.js?v=2.7.0"></script>
+<script src="js/mockData.js?v=2.7.0"></script>
+<script src="js/map.js?v=2.7.0"></script>
+<script src="js/orders.js?v=2.7.0"></script>
+<script src="js/merchants.js?v=2.7.0"></script>
+<script src="js/riders.js?v=2.7.0"></script>
+<script src="js/safety.js?v=2.7.0"></script>
+<script src="js/support.js?v=2.7.0"></script>
+<script src="js/growth.js?v=2.7.0"></script>
+<script src="js/finance.js?v=2.7.0"></script>
+<script src="js/zones.js?v=2.7.0"></script>
+<script src="js/app.js?v=2.7.0"></script>
 
-  <script src="../shared/simulationEngine.js?v=2.6.0"></script>
-  <script src="../shared/simulationModal.js?v=2.6.0"></script>
-  <script src="../shared/offlineQueue.js?v=2.6.0"></script>
+  <script src="../shared/simulationEngine.js?v=2.7.0"></script>
+  <script src="../shared/simulationModal.js?v=2.7.0"></script>
+  <script src="../shared/offlineQueue.js?v=2.7.0"></script>
 </body>
 </html>

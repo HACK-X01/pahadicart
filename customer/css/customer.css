@@ -765,3 +765,42 @@ body {
   .hero-title { font-size: 22px; }
   .cart-drawer { max-width: 100%; }
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .brand-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    width: 100%;
+  }
+  .nav-actions::-webkit-scrollbar {
+    display: none;
+  }
+  .town-select-btn {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    padding: 6px 10px;
+  }
+  .nav-actions button {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 11.5px !important;
+    padding: 6px 10px !important;
+  }
+}
