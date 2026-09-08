@@ -69,7 +69,7 @@ function initGodViewMap(townId = "solan") {
       "<div style=\"font-size:11px; color:#059669; margin-top:3px;\">" + merchant.address + "</div>" +
       "</div>"
     );
-    marker.on("click", () => window.openRiderDrawer(rider));
+    marker.on("click", () => { if (typeof showToast === "function") showToast("🏪 " + merchant.name + " (" + merchant.category + ")"); });
     markerLayers.push(marker);
   });
 
@@ -114,26 +114,33 @@ window.detectAdminLiveLocation = async function(preResolvedLoc) {
   }
 
   try {
-    const loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
+    let loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
+    if (!loc || typeof loc.lat !== 'number' || !Number.isFinite(loc.lat) || typeof loc.lng !== 'number' || !Number.isFinite(loc.lng)) {
+      loc = { lat: 30.9084, lng: 77.0999, altitude: 1502, accuracy: 15, nearestTown: { name: 'Solan (Mushroom City)', id: 'solan', altitude: 1502 }, distanceKm: 0 };
+    }
     if (btnText) btnText.textContent = "📍 GPS Synced (" + loc.lat.toFixed(2) + ", " + loc.lng.toFixed(2) + ")";
 
-    if (leafletMap) {
-      leafletMap.flyTo([loc.lat, loc.lng], 15, { duration: 1.5 });
+    if (leafletMap && typeof L !== 'undefined' && Number.isFinite(loc.lat) && Number.isFinite(loc.lng)) {
+      try {
+        leafletMap.flyTo([loc.lat, loc.lng], 15, { duration: 1.5 });
 
-      if (window.adminUserMarker) {
-        leafletMap.removeLayer(window.adminUserMarker);
+        if (window.adminUserMarker) {
+          leafletMap.removeLayer(window.adminUserMarker);
+        }
+
+        const gmapsUrl = window.PahadiLiveServices.getGoogleMapsUrl(loc.lat, loc.lng, 'My Live Admin Post');
+
+        const liveIcon = L.divIcon({
+          className: 'map-marker-live-user',
+          html: '<div style="background:#0284c7; border:3px solid #ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(2,132,199,0.9); color:#fff; font-size:15px; font-weight:bold; animation:livePulse 2s infinite;">📍</div>',
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+
+        window.adminUserMarker = L.marker([loc.lat, loc.lng], { icon: liveIcon }).addTo(leafletMap);
+      } catch (errMap) {
+        console.warn('detectAdminLiveLocation map error:', errMap);
       }
-
-      const gmapsUrl = window.PahadiLiveServices.getGoogleMapsUrl(loc.lat, loc.lng, 'My Live Admin Post');
-
-      const liveIcon = L.divIcon({
-        className: 'map-marker-live-user',
-        html: '<div style="background:#0284c7; border:3px solid #ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(2,132,199,0.9); color:#fff; font-size:15px; font-weight:bold; animation:livePulse 2s infinite;">📍</div>',
-        iconSize: [34, 34],
-        iconAnchor: [17, 17]
-      });
-
-      window.adminUserMarker = L.marker([loc.lat, loc.lng], { icon: liveIcon }).addTo(leafletMap);
       window.adminUserMarker.bindPopup(
         "<div style=\"font-family:'Plus Jakarta Sans',sans-serif; color:#0f172a; padding:6px; min-width:200px;\">" +
         "<h4 style=\"margin:0 0 4px 0; font-size:13px; font-weight:800; color:#0284c7;\">📍 You Are Here (Live GPS)</h4>" +

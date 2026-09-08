@@ -536,8 +536,12 @@ window.detectCustomerLiveLocation = async function(preResolvedLoc, silent = fals
   }
 
   try {
-    const loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
-    if (btnText) btnText.textContent = '📍 ' + loc.nearestTown.name + ' (' + loc.lat.toFixed(2) + ', ' + loc.lng.toFixed(2) + ')';
+    let loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
+    if (!loc || typeof loc.lat !== 'number' || !Number.isFinite(loc.lat) || typeof loc.lng !== 'number' || !Number.isFinite(loc.lng)) {
+      loc = { lat: 30.9084, lng: 77.0999, altitude: 1502, accuracy: 15, nearestTown: { name: 'Solan (Mushroom City)', id: 'solan', altitude: 1502 }, distanceKm: 0 };
+    }
+    const townName = (loc.nearestTown && loc.nearestTown.name) ? loc.nearestTown.name : 'Solan';
+    if (btnText) btnText.textContent = '📍 ' + townName + ' (' + loc.lat.toFixed(2) + ', ' + loc.lng.toFixed(2) + ')';
 
     // Auto-switch to nearest Himachal Town
     const townSelect = document.getElementById('townSelect');

@@ -133,19 +133,23 @@
     }
 
     findNearestTown(lat, lng) {
+      if (typeof lat !== 'number' || !Number.isFinite(lat) || typeof lng !== 'number' || !Number.isFinite(lng)) {
+        lat = HIMACHAL_TOWNS[0].lat;
+        lng = HIMACHAL_TOWNS[0].lng;
+      }
       let minDistance = Infinity;
       let nearest = HIMACHAL_TOWNS[0];
       for (const town of HIMACHAL_TOWNS) {
         const dist = this.calculateDistance(lat, lng, town.lat, town.lng);
-        if (dist < minDistance) {
+        if (Number.isFinite(dist) && dist < minDistance) {
           minDistance = dist;
           nearest = town;
         }
       }
       return {
         town: nearest,
-        distanceKm: minDistance,
-        isWithinHimachal: minDistance <= 120
+        distanceKm: Number.isFinite(minDistance) ? minDistance : 0,
+        isWithinHimachal: Number.isFinite(minDistance) ? minDistance <= 120 : true
       };
     }
 
@@ -166,17 +170,28 @@
         navigator.geolocation.getCurrentPosition(
           (position) => {
             this.isDetecting = false;
-            const { latitude, longitude, altitude, accuracy } = position.coords;
+            let latitude = (position && position.coords) ? position.coords.latitude : null;
+            let longitude = (position && position.coords) ? position.coords.longitude : null;
+            let altitude = (position && position.coords) ? position.coords.altitude : null;
+            let accuracy = (position && position.coords) ? position.coords.accuracy : null;
+
+            // Safe guard against NaN, null, or undefined coordinates from device/browser
+            if (typeof latitude !== 'number' || !Number.isFinite(latitude) || typeof longitude !== 'number' || !Number.isFinite(longitude)) {
+              console.warn('Device GPS returned non-finite coordinates, defaulting to Solan Hub:', latitude, longitude);
+              latitude = HIMACHAL_TOWNS[0].lat;
+              longitude = HIMACHAL_TOWNS[0].lng;
+            }
+
             const nearestInfo = this.findNearestTown(latitude, longitude);
 
             const result = {
               lat: latitude,
               lng: longitude,
-              altitude: altitude ? Math.round(altitude) : nearestInfo.town.altitude,
-              accuracy: Math.round(accuracy || 10),
+              altitude: (altitude && Number.isFinite(altitude)) ? Math.round(altitude) : nearestInfo.town.altitude,
+              accuracy: (accuracy && Number.isFinite(accuracy)) ? Math.round(accuracy) : 10,
               timestamp: position.timestamp || Date.now(),
               nearestTown: nearestInfo.town,
-              distanceKm: nearestInfo.distanceKm,
+              distanceKm: Number.isFinite(nearestInfo.distanceKm) ? nearestInfo.distanceKm : 0,
               isWithinHimachal: nearestInfo.isWithinHimachal
             };
 
@@ -315,9 +330,14 @@
           const cached = sessionStorage.getItem('pahadi_live_location');
           if (cached) {
             const parsed = JSON.parse(cached);
-            this.currentLiveLocation = parsed;
-            await this.applyLocationAndSyncWeather(parsed);
-            return;
+            if (parsed && typeof parsed.lat === 'number' && Number.isFinite(parsed.lat) && typeof parsed.lng === 'number' && Number.isFinite(parsed.lng)) {
+              this.currentLiveLocation = parsed;
+              await this.applyLocationAndSyncWeather(parsed);
+              return;
+            } else {
+              sessionStorage.removeItem('pahadi_live_location');
+              sessionStorage.removeItem('pahadi_live_location_confirmed');
+            }
           }
         } catch (e) {}
       }
@@ -431,8 +451,15 @@
         isFallback: true
       };
       this.currentLiveLocation = fallbackLoc;
-      await this.applyLocationAndSyncWeather(fallbackLoc);
-      this.dismissCompulsoryModal();
+      try {
+        await this.applyLocationAndSyncWeather(fallbackLoc);
+      } catch (e) {
+        console.warn('Fallback sync weather error:', e);
+      } finally {
+        sessionStorage.setItem('pahadi_live_location', JSON.stringify(fallbackLoc));
+        sessionStorage.setItem('pahadi_live_location_confirmed', 'true');
+        this.dismissCompulsoryModal();
+      }
     }
 
     dismissCompulsoryModal() {
@@ -445,6 +472,23 @@
     }
 
     async applyLocationAndSyncWeather(loc) {
+      // Robust sanitization against NaN or corrupted coordinates
+      if (!loc || typeof loc.lat !== 'number' || !Number.isFinite(loc.lat) || typeof loc.lng !== 'number' || !Number.isFinite(loc.lng)) {
+        console.warn('applyLocationAndSyncWeather received non-finite loc, defaulting to Solan:', loc);
+        const defaultTown = HIMACHAL_TOWNS[0];
+        loc = {
+          lat: defaultTown.lat,
+          lng: defaultTown.lng,
+          altitude: defaultTown.altitude,
+          accuracy: 15,
+          nearestTown: defaultTown,
+          distanceKm: 0,
+          isWithinHimachal: true,
+          isFallback: true
+        };
+      }
+      this.currentLiveLocation = loc;
+
       // 1. Fetch real-time Open-Meteo weather
       const weather = await this.fetchRealtimeWeather(loc.lat, loc.lng);
 
@@ -464,31 +508,35 @@
       }
 
       // 3. Update Admin Portal
-      if (window.leafletMap) {
-        window.leafletMap.flyTo([loc.lat, loc.lng], 15, { duration: 1.5 });
+      try {
+        if (window.leafletMap && typeof L !== 'undefined' && Number.isFinite(loc.lat) && Number.isFinite(loc.lng)) {
+          window.leafletMap.flyTo([loc.lat, loc.lng], 15, { duration: 1.5 });
 
-        if (window.adminUserMarker) {
-          window.leafletMap.removeLayer(window.adminUserMarker);
+          if (window.adminUserMarker) {
+            window.leafletMap.removeLayer(window.adminUserMarker);
+          }
+
+          const gmapsUrl = this.getGoogleMapsUrl(loc.lat, loc.lng, 'My Live Admin Post');
+          const liveIcon = L.divIcon({
+            className: 'map-marker-live-user',
+            html: '<div style="background:#0284c7; border:3px solid #ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(2,132,199,0.9); color:#fff; font-size:15px; font-weight:bold; animation:livePulse 2s infinite;">📍</div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+          });
+
+          window.adminUserMarker = L.marker([loc.lat, loc.lng], { icon: liveIcon }).addTo(window.leafletMap);
+          window.adminUserMarker.bindPopup(
+            "<div style=\"font-family:'Plus Jakarta Sans',sans-serif; color:#0f172a; padding:6px; min-width:200px;\">" +
+            "<h4 style=\"margin:0 0 4px 0; font-size:13px; font-weight:800; color:#0284c7;\">📍 You Are Here (Live GPS)</h4>" +
+            "<div style=\"font-size:11px; color:#475569;\">Coords: <b>" + loc.lat.toFixed(4) + ", " + loc.lng.toFixed(4) + "</b></div>" +
+            "<div style=\"font-size:11px; color:#475569;\">Altitude: <b>" + loc.altitude + "m</b> &bull; Accuracy: &plusmn;" + loc.accuracy + "m</div>" +
+            "<div style=\"font-size:11px; color:#059669; font-weight:700; margin:4px 0;\">Nearest Hub: " + (loc.nearestTown ? loc.nearestTown.name : 'Solan') + " (" + loc.distanceKm + " km)</div>" +
+            "<a href=\"" + gmapsUrl + "\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block; margin-top:6px; background:#0284c7; color:#fff; padding:5px 12px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:700;\">🗺️ Open in Google Maps</a>" +
+            "</div>"
+          ).openPopup();
         }
-
-        const gmapsUrl = this.getGoogleMapsUrl(loc.lat, loc.lng, 'My Live Admin Post');
-        const liveIcon = L.divIcon({
-          className: 'map-marker-live-user',
-          html: '<div style="background:#0284c7; border:3px solid #ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(2,132,199,0.9); color:#fff; font-size:15px; font-weight:bold; animation:livePulse 2s infinite;">📍</div>',
-          iconSize: [34, 34],
-          iconAnchor: [17, 17]
-        });
-
-        window.adminUserMarker = L.marker([loc.lat, loc.lng], { icon: liveIcon }).addTo(window.leafletMap);
-        window.adminUserMarker.bindPopup(
-          "<div style=\"font-family:'Plus Jakarta Sans',sans-serif; color:#0f172a; padding:6px; min-width:200px;\">" +
-          "<h4 style=\"margin:0 0 4px 0; font-size:13px; font-weight:800; color:#0284c7;\">📍 You Are Here (Live GPS)</h4>" +
-          "<div style=\"font-size:11px; color:#475569;\">Coords: <b>" + loc.lat.toFixed(4) + ", " + loc.lng.toFixed(4) + "</b></div>" +
-          "<div style=\"font-size:11px; color:#475569;\">Altitude: <b>" + loc.altitude + "m</b> &bull; Accuracy: &plusmn;" + loc.accuracy + "m</div>" +
-          "<div style=\"font-size:11px; color:#059669; font-weight:700; margin:4px 0;\">Nearest Hub: " + loc.nearestTown.name + " (" + loc.distanceKm + " km)</div>" +
-          "<a href=\"" + gmapsUrl + "\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block; margin-top:6px; background:#0284c7; color:#fff; padding:5px 12px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:700;\">🗺️ Open in Google Maps</a>" +
-          "</div>"
-        ).openPopup();
+      } catch (mapErr) {
+        console.warn('Map flyTo/marker error (non-fatal):', mapErr);
       }
 
       // Update Admin UI Badges
