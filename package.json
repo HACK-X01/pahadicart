@@ -1,0 +1,9 @@
+{
+  "name": "pahadicart",
+  "version": "2.0.0",
+  "description": "Himachal Hyperlocal Delivery Ecosystem",
+  "scripts": {
+    "start": "node dev-server.js",
+    "dev": "node dev-server.js"
+  }
+}
