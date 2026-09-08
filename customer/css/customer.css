@@ -1,0 +1,766 @@
+/* PahadiCart Customer App CSS - Mountain Emerald Design System */
+:root {
+  --primary: #065f46;
+  --primary-light: #10b981;
+  --primary-dark: #064e3b;
+  --accent: #f59e0b;
+  --accent-light: #fbbf24;
+  --bg-dark: #0b1320;
+  --bg-surface: #131f33;
+  --bg-card: #1a2942;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(16, 185, 129, 0.4);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --danger: #ef4444;
+  --success: #10b981;
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.25);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;\n  --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+/* Quick App Switcher Header */
+.portal-switch-bar {
+  background: #050a12;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.portal-switch-links {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.portal-switch-links::-webkit-scrollbar { display: none; }
+
+.portal-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.portal-link:hover, .portal-link.active {
+  color: #fff;
+  background: rgba(16, 185, 129, 0.15);
+}
+.portal-link.active {
+  color: var(--primary-light);
+  font-weight: 600;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Main Navigation Bar */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(19, 31, 51, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+.brand-logo {
+  font-family: var(--font-display); font-size: 34px; letter-spacing: -0.8px;
+  filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.4));
+}
+.brand-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #34d399, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.town-select-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.cart-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  border: 1px solid var(--border-active);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(6, 95, 70, 0.4);
+  transition: transform 0.2s;
+}
+.cart-btn:active { transform: scale(0.97); }
+
+.cart-badge {
+  background: var(--accent);
+  color: #000;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+/* Mountain Banner */
+.hero-banner {
+  background: linear-gradient(180deg, rgba(6, 95, 70, 0.4) 0%, rgba(11, 19, 32, 0) 100%),
+              radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+  padding: 38px 24px 28px;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--primary-light);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 12px;
+}
+.hero-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.hero-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin: 0 auto 16px;
+}
+
+/* Mountain Weather & Terrain Strip */
+.weather-strip {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  max-width: 900px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.weather-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-light);
+  font-weight: 600;
+}
+.staircase-guarantee {
+  color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Category Filter Pills */
+.category-container {
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+}
+.category-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+.category-scroll::-webkit-scrollbar { display: none; }
+
+.cat-pill {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.cat-pill:hover, .cat-pill.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--primary-light);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Products Grid */
+.products-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.item-count {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 22px 24px; border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.product-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.product-tag {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--accent-light);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+.vyapar-badge {
+  font-size: 11px;
+  color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-body {
+  flex-grow: 1;
+  margin-bottom: 16px;
+}
+.product-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.product-hindi {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.product-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.product-merchant {
+  font-size: 11px;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+.price-box {
+  display: flex;
+  flex-direction: column;
+}
+.price-current {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+.price-mrp {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+
+/* Quantity Controls */
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.add-btn {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--primary-light);
+  color: var(--primary-light);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.add-btn:hover {
+  background: var(--primary-light);
+  color: #000;
+}
+.qty-counter {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-active);
+  border-radius: var(--radius-sm);
+}
+.qty-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.qty-num {
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Cart Slide-in Drawer */
+.cart-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cart-drawer-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-color);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
+}
+.cart-drawer.active {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.drawer-title {
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.close-drawer-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.drawer-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.empty-cart-view {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-dim);
+}
+.empty-cart-icon {
+  font-size: 54px;
+  margin-bottom: 12px;
+}
+
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.item-info {
+  flex-grow: 1;
+  padding-right: 10px;
+}
+.item-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.item-price {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Hill Address Card */
+.hill-address-box {
+  background: rgba(6, 95, 70, 0.15);
+  border: 1px dashed var(--primary-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin: 16px 0;
+}
+.hill-address-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.form-input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: #fff;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+}
+
+/* Bill Breakdown */
+.bill-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-top: 14px;
+}
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+}
+.bill-row.total {
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.drawer-footer {
+  padding: 18px 20px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+.checkout-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #000;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+/* Payment Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-content {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  max-width: 420px;
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.qr-placeholder {
+  background: #fff;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  display: inline-block;
+  margin: 16px 0;
+}
+.qr-svg {
+  width: 180px;
+  height: 180px;
+  display: block;
+}
+
+/* Live Tracking Modal / View */
+.track-screen-modal {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  z-index: 1500;
+  display: none;
+  flex-direction: column;
+}
+.track-screen-modal.active { display: flex; }
+
+.track-header {
+  padding: 14px 20px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.track-body {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  height: calc(100vh - 65px);
+}
+#trackMap {
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+}
+.track-sidebar {
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-color);
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* OTP Pill */
+.otp-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+}
+.otp-code {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--accent-light);
+  margin: 6px 0;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  padding-left: 24px;
+}
+.stepper::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--border-color);
+}
+.step-item {
+  position: relative;
+}
+.step-dot {
+  position: absolute;
+  left: -24px;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--text-dim);
+}
+.step-item.active .step-dot {
+  border-color: var(--primary-light);
+  background: var(--primary-light);
+  box-shadow: 0 0 10px var(--primary-light);
+}
+.step-item.done .step-dot {
+  border-color: var(--primary-light);
+  background: var(--primary-light);
+}
+.step-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+.step-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 860px) {
+  .track-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 280px 1fr;
+    height: auto;
+  }
+  .track-sidebar {
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+  .hero-title { font-size: 22px; }
+  .cart-drawer { max-width: 100%; }
+}

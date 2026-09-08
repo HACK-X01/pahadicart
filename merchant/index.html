@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PahadiCart Merchant Partner - Vyapar Mandal Order Terminal</title>
+  <link rel="stylesheet" href="css/merchant.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      background-color: #030712 !important;
+      color-scheme: dark;
+      overflow-x: clip;
+      overflow-y: auto;
+      width: 100%;
+    }
+    body {
+      background-color: #030712 !important;
+      color-scheme: dark;
+      overflow-x: clip;
+      overflow-y: visible;
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- Switch Bar -->
+  <div class="portal-switch-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-weight: 700; color: #10b981;">🏔️ PahadiCart Ecosystem:</span>
+    </div>
+    <div class="portal-switch-links">
+      <a href="/" class="portal-link">Super Hub</a>
+      <a href="/admin/" class="portal-link">Admin Tower</a>
+      <a href="/customer/" class="portal-link">Customer App</a>
+      <a href="/merchant/" class="portal-link active">Vyapar Mandal (Shop)</a>
+      <a href="/rider/" class="portal-link">Rider Cockpit</a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="merchant-header">
+    <div class="shop-info-group">
+      <div class="shop-avatar" id="shopAvatar">🍎</div>
+      <div>
+        <h1 class="shop-name-title" id="shopTitle">Sharma Kirana & Fresh Produce</h1>
+        <div class="vyapar-cert-tag">
+          <span>🛡️ Verified Vyapar Mandal Partner</span>
+          <span style="color: var(--text-dim);">•</span>
+          <span id="shopVyaparId">Reg: VM-SOL-2024-089 (Mall Road Solan)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <button class="chime-btn" onclick="window.pahadiScanner && window.pahadiScanner.openScannerModal()" style="background:rgba(56,189,248,0.15); border:1px solid #38bdf8; color:#38bdf8; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
+        <span>📷 Barcode Scanner</span>
+      </button>
+      <button class="chime-btn" onclick="window.pahadiPrinter && window.pahadiPrinter.printReceipt({ id: 'ORD-KOT-7821', customer: { name: 'Aarav Sharma', colony: 'Shamti Upper Pine Lane', staircaseDetails: 'Descend 35 stone steps from road level, green gate', phone: '98160-12890' }, merchant: { name: 'Sharma Kirana & Fresh Produce', area: 'Mall Road Lower Bazaar', vyaparMandalId: 'VM-SOL-2024-089' }, items: [{ name: 'Kinnaur Royal Apples (1 kg)', qty: 1, price: 140 }, { name: 'Fresh Siddu Dough Kit', qty: 2, price: 180 }] })" style="background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#34d399; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
+        <span>🖨️ KOT Slip</span>
+      </button>
+      <!-- Test Audio Chime -->
+      <button class="chime-btn" onclick="window.merchantApp.testChime()">
+        <span>🔔 Test "Ghar Ki Ghanti"</span>
+      </button>
+
+      <!-- Shop Status -->
+      <button class="online-toggle-btn" id="shopStatusBtn" onclick="window.merchantApp.toggleStoreOnline()">
+        <span>🟢 Dukan Khuli Hai (Live)</span>
+      </button>
+
+      <!-- Switch Shop Profile -->
+      <select id="merchantSwitch" style="background: var(--bg-card); color:#fff; border:1px solid var(--border-color); padding:8px 12px; border-radius:8px; font-size:13px;" onchange="window.merchantApp.switchMerchant(this.value)">
+        <option value="m-101" selected>Sharma Kirana (Mall Road)</option>
+        <option value="m-102">Pahadi Rasoi & Dham Kitchen</option>
+        <option value="m-103">Solan Heritage Bakery</option>
+        <option value="m-104">Himalayan Health Chemist</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- Daily Settlement Bar -->
+  <section class="settlement-strip">
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-label">AAJ KE KUL ORDERS</div>
+        <div class="metric-val" id="todayOrderCount">18</div>
+        <div class="metric-sub">100% On-Time Fulfillment</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">GROSS SALES (AAJ KI KUL BIKRI)</div>
+        <div class="metric-val" id="todayGrossRevenue">₹6,420</div>
+        <div class="metric-sub">+18% vs Last Monday</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">PLATFORM COMMISSION</div>
+        <div class="metric-val" id="todayCommission" style="color: #38bdf8;">₹385 (6%)</div>
+        <div class="metric-sub">Zero hidden surcharges</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">1% TCS GOVT TAX DEDUCTION</div>
+        <div class="metric-val" id="todayTcs" style="color: #fbbf24;">₹64.20</div>
+        <div class="metric-sub">Eligible for Form 26AS Credit</div>
+      </div>
+      <div class="metric-box" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(6, 95, 70, 0.15);">
+        <div class="metric-label" style="color: #34d399;">AAJ KA NET BANK PAYOUT</div>
+        <div class="metric-val" id="todayNetPayout" style="color: #10b981;">₹5,970.80</div>
+        <div class="metric-sub">UTR #HDFC9928103 (Processed)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kanban Dispatch Board -->
+  <main class="board-container">
+    <div class="board-header">
+      <h2 class="board-title">
+        <span>⚡ Live Kitchen & Packing Dispatch Board</span>
+      </h2>
+      <div style="display: flex; gap: 10px;">
+        <button class="stock-drawer-btn" onclick="window.merchantApp.openStockModal()">📦 Menu & Stock Toggles</button>
+      </div>
+    </div>
+
+    <div class="kanban-grid">
+      <!-- Column 1: New / Incoming -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div class="col-title" style="color: #fbbf24;">
+            <span>🔔 Naye Orders (Action Required)</span>
+          </div>
+          <span class="col-count" id="countPlaced" style="color: #fbbf24;">0</span>
+        </div>
+        <div class="col-cards" id="colPlaced">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Column 2: Preparing / In Kitchen -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div class="col-title" style="color: #38bdf8;">
+            <span>🍳 Packing & Taiyari Chal Rahi Hai</span>
+          </div>
+          <span class="col-count" id="countPreparing" style="color: #38bdf8;">0</span>
+        </div>
+        <div class="col-cards" id="colPreparing">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Column 3: Rider Handed / Completed -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div class="col-title" style="color: #10b981;">
+            <span>🛵 Rider Ko Diya / Delivered</span>
+          </div>
+          <span class="col-count" id="countDelivered" style="color: #10b981;">0</span>
+        </div>
+        <div class="col-cards" id="colDelivered">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Stock Modal -->
+  <div id="stockModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; max-width: 500px; width: 100%; padding: 24px; max-height: 80vh; display: flex; flex-direction: column;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 18px; font-weight: 800;">📦 Dukaan Stock & Rates Controller</h3>
+        <button style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;" onclick="window.merchantApp.closeStockModal()">&times;</button>
+      </div>
+      <div style="flex-grow: 1; overflow-y: auto;" id="stockItemsList">
+        <!-- Injected by JS -->
+      </div>
+      <button class="btn-action btn-ready" style="margin-top: 16px;" onclick="window.merchantApp.closeStockModal()">Save & Update Menu</button>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="/shared/hillAudio.js"></script>
+  <script src="/shared/sharedData.js"></script>
+  <script src="/shared/eventBus.js"></script>
+  <!-- Merchant Logic -->
+  <script src="js/thermalPrinter.js"></script>
+  <script src="js/barcodeScanner.js"></script>
+  <script src="js/merchantApp.js"></script>
+</body>
+</html>

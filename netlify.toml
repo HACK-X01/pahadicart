@@ -1,0 +1,22 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/"
+  status = 301
+
+[[redirects]]
+  from = "/customer"
+  to = "/customer/"
+  status = 301
+
+[[redirects]]
+  from = "/merchant"
+  to = "/merchant/"
+  status = 301
+
+[[redirects]]
+  from = "/rider"
+  to = "/rider/"
+  status = 301

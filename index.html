@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PahadiCart (पहाड़ीकार्ट) - Himachal Hyperlocal Delivery Ecosystem</title>
+  <meta name="description" content="PahadiCart Unified Ecosystem Launcher: Super Admin Command Center, Customer Ordering Web App, Merchant Partner Portal, and Pahadi Rider Mobile Cockpit.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #065f46;
+      --primary-light: #10b981;
+      --accent: #f59e0b;
+      --accent-light: #fbbf24;
+      --bg-dark: #070d18;
+      --bg-surface: #0f1a2e;
+      --bg-card: #15233c;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(16, 185, 129, 0.4);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;\n      --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 70%, rgba(245, 158, 11, 0.08) 0%, transparent 40%);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 56px 32px 100px;
+    }
+
+    /* Hero Header */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--border-glow);
+      color: var(--primary-light);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 30%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-hindi {
+      font-size: 20px;
+      color: var(--accent-light);
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .hero-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 24px;
+    }
+
+    /* Stats Strip */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      text-align: left;
+    }
+    .stat-num {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .stat-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* 4 Portals Grid */
+    .portals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+    .portal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 34px 32px; border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+    .portal-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--primary-light);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.25);
+    }
+    .portal-card.admin-card:hover { border-color: #38bdf8; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.25); }
+    .portal-card.customer-card:hover { border-color: #10b981; }
+    .portal-card.merchant-card:hover { border-color: #f59e0b; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 158, 11, 0.25); }
+    .portal-card.rider-card:hover { border-color: #a855f7; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.25); }
+
+    .portal-icon {
+      font-size: 42px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .portal-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-admin { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-cust { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-merch { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-rider { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    .portal-name {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .portal-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .portal-features {
+      list-style: none;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .portal-features li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .launch-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: #fff;
+    }
+    .portal-card:hover .launch-btn {
+      background: var(--primary-light);
+      color: #000;
+      border-color: var(--primary-light);
+    }
+    .portal-card.admin-card:hover .launch-btn { background: #38bdf8; color: #000; }
+    .portal-card.merchant-card:hover .launch-btn { background: #f59e0b; color: #000; }
+    .portal-card.rider-card:hover .launch-btn { background: #a855f7; color: #fff; }
+
+    /* Interactive Simulation Sandbox Bar */
+    .sandbox-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .sandbox-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sandbox-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .sandbox-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .sim-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sim-btn:hover {
+      border-color: var(--primary-light);
+      background: rgba(16, 185, 129, 0.15);
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title { font-size: 32px; }
+      .portals-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Hero -->
+    <header class="hero-section">
+      <div class="badge-pill">
+        <span>🏔️</span>
+        <span>Pre-Live Zero-Cost Architecture (100% Free Open-Source Stack)</span>
+      </div>
+      <h1 class="hero-title">PahadiCart (पहाड़ीकार्ट)</h1>
+      <div class="hero-hindi">"Aapka Apna Pahadi Bazaar • Har Mod Par Aapke Saath"</div>
+      <p class="hero-sub">Himachal's first dedicated 2-hour hyperlocal marketplace and rapid mountain delivery platform. Tailored for steep ridges, pedestrian mall roads, and staircase doorstep navigation.</p>
+      <div style="display:flex; justify-content:center; gap:16px; margin-top:24px;">
+        <button onclick="window.openSimModal()" style="background:linear-gradient(135deg, #10b981 0%, #047857 100%); color:#ffffff; border:none; padding:12px 28px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 0 24px rgba(16,185,129,0.45); display:inline-flex; align-items:center; gap:10px;">
+          <span style="font-size:18px;">⚡</span>
+          <span>1-Click Live Lifecycle Simulator</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Key Platform Stats -->
+    <section class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-num">3 Hubs</div>
+        <div class="stat-title">Solan • Shimla • Dharamshala</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">28 Partners</div>
+        <div class="stat-title">Vyapar Mandal Kirana & Dhabas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">14 Riders</div>
+        <div class="stat-title">Mountain Scooters & Walkers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">₹0 Cost</div>
+        <div class="stat-title">Zero Paid APIs • 100% Local Run</div>
+      </div>
+    </section>
+
+    <!-- 4 Portals Launchpad -->
+    <main class="portals-grid">
+      <!-- 1. Admin Tower -->
+      <a href="/admin/" class="portal-card admin-card">
+        <div>
+          <span class="portal-icon">🏢</span>
+          <span class="portal-badge badge-admin">Master Control Tower</span>
+          <h2 class="portal-name">Super Admin Command Center</h2>
+          <p class="portal-desc">Central business intelligence dashboard for business monitoring, rider telemetry, merchant approvals, and financial P&L audit.</p>
+          <ul class="portal-features">
+            <li><span>✓</span> Leaflet Multi-Town OSM God-View Map</li>
+            <li><span>✓</span> Order-by-Order Rupee Net Profit Waterfall</li>
+            <li><span>✓</span> ₹2,500 COD Floating Cash-in-Hand Lock</li>
+            <li><span>✓</span> Emergency SOS Hill Breakdown Desk</li>
+            <li><span>✓</span> 1-Click Instant Customer Wallet Refunds</li>
+            <li><span>✓</span> Himachal Colony Repeat Order Heatmap</li>
+            <li><span>✓</span> 1% TCS Tax Deduction Certificates & Excel Export</li>
+          </ul>
+        </div>
+        <div class="launch-btn">Launch Admin Portal ➔</div>
+      </a>
+
+      <!-- 2. Customer App -->
+      <a href="/customer/" class="portal-card customer-card">
+        <div>
+          <span class="portal-icon">🛍️</span>
+          <span class="portal-badge badge-cust">Customer PWA & Store</span>
+          <h2 class="portal-name">Customer Ordering Web App</h2>
+          <p class="portal-desc">Fast, responsive consumer marketplace with Himachal catalog, staircase address navigation, and live animated delivery tracking.</p>
+          <ul class="portal-features">
+            <li><span>✓</span> Kinnaur Apples, Fresh Siddu Dough & Dham Thalis</li>
+            <li><span>✓</span> Landmark & Staircase Hill Address Input</li>
+            <li><span>✓</span> Simulated PhonePe / GPay UPI QR & COD</li>
+            <li><span>✓</span> Live Hill Tracking Map with Animated Rider</li>
+            <li><span>✓</span> 4-Digit Secret Delivery OTP System</li>
+            <li><span>✓</span> Spill-Proof Hill Terrain Eco-Packaging</li>
+          </ul>
+        </div>
+        <div class="launch-btn">Launch Customer App ➔</div>
+      </a>
+
+      <!-- 3. Merchant Portal -->
+      <a href="/merchant/" class="portal-card merchant-card">
+        <div>
+          <span class="portal-icon">🏪</span>
+          <span class="portal-badge badge-merch">Vyapar Mandal Terminal</span>
+          <h2 class="portal-name">Merchant Partner Portal</h2>
+          <p class="portal-desc">Kitchen & counter order dispatch terminal for local Himachal shopkeepers, Dhabas, bakers, and pharmacies.</p>
+          <ul class="portal-features">
+            <li><span>✓</span> Resonant "Ghar Ki Ghanti" Web Audio Chime</li>
+            <li><span>✓</span> 3-Column Kanban Board (New ➔ Prep ➔ Picked)</li>
+            <li><span>✓</span> 1-Tap 15-Minute Prep Order Accept / Reject</li>
+            <li><span>✓</span> Real-Time Kirana Stock & Rate Controller</li>
+            <li><span>✓</span> Daily UTR Settlement & 1% TCS Ledger</li>
+            <li><span>✓</span> Instant Sync with Customer & Rider Tabs</li>
+          </ul>
+        </div>
+        <div class="launch-btn">Launch Merchant Portal ➔</div>
+      </a>
+
+      <!-- 4. Rider Cockpit -->
+      <a href="/rider/" class="portal-card rider-card">
+        <div>
+          <span class="portal-icon">🛵</span>
+          <span class="portal-badge badge-rider">Rider Delivery App</span>
+          <h2 class="portal-name">Pahadi Rider Mobile Cockpit</h2>
+          <p class="portal-desc">Glove-friendly mobile interface for delivery partners tackling steep hill climbs, hairpin turns, and pedestrian Mall Roads.</p>
+          <ul class="portal-features">
+            <li><span>✓</span> 56px Glove-Friendly Touch Hit Targets</li>
+            <li><span>✓</span> Hill Elevation Gain Telemetry (+140m Climb)</li>
+            <li><span>✓</span> Staircase Guidance ("Descend 35 stone steps")</li>
+            <li><span>✓</span> Flashing Emergency SOS Breakdown Alert</li>
+            <li><span>✓</span> Customer Secret OTP Verification</li>
+            <li><span>✓</span> COD Cash Collection with Balance Auto-Lock</li>
+          </ul>
+        </div>
+        <div class="launch-btn">Launch Rider Cockpit ➔</div>
+      </a>
+    </main>
+
+    <!-- Cross-App Simulation Sandbox -->
+    <section class="sandbox-panel">
+      <h3 class="sandbox-title">⚡ Interactive Cross-App Simulation Sandbox</h3>
+      <p class="sandbox-sub">Test the full end-to-end lifecycle across browser tabs. Clicking an action broadcasts real-time events to all open portals!</p>
+      <div class="sandbox-buttons">
+        <button class="sim-btn" onclick="window.testSim('ORDER')">
+          <span>🛒</span>
+          <span>1. Place Test Customer Order (#ORD-9901)</span>
+        </button>
+        <button class="sim-btn" onclick="window.testSim('CHIME')">
+          <span>🔔</span>
+          <span>2. Play "Ghar Ki Ghanti" Audio Bell</span>
+        </button>
+        <button class="sim-btn" onclick="window.testSim('RIDER')">
+          <span>🛵</span>
+          <span>3. Trigger Rider Dispatch Ping</span>
+        </button>
+        <button class="sim-btn" onclick="window.testSim('SOS')">
+          <span>🚨</span>
+          <span>4. Simulate Emergency Hill Breakdown SOS</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="/shared/hillAudio.js"></script>
+  <script src="/shared/sharedData.js"></script>
+  <script src="/shared/eventBus.js"></script>
+  <script>
+    window.testSim = function(type) {
+      if (!window.pahadiAudio) return;
+
+      if (type === 'CHIME') {
+        window.pahadiAudio.playGharKiGhanti();
+      } else if (type === 'RIDER') {
+        window.pahadiAudio.playRiderPing();
+      } else if (type === 'SOS') {
+        window.pahadiAudio.playSOSAlert();
+      } else if (type === 'ORDER') {
+        const testOrd = {
+          id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+          customerName: 'Rohit Kanwar',
+          customerPhone: '98160-77112',
+          town: 'solan',
+          colony: 'Kotla Nullah Chowk',
+          landmark: 'Opposite Hill View Cafe',
+          staircaseNotes: '15 steps up from taxi stand, blue wooden door',
+          merchantId: 'm-101',
+          merchantName: 'Sharma Kirana & Fresh Produce',
+          items: [{ name: 'Kinnaur Crisp Royal Delicious Apples (1 kg)', qty: 2, price: 140 }],
+          itemTotal: 280,
+          deliveryFee: 35,
+          weatherSurge: 0,
+          grandTotal: 320,
+          paymentMode: 'UPI_ONLINE',
+          paymentStatus: 'Paid (UPI)',
+          status: 'Placed',
+          otp: '5521',
+          riderId: 'r-1',
+          riderName: 'Vikas Thakur',
+          riderPhone: '98161-12345',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          createdTimestamp: Date.now()
+        };
+        if (window.pahadiBus) {
+          window.pahadiBus.placeOrder(testOrd);
+        }
+        window.pahadiAudio.playGharKiGhanti();
+        alert('🎉 Simulated Order #' + testOrd.id + ' broadcasted to Merchant, Rider, and Admin portals!');
+      }
+    };
+  </script>
+  <script src="shared/sharedData.js"></script>
+  <script src="shared/eventBus.js"></script>
+  <script src="shared/hillAudio.js"></script>
+  <script src="shared/dispatchEngine.js"></script>
+  <script src="shared/simulationEngine.js"></script>
+  <script src="shared/simulationModal.js"></script>
+  <script src="shared/offlineQueue.js"></script>
+</body>
+</html>

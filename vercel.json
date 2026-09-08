@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "routes": [
+    {
+      "src": "/admin/?(.*)",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/customer/?(.*)",
+      "dest": "/customer/index.html"
+    },
+    {
+      "src": "/merchant/?(.*)",
+      "dest": "/merchant/index.html"
+    },
+    {
+      "src": "/rider/?(.*)",
+      "dest": "/rider/index.html"
+    },
+    {
+      "src": "/shared/(.*)",
+      "dest": "/shared/$1"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/sw.js"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PahadiCart (पहाड़ीकार्ट) - Himachal 2-Hour Hyperlocal Delivery</title>
+  <meta name="description" content="Order authentic Himachal apples, fresh Siddu, local dham thali, mountain bakery cakes and medicines delivered to your staircase doorstep in Solan, Shimla, and Dharamshala.">
+  
+  <!-- Leaflet CSS for Hill Tracking Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Customer App CSS -->
+  <link rel="stylesheet" href="css/customer.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      background-color: #030712 !important;
+      color-scheme: dark;
+      overflow-x: clip;
+      overflow-y: auto;
+      width: 100%;
+    }
+    body {
+      background-color: #030712 !important;
+      color-scheme: dark;
+      overflow-x: clip;
+      overflow-y: visible;
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <link rel="manifest" href="../manifest.json">
+</head>
+<body>
+
+  <!-- Top Switcher Bar -->
+  <div class="portal-switch-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-weight: 700; color: #10b981;">🏔️ PahadiCart Ecosystem:</span>
+    </div>
+    <div class="portal-switch-links">
+      <a href="/" class="portal-link">Super Hub</a>
+      <a href="/admin/" class="portal-link">Admin Tower</a>
+      <a href="/customer/" class="portal-link active">Customer App</a>
+      <a href="/merchant/" class="portal-link">Vyapar Mandal (Shop)</a>
+      <a href="/rider/" class="portal-link">Rider Cockpit</a>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <nav class="navbar">
+    <a href="/customer/" class="brand-wrapper">
+      <span class="brand-logo">🏔️</span>
+      <div>
+        <span class="brand-title">PahadiCart</span>
+        <span class="brand-tagline">Aapka Apna Pahadi Bazaar</span>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <!-- Town Selector -->
+      <select id="townSelect" class="town-select-btn" onchange="window.customerApp.changeTown(this.value)">
+        <option value="solan" selected>📍 Solan (1,502m)</option>
+        <option value="shimla">📍 Shimla Ridge (2,206m)</option>
+        <option value="dharamshala">📍 Dharamshala (1,457m)</option>
+      </select>
+      <button onclick="window.pahadiOffline.toggleSimulatedTunnel()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#fca5a5; padding:6px 12px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;"><span>🌲⛰️ Tunnel Mode (Offline)</span></button>
+
+      <!-- Voice Order Button -->
+      <button id="voiceOrderBtn" onclick="window.pahadiVoice && window.pahadiVoice.openVoiceModal()" style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:7px 14px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        <span>🎤</span>
+        <span>बोलकर ऑर्डर करें</span>
+      </button>
+
+      <!-- Live GPS Button -->
+      <button id="liveGpsBtn" onclick="window.pahadiGPS && window.pahadiGPS.showTrackingModal({ id: 'ORD-LIVE-7821' })" style="background:rgba(56,189,248,0.15); border:1px solid #38bdf8; color:#38bdf8; padding:7px 12px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">
+        <span>📍</span>
+        <span>Live Rider GPS</span>
+      </button>
+
+      <!-- Cart Button -->
+      <button class="cart-btn" onclick="window.customerApp.toggleCart(true)">
+        <span>🛍️ Cart</span>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Banner -->
+  <header class="hero-banner">
+    <div class="hero-badge">⚡ 2-Hour Hill Delivery Guaranteed</div>
+    <h1 class="hero-title">Shuddh Himachal Se Seedhe Aapke Dwar</h1>
+    <p class="hero-sub">Kinnaur apples, fresh Siddu dough, royal dham thali, and emergency mountain medicines delivered right to your staircase doorstep.</p>
+
+    <!-- Weather & Hill SLA Strip -->
+    <div class="weather-strip">
+      <div class="weather-tag">
+        <span>☀️</span>
+        <span id="weatherStatusText">Solan Weather: 18°C Clear Skies • Standard 45m SLA</span>
+      </div>
+      <div class="staircase-guarantee">
+        <span>🪜</span>
+        <span>Staircase Footpath Navigation Included</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Category Filter Pills -->
+  <div class="category-container">
+    <div class="category-scroll" id="categoryPills">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <main class="products-section">
+    <div class="section-header">
+      <h2 class="section-title" id="currentCatTitle">Sabhi Pahadi Products</h2>
+      <span class="item-count" id="productCount">Showing 12 items</span>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="products-grid" id="productsGrid">
+      <!-- Dynamic cards rendered by JS -->
+    </div>
+  </main>
+
+  <!-- Cart Slide-in Drawer -->
+  <div class="cart-drawer-overlay" id="cartOverlay" onclick="window.customerApp.toggleCart(false)"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="drawer-header">
+      <h3 class="drawer-title">🛍️ Aapka Pahadi Jhola</h3>
+      <button class="close-drawer-btn" onclick="window.customerApp.toggleCart(false)">&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Cart Items -->
+      <div id="cartItemsList">
+        <!-- Rendered items or empty state -->
+      </div>
+
+      <!-- Himachal Staircase & Landmark Address Input -->
+      <div class="hill-address-box" id="addressBox" style="display: none;">
+        <div class="hill-address-title">
+          <span>🪜</span>
+          <span>Himachal Staircase & Landmark Details</span>
+        </div>
+        <input type="text" id="custColony" class="form-input" placeholder="Colony / Ward (e.g. Shamti Upper Pine Lane)" value="Shamti, Upper Pine Lane">
+        <input type="text" id="custLandmark" class="form-input" placeholder="Famous Hill Landmark (e.g. Near Durga Mandir Tank)" value="Opposite Durga Mandir Water Tank">
+        <textarea id="custStairs" class="form-input" rows="2" placeholder="Staircase/Footpath Guide (e.g. 35 stairs down from road, yellow gate)">Descend 35 stone steps from road level, 2nd green gate on left</textarea>
+        <input type="tel" id="custPhone" class="form-input" placeholder="Contact Mobile (e.g. 98160-12890)" value="98160-12890">
+      </div>
+
+      <!-- Bill Breakdown -->
+      <div class="bill-box" id="billBox" style="display: none;">
+        <div class="bill-row">
+          <span>Item Total</span>
+          <span id="billItemTotal">₹0</span>
+        </div>
+        <div class="bill-row">
+          <span>Pahadi Terrain Delivery</span>
+          <span id="billDeliveryFee">₹35</span>
+        </div>
+        <div class="bill-row">
+          <span>Spill-Proof Eco Packaging</span>
+          <span>₹5</span>
+        </div>
+        <div class="bill-row total">
+          <span>Grand Total to Pay</span>
+          <span id="billGrandTotal" style="color: #10b981;">₹0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer" id="drawerFooter" style="display: none;">
+      <button class="checkout-btn" onclick="window.customerApp.openPaymentModal()">
+        <span>Aage Badhein (Proceed to Pay)</span>
+        <span>➔</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Simulated Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-content">
+      <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">💳 Payment Mode Chunein</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Total Payable: <strong id="payModalAmount" style="color: #10b981;">₹485</strong></p>
+
+      <!-- Options -->
+      <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+        <button id="payModeUPI" class="add-btn" style="flex: 1; padding: 10px; background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #fff;" onclick="window.customerApp.selectPayMode('UPI')">📱 Instant UPI QR</button>
+        <button id="payModeCOD" class="add-btn" style="flex: 1; padding: 10px; background: var(--bg-card); color: var(--text-muted);" onclick="window.customerApp.selectPayMode('COD')">💵 Cash on Delivery</button>
+      </div>
+
+      <!-- UPI QR View -->
+      <div id="upiQrContainer">
+        <div class="qr-placeholder">
+          <!-- Standalone SVG QR Code Representation -->
+          <svg class="qr-svg" viewBox="0 0 100 100">
+            <rect width="100" height="100" fill="#ffffff"/>
+            <!-- Position Detection Patterns -->
+            <rect x="10" y="10" width="25" height="25" fill="#064e3b" rx="4"/>
+            <rect x="14" y="14" width="17" height="17" fill="#ffffff" rx="2"/>
+            <rect x="18" y="18" width="9" height="9" fill="#064e3b"/>
+
+            <rect x="65" y="10" width="25" height="25" fill="#064e3b" rx="4"/>
+            <rect x="69" y="14" width="17" height="17" fill="#ffffff" rx="2"/>
+            <rect x="73" y="18" width="9" height="9" fill="#064e3b"/>
+
+            <rect x="10" y="65" width="25" height="25" fill="#064e3b" rx="4"/>
+            <rect x="14" y="69" width="17" height="17" fill="#ffffff" rx="2"/>
+            <rect x="18" y="73" width="9" height="9" fill="#064e3b"/>
+
+            <!-- Data Bits -->
+            <rect x="40" y="15" width="6" height="6" fill="#064e3b"/>
+            <rect x="50" y="20" width="6" height="6" fill="#064e3b"/>
+            <rect x="42" y="32" width="18" height="6" fill="#064e3b"/>
+            <rect x="40" y="44" width="20" height="14" fill="#064e3b"/>
+            <rect x="15" y="42" width="12" height="6" fill="#064e3b"/>
+            <rect x="70" y="45" width="15" height="6" fill="#064e3b"/>
+            <rect x="40" y="65" width="8" height="8" fill="#064e3b"/>
+            <rect x="52" y="75" width="14" height="6" fill="#064e3b"/>
+            <rect x="75" y="65" width="15" height="18" fill="#064e3b"/>
+            <circle cx="50" cy="50" r="5" fill="#10b981"/>
+          </svg>
+        </div>
+        <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 12px;">Scan with GPay, PhonePe, Paytm, or BHIM</p>
+      </div>
+
+      <div id="codNoticeContainer" style="display: none; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; margin-bottom: 16px;">
+        <p style="font-size: 13px; color: var(--accent-light); font-weight: 600;">💵 Pay Cash to Rider upon Delivery</p>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Please keep exact change ready to assist rider on mountain trails.</p>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="add-btn" style="flex: 1; padding: 12px; background: var(--bg-card); color: var(--text-muted);" onclick="window.customerApp.closePaymentModal()">Cancel</button>
+        <button class="checkout-btn" style="flex: 2; padding: 12px;" onclick="window.customerApp.confirmOrderPlacement()">
+          <span>Simulate Payment & Place Order</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Hill Order Tracking Screen (Modal) -->
+  <div class="track-screen-modal" id="trackModal">
+    <div class="track-header">
+      <div>
+        <span style="font-size: 11px; color: #10b981; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Live Hill Radar</span>
+        <h2 style="font-size: 18px; font-weight: 800; margin-top: 2px;" id="trackOrderId">Order #ORD-7821</h2>
+      </div>
+      <button class="add-btn" onclick="window.customerApp.closeTrackingModal()">✕ Close Tracking</button>
+    </div>
+
+    <div class="track-body">
+      <!-- Leaflet Map Canvas -->
+      <div id="trackMap"></div>
+
+      <!-- Live Order Stepper & Telemetry -->
+      <div class="track-sidebar">
+        <!-- OTP Card -->
+        <div class="otp-card">
+          <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">CONFIDENTIAL DELIVERY OTP</span>
+          <div class="otp-code" id="trackOtpCode">4829</div>
+          <span style="font-size: 11px; color: var(--text-muted);">Share this OTP with rider only when order is in your hand</span>
+        </div>
+
+        <!-- Rider Profile Card -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 26px;">🛵</div>
+              <div>
+                <h4 style="font-size: 14px; font-weight: 700;" id="trackRiderName">Vikas Thakur</h4>
+                <span style="font-size: 11px; color: var(--text-muted);" id="trackRiderVehicle">Hero Splendor (HP-14-B-8821)</span>
+              </div>
+            </div>
+            <span style="font-size: 12px; font-weight: 700; color: #fbbf24;">⭐ 4.9</span>
+          </div>
+          <div style="font-size: 11px; color: #38bdf8; display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px;">
+            <span>⛰️ Elevation Climbed Today: <strong>420 m</strong></span>
+            <span>📱 +91 98161-12345</span>
+          </div>
+        </div>
+
+        <!-- Staircase Notice -->
+        <div style="background: rgba(6, 95, 70, 0.2); border-left: 3px solid #10b981; padding: 10px 12px; border-radius: 4px; font-size: 12px;">
+          <span style="font-weight: 700; color: #34d399;">Rider Staircase Note:</span>
+          <p id="trackStairNote" style="color: var(--text-muted); margin-top: 2px;">Descend 35 stone steps from road level, 2nd green gate on left</p>
+        </div>
+
+        <!-- Milestones Stepper -->
+        <div>
+          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-muted);">DELIVERY MILESTONES</h4>
+          <div class="stepper" id="trackStepper">
+            <div class="step-item done" id="stepPlaced">
+              <div class="step-dot"></div>
+              <div class="step-title">Order Received & Confirmed</div>
+              <div class="step-sub">Forwarded to Vyapar Mandal Merchant</div>
+            </div>
+            <div class="step-item done" id="stepPrep">
+              <div class="step-dot"></div>
+              <div class="step-title">Merchant Packing Order</div>
+              <div class="step-sub">100% spill-proof seal applied</div>
+            </div>
+            <div class="step-item active" id="stepTransit">
+              <div class="step-dot"></div>
+              <div class="step-title">Rider Climbing Mountain Trail</div>
+              <div class="step-sub">En route via Mall Road / Shamti link road</div>
+            </div>
+            <div class="step-item" id="stepDelivered">
+              <div class="step-dot"></div>
+              <div class="step-title">Delivered at Doorstep</div>
+              <div class="step-sub">OTP verified & confirmed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/shared/hillAudio.js"></script>
+  <script src="/shared/sharedData.js"></script>
+  <script src="/shared/eventBus.js"></script>
+  <script src="/shared/dispatchEngine.js"></script>
+  <script src="/shared/simulationEngine.js"></script>
+  <script src="/shared/simulationModal.js"></script>
+  <script src="/shared/offlineQueue.js"></script>
+  <script src="/shared/whatsappBot.js"></script>
+  <script src="/shared/batchingEngine.js"></script>
+  <!-- Customer App Logic -->
+  <script src="/shared/gpsTrackingEngine.js"></script>
+  <script src="js/voiceOrderEngine.js"></script>
+  <script src="js/customerApp.js"></script>
+</body>
+</html>

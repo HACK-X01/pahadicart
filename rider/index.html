@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PahadiCart Rider Cockpit - Mountain Delivery Partner</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="css/rider.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      background-color: #030712 !important;
+      color-scheme: dark;
+      overflow-x: clip;
+      overflow-y: auto;
+      width: 100%;
+    }
+    body {
+      background-color: #030712 !important;
+      color-scheme: dark;
+      overflow-x: clip;
+      overflow-y: visible;
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- Switch Bar -->
+  <div class="portal-switch-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-weight: 700; color: #10b981;">🏔️ PahadiCart:</span>
+    </div>
+    <div class="portal-switch-links">
+      <a href="/" class="portal-link">Super Hub</a>
+      <a href="/admin/" class="portal-link">Admin Tower</a>
+      <a href="/customer/" class="portal-link">Customer App</a>
+      <a href="/merchant/" class="portal-link">Merchant Shop</a>
+      <a href="/rider/" class="portal-link active">Rider Cockpit</a>
+    </div>
+  </div>
+
+  <!-- Mobile App Header -->
+  <header class="rider-top-bar">
+    <div class="rider-info">
+      <div class="rider-avatar">🛵</div>
+      <div>
+        <div class="rider-name">Vikas Thakur</div>
+        <div class="rider-bike">Hero Splendor (HP-14-B-8821) • Solan</div>
+      </div>
+    </div>
+
+    <button onclick="window.showBatchedRouteModal()" style="background:linear-gradient(135deg, #10b981, #047857); color:#fff; border:none; padding:7px 13px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; margin-right:8px;">📦 Batched Route</button>
+    <!-- Duty Status Switch -->
+    <button class="duty-toggle" id="dutyToggleBtn" onclick="window.riderApp.toggleDuty()">
+      <span>🟢 Online (On Duty)</span>
+    </button>
+  </header>
+
+  <!-- Telemetry & Floating Cash Bar -->
+  <section class="telemetry-deck">
+    <div class="stat-box">
+      <div class="stat-lbl">AAJ KI KAMAI (EARNINGS)</div>
+      <div class="stat-val" id="todayEarnings">₹720</div>
+      <div class="stat-hint">8 Deliveries Completed</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">COD FLOATING CASH</div>
+      <div class="stat-val" id="cashBalance">₹1,240</div>
+      <div class="stat-hint" style="color: #fbbf24;">Safe (&lt; ₹2,500 Limit)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">ALTITUDE CLIMBED</div>
+      <div class="stat-val" id="altitudeClimbed">+420 m</div>
+      <div class="stat-hint">₹125 Mountain Bonus Included</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">BATTERY & SIGNAL</div>
+      <div class="stat-val" style="color: #10b981;">88% • 4G</div>
+      <div class="stat-hint">GPS Precision: 3 meters</div>
+    </div>
+  </section>
+
+  <!-- Emergency SOS Breakdown -->
+  <div class="sos-strip">
+    <button class="sos-btn" onclick="window.riderApp.triggerSOS()">
+      <span>🚨</span>
+      <span>EMERGENCY SOS: Hill Breakdown / Landslide Alert</span>
+    </button>
+  </div>
+
+  <!-- Cockpit Main Area -->
+  <main class="cockpit-view">
+    <!-- Active Delivery Mission (If order picked) -->
+    <div id="activeMissionContainer" style="display: none;">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Incoming Dispatch Radar (When an order is available) -->
+    <div id="incomingRadarContainer">
+      <!-- Injected by JS -->
+    </div>
+  </main>
+
+  <!-- Shared Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/shared/hillAudio.js"></script>
+  <script src="/shared/sharedData.js"></script>
+  <script src="/shared/eventBus.js"></script>
+  <!-- Rider Controller -->
+  <script src="/shared/batchingEngine.js"></script>
+  <script src="js/riderApp.js"></script>
+</body>
+</html>

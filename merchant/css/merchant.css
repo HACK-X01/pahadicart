@@ -1,0 +1,346 @@
+/* PahadiCart Merchant Partner Portal CSS */
+:root {
+  --primary: #065f46;
+  --primary-light: #10b981;
+  --bg-dark: #090f1a;
+  --bg-surface: #111a2e;
+  --bg-card: #18243c;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-active: rgba(16, 185, 129, 0.4);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --success: #10b981;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding-bottom: 60px;
+}
+
+/* Switch Bar */
+.portal-switch-bar {
+  background: #050a12;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.portal-switch-links {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.portal-switch-links::-webkit-scrollbar { display: none; }
+.portal-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.portal-link:hover, .portal-link.active {
+  color: #fff;
+  background: rgba(16, 185, 129, 0.15);
+}
+.portal-link.active {
+  color: var(--primary-light);
+  font-weight: 600;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Header */
+.merchant-header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.shop-info-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.shop-avatar {
+  font-size: 36px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--primary-light);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+}
+.shop-name-title {
+  font-size: 20px;
+  font-weight: 800;
+}
+.vyapar-cert-tag {
+  font-size: 12px;
+  color: var(--primary-light);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.chime-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--accent);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.online-toggle-btn {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--primary-light);
+  color: var(--primary-light);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Daily Settlement Bar */
+.settlement-strip {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+.metric-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+}
+.metric-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.metric-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+}
+.metric-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* Kanban Board Container */
+.board-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.board-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kanban-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.kanban-col {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+}
+.col-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.col-title {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.col-count {
+  background: var(--bg-card);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.col-cards {
+  padding: 14px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+/* Order Card */
+.order-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.order-card.incoming {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+  animation: pulseCard 2s infinite;
+}
+@keyframes pulseCard {
+  0% { border-color: rgba(245, 158, 11, 0.4); }
+  50% { border-color: rgba(245, 158, 11, 1); }
+  100% { border-color: rgba(245, 158, 11, 0.4); }
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.order-id {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+.order-time {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.stair-alert {
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid var(--accent);
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.item-list-box {
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 0;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.item-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+}
+.btn-action {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.15s;
+}
+.btn-action:active { transform: scale(0.97); }
+.btn-accept {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #000;
+}
+.btn-reject {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+.btn-ready {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  width: 100%;
+}
+
+/* Stock Toggle Drawer */
+.stock-drawer-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 960px) {
+  .kanban-grid {
+    grid-template-columns: 1fr;
+  }
+}
