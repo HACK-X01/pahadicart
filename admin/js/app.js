@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (window.RbacService) window.RbacService.init();
   initGodViewMap("solan");
   renderOrdersFeed();
   renderMerchantsTable();
@@ -79,6 +80,13 @@ function onTownChange(townId) {
 }
 
 function switchTab(tabId) {
+  // Check RBAC permission for this tab
+  if (window.RbacService && !window.RbacService.canAccessTab(tabId)) {
+    const role = window.RbacService.getActiveRole();
+    if (window.showToast) window.showToast('Access Restricted: Role ' + role + ' cannot view ' + tabId.toUpperCase() + ' module.', 'error');
+    return;
+  }
+
   activeTab = tabId;
   window.location.hash = tabId;
 
@@ -116,8 +124,33 @@ function switchTab(tabId) {
     renderGrowthAnalytics();
   } else if (tabId === "orders") {
     renderOrdersFeed('all');
+  } else if (tabId === "dispatch") {
+    if (window.renderDispatchConsole) window.renderDispatchConsole();
+    if (window.DispatchService) window.DispatchService.init();
+  } else if (tabId === "runners") {
+    if (window.renderRunnersView) window.renderRunnersView();
+    if (window.RunnerService) window.RunnerService.init();
+  } else if (tabId === "customers") {
+    if (window.CustomerService) window.CustomerService.init();
+  } else if (tabId === "inventory") {
+    if (window.InventoryService) window.InventoryService.init();
+  } else if (tabId === "terrain_eta") {
+    if (window.runEtaDebugger) window.runEtaDebugger();
+    if (window.TerrainEtaService) window.TerrainEtaService.init();
+  } else if (tabId === "cod") {
+    if (window.renderCodReconciliation) window.renderCodReconciliation();
+    if (window.CodService) window.CodService.init();
+  } else if (tabId === "audit_logs") {
+    if (window.renderAuditLogsTable) window.renderAuditLogsTable();
+    if (window.AuditLogService) window.AuditLogService.init();
+  } else if (tabId === "system_health") {
+    if (window.renderSystemHealthDeck) window.renderSystemHealthDeck();
+    if (window.SystemHealthService) window.SystemHealthService.init();
+  } else if (tabId === "settings") {
+    if (window.SettingsService) window.SettingsService.init();
   }
 }
+window.switchTab = switchTab;
 
 function updateMetricsDashboard() {
   const currentTown = document.getElementById("townSelect")?.value || "solan";

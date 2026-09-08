@@ -404,3 +404,214 @@ window.showTriadAudit = function(orderId) {
 
   modal.style.display = 'flex';
 };
+
+
+// =========================================================================
+// SUPER ADMIN: 12-STATE ORDER STATE MACHINE, KANBAN & COMMAND DRAWER
+// =========================================================================
+
+let currentOrderViewMode = 'list'; // 'list' | 'kanban'
+
+function setOrderViewMode(mode) {
+  currentOrderViewMode = mode;
+  const listBtn = document.getElementById('viewModeListBtn');
+  const kanbanBtn = document.getElementById('viewModeKanbanBtn');
+  if (listBtn && kanbanBtn) {
+    listBtn.classList.toggle('active', mode === 'list');
+    kanbanBtn.classList.toggle('active', mode === 'kanban');
+  }
+  renderOrdersFeed();
+}
+
+// Open Detailed Order Command Drawer
+window.openOrderCommandDrawer = function(orderId) {
+  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  const drawer = document.getElementById('orderCommandDrawer');
+  const backdrop = document.getElementById('sideDrawerBackdrop');
+  const content = document.getElementById('orderDrawerContent');
+  const title = document.getElementById('orderDrawerTitle');
+
+  if (!drawer || !backdrop || !content) {
+    alert('Order: ' + order.id + '\nTotal: ₹' + order.total + '\nStatus: ' + order.status);
+    return;
+  }
+
+  if (title) title.innerText = order.id + ' • ' + order.merchantName;
+
+  // Calculate detailed financial items
+  const itemTotal = order.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+  const deliveryFee = 45;
+  const platformFee = 5;
+  const packagingFee = 10;
+  const grandTotal = itemTotal + deliveryFee + platformFee + packagingFee;
+
+  content.innerHTML = 
+    '<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<div>' +
+        '<div style="font-size:11px; color:var(--slate-400); text-transform:uppercase;">Current Lifecycle State</div>' +
+        '<div style="font-size:16px; font-weight:800; color:var(--sky-400); margin-top:2px;">' + order.status.toUpperCase() + '</div>' +
+      '</div>' +
+      '<div style="text-align:right;">' +
+        '<div style="font-size:11px; color:var(--slate-400);">Estimated Delivery</div>' +
+        '<div style="font-size:14px; font-weight:700; color:var(--emerald-400);">' + (order.eta || '45 Mins') + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // Customer & Mountain Drop Point Card
+    '<div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<h4 style="margin:0 0 10px 0; color:#fff; font-size:13px; display:flex; align-items:center; gap:8px;"><span>👤</span> Customer & Hill Drop Coordinates</h4>' +
+      '<div style="font-size:12px; line-height:1.6;">' +
+        '<div><span style="color:var(--slate-400);">Name:</span> <b>' + (order.customerName || 'Pahadi Resident') + '</b></div>' +
+        '<div><span style="color:var(--slate-400);">Masked Phone:</span> <code style="color:var(--sky-400);">+91 98*** 49210</code></div>' +
+        '<div><span style="color:var(--slate-400);">Address:</span> ' + order.deliveryAddress + '</div>' +
+        '<div><span style="color:var(--slate-400);">Staircase Note:</span> <span style="color:#f59e0b; font-weight:600;">' + order.staircaseNote + '</span></div>' +
+        '<div style="display:flex; gap:12px; margin-top:8px;">' +
+          '<span style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); color:#38bdf8; padding:3px 8px; border-radius:4px; font-size:11px;">⛰️ Elevation: ' + (order.elevation || '1,720m') + '</span>' +
+          '<span style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10b981; padding:3px 8px; border-radius:4px; font-size:11px;">📍 Drop Point Verified</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // Merchant & Rider Section
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">' +
+      '<div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+        '<div style="font-size:11px; color:var(--slate-400); text-transform:uppercase;">Shop / Merchant</div>' +
+        '<div style="font-weight:700; color:#fff; font-size:13px; margin-top:2px;">' + order.merchantName + '</div>' +
+        '<div style="font-size:11px; color:var(--slate-400); margin-top:4px;">Vyapar Mandal Verified</div>' +
+      '</div>' +
+      '<div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+        '<div style="font-size:11px; color:var(--slate-400); text-transform:uppercase;">Assigned Rider</div>' +
+        '<div style="font-weight:700; color:var(--sky-400); font-size:13px; margin-top:2px;">' + (order.assignedRider || 'Sunil Verma (Bike)') + '</div>' +
+        '<div style="font-size:11px; color:var(--emerald-400); margin-top:4px;">🔋 88% • 🟢 Active GPS</div>' +
+      '</div>' +
+    '</div>' +
+
+    // Items & Bill Breakdown
+    '<div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<h4 style="margin:0 0 10px 0; color:#fff; font-size:13px;">Order Items & Bill Breakdown</h4>' +
+      '<table style="width:100%; font-size:12px; border-collapse:collapse;">' +
+        order.items.map(i => 
+          '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">' +
+            '<td style="padding:6px 0; color:#e2e8f0;">' + i.qty + 'x ' + i.name + '</td>' +
+            '<td style="text-align:right; color:#fff; font-family:var(--font-mono);">₹' + (i.price * i.qty) + '</td>' +
+          '</tr>'
+        ).join('') +
+        '<tr><td style="padding:6px 0; color:var(--slate-400);">Delivery Fee (Hill Terrain)</td><td style="text-align:right; font-family:var(--font-mono);">₹' + deliveryFee + '</td></tr>' +
+        '<tr><td style="padding:6px 0; color:var(--slate-400);">Platform Fee</td><td style="text-align:right; font-family:var(--font-mono);">₹' + platformFee + '</td></tr>' +
+        '<tr><td style="padding:6px 0; color:var(--slate-400);">Packaging Fee</td><td style="text-align:right; font-family:var(--font-mono);">₹' + packagingFee + '</td></tr>' +
+        '<tr style="border-top:1px solid rgba(255,255,255,0.15); font-weight:700;">' +
+          '<td style="padding:8px 0; color:#fff;">Final Settled Amount (' + order.paymentMode + ')</td>' +
+          '<td style="text-align:right; color:var(--emerald-400); font-size:15px; font-family:var(--font-mono);">₹' + grandTotal + '</td>' +
+        '</tr>' +
+      '</table>' +
+    '</div>' +
+
+    // State Transition Buttons
+    '<div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<h4 style="margin:0 0 10px 0; color:#fff; font-size:13px;">Admin State Controls</h4>' +
+      '<div style="display:flex; gap:8px; flex-wrap:wrap;">' +
+        (order.status === 'placed' ? '<button class="btn btn-primary btn-sm" onclick="window.advanceOrderStatusAndAudit(\'' + order.id + '\', \'preparing\')">Accept Shop Order</button>' : '') +
+        (order.status === 'preparing' ? '<button class="btn btn-primary btn-sm" onclick="window.advanceOrderStatusAndAudit(\'' + order.id + '\', \'in_transit\')">Handover to Rider</button>' : '') +
+        (order.status === 'in_transit' ? '<button class="btn btn-success btn-sm" onclick="window.advanceOrderStatusAndAudit(\'' + order.id + '\', \'delivered\')" style="background:#10b981;">Verify OTP & Complete</button>' : '') +
+        '<button class="btn btn-secondary btn-sm" onclick="window.reassignRiderPrompt(\'' + order.id + '\')">Reassign Rider</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="window.cancelOrderPrompt(\'' + order.id + '\')" style="color:var(--rose-400);">Cancel Order</button>' +
+      '</div>' +
+    '</div>';
+
+  drawer.classList.add('active');
+  backdrop.classList.add('active');
+};
+
+window.closeOrderCommandDrawer = function() {
+  const drawer = document.getElementById('orderCommandDrawer');
+  const backdrop = document.getElementById('sideDrawerBackdrop');
+  if (drawer) drawer.classList.remove('active');
+  if (backdrop) backdrop.classList.remove('active');
+};
+
+window.advanceOrderStatusAndAudit = function(orderId, nextStatus) {
+  if (window.RbacService && !window.RbacService.canPerform('ORDERS', 'UPDATE')) {
+    alert('Permission Denied: Your current role cannot modify order lifecycle states.');
+    return;
+  }
+
+  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  const oldStatus = order.status;
+  order.status = nextStatus;
+
+  if (window.AdminApiService) {
+    window.AdminApiService.createAuditLog(
+      'ORDER_STATUS_CHANGED',
+      'ORDER',
+      order.id,
+      { status: oldStatus },
+      { status: nextStatus, actor: (window.RbacService ? window.RbacService.getActiveRole() : 'SUPER_ADMIN') }
+    );
+  }
+
+  renderOrdersFeed();
+  window.openOrderCommandDrawer(orderId);
+  if (window.showToast) window.showToast('Order ' + orderId + ' advanced to ' + nextStatus.toUpperCase(), 'success');
+};
+
+window.reassignRiderPrompt = function(orderId) {
+  if (window.RbacService && !window.RbacService.canPerform('DISPATCH', 'REASSIGN')) {
+    alert('Permission Denied: Only SUPER_ADMIN and OPERATIONS_ADMIN can manually reassign riders.');
+    return;
+  }
+  const newRider = prompt('Enter Rider Name or ID for manual re-assignment:', 'Vikram Rawat (EV Scooter)');
+  if (!newRider) return;
+
+  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  if (!order) return;
+  const oldRider = order.assignedRider || 'Unassigned';
+  order.assignedRider = newRider;
+
+  if (window.AdminApiService) {
+    window.AdminApiService.createAuditLog(
+      'ORDER_RIDER_REASSIGNED',
+      'ORDER',
+      order.id,
+      { assignedRider: oldRider },
+      { assignedRider: newRider, reason: 'Manual operational dispatch override' }
+    );
+  }
+
+  renderOrdersFeed();
+  window.openOrderCommandDrawer(orderId);
+  if (window.showToast) window.showToast('Rider for ' + orderId + ' reassigned to ' + newRider, 'info');
+};
+
+window.cancelOrderPrompt = function(orderId) {
+  if (window.RbacService && !window.RbacService.canPerform('ORDERS', 'CANCEL')) {
+    alert('Permission Denied: Current role not permitted to cancel live orders.');
+    return;
+  }
+  const reason = prompt('Mandatory Audit: Enter reason for cancelling order ' + orderId + ':', 'Customer requested cancellation due to weather delay');
+  if (!reason) return;
+
+  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  const oldStatus = order.status;
+  order.status = 'cancelled';
+  order.cancellationReason = reason;
+
+  if (window.AdminApiService) {
+    window.AdminApiService.createAuditLog(
+      'ORDER_CANCELLED',
+      'ORDER',
+      order.id,
+      { status: oldStatus },
+      { status: 'cancelled', reason: reason }
+    );
+  }
+
+  renderOrdersFeed();
+  window.closeOrderCommandDrawer();
+  if (window.showToast) window.showToast('Order ' + orderId + ' cancelled and audited.', 'error');
+};

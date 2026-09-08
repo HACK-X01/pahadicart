@@ -145,3 +145,53 @@ To bridge web app logistics with hardware satellite navigation, PahadiCart gener
 - **Artifact Directory:** `C:\Users\Venom\.gemini\antigravity-ide\brain\05a208ea-49f8-4034-a6e9-27f8f7e11da9\PahadiCart_User_Manual_and_Flow.pdf`
 - **Desktop:** `C:\Users\Venom\OneDrive\Desktop\PahadiCart_User_Manual_and_Flow.pdf`
 - **Downloads:** `C:\Users\Venom\Downloads\PahadiCart_User_Manual_and_Flow.pdf`
+
+
+---
+
+## 10. Super Admin Command Center V3.0 (60-Point PRD Master Specifications)
+
+The Super Admin Web Panel is the central operational command tower for all hyperlocal deliveries across the challenging terrain of Himachal Pradesh (Solan, Dharamshala, Shimla).
+
+### 10.1 Role-Based Access Control (RBAC)
+| Role | Accessible Modules | Operational Bounds |
+|---|---|---|
+| **SUPER_ADMIN** | Full Platform Access | All towns, system settings, RBAC management, audit trails, financial overrides |
+| **OPERATIONS_ADMIN** | Orders, Riders, Merchants, Zones, Dispatch, Live Map | Fleet dispatch, corridor management, live order escalations |
+| **FINANCE_ADMIN** | Payments, Settlements, Merchant Ledger, Rider Wallets, COD, Refunds | T+1/T+2 payout runs, take-rate audits, cash float reconciliation |
+| **SUPPORT_ADMIN** | Orders, Customers, Merchants, Riders, Support Tickets, Disputes | Order interventions, masked customer assistance, ticket resolutions |
+| **TOWN_COORDINATOR** | Assigned Town Only (Solan, Shimla, or Dharamshala) | Local shop approvals, local rider shift allocations |
+
+---
+
+### 10.2 Mathematical Terrain & ETA Engine Blueprint
+Direct straight-line distance produces massive delivery failure rates in Himachal valleys. The platform implements the exact terrain formula:
+
+$$\text{Final ETA} = T_{\text{prep}} + T_{\text{pickup}} + T_{\text{transit}} + T_{\text{staircase}} + T_{\text{weather\_buffer}}$$
+
+- **Transit Time ($T_{\text{transit}}$):**
+  $$T_{\text{transit}} = \left(\frac{D_{\text{road}}}{V_{\text{base}}}\right) \times (1 + \alpha \times \text{Gradient\_Factor}) \times \text{Turn\_Penalty}$$
+- **Gradient Factor:**
+  $$\text{Gradient} = \max\left(0, \frac{\text{Elevation}_{\text{drop}} - \text{Elevation}_{\text{pickup}}}{D_{\text{road}}}\right)$$
+- **Hairpin Bend Turn Penalty:**
+  $$\text{Turn\_Penalty} = 1 + (\text{Hairpin Count} \times 0.035)$$
+- **Doorstep Stairway Climb:**
+  $$T_{\text{staircase}} = \text{Staircase Steps} \times 0.25\text{ min}$$
+- **Dynamic Meteorological Buffers:**
+  - *Monsoon Rain:* $+15\text{ mins}$
+  - *Heavy Ridge Fog:* $+25\text{ mins}$
+  - *Snow Alert:* $+35\text{ mins}$ (or automatic zone safety pause)
+
+---
+
+### 10.3 Unresolved PRD Decisions Matrix (Configurable System Settings)
+To prevent hardcoded operational assumptions, all ambiguous PRD requirements are exposed as audited settings in the Super Admin panel:
+1. **Merchant Acceptance Timer:** PRD Section 4.2 states 60s while Section 7.1 states 90s. Configured as a dynamic slider (default 75s with 60s/90s one-click presets).
+2. **Gradient Factor Alpha ($\alpha$):** Default calibrated to $1.45$, dynamically adjustable for different mountain steepness profiles.
+3. **Base Hill Transit Speed ($V_{\text{base}}$):** Default $24\text{ km/h}$ for winding mountain state highways.
+4. **Abstracted Map Engine:** Supports Leaflet (zero-cost OpenStreetMap) and Mapbox GL JS.
+5. **Abstracted Mountain Router:** Supports OSRM Hill Engine, Google Directions, and Mapbox Directions.
+6. **Abstracted Settlement Infrastructure:** T+1 vs T+2 cycles, configured for RazorpayX and Cashfree Payouts.
+7. **Cash Remittance Float Rules:** Configurable maximum cash-on-delivery holding limit per rider partner before mandatory hub deposit.
+8. **Runner Partner Commercial Structure:** Walking couriers on Mall Road receive ₹45 base + ₹12/km walking surcharge.
+9. **Controlled Inventory Overrides:** Admin can override merchant stock discrepancies on-ground with mandatory audit justification.

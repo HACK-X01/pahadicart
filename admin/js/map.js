@@ -69,6 +69,7 @@ function initGodViewMap(townId = "solan") {
       "<div style=\"font-size:11px; color:#059669; margin-top:3px;\">" + merchant.address + "</div>" +
       "</div>"
     );
+    marker.on("click", () => window.openRiderDrawer(rider));
     markerLayers.push(marker);
   });
 
@@ -152,4 +153,93 @@ window.detectAdminLiveLocation = async function(preResolvedLoc) {
     if (btnText) btnText.textContent = "Detect My Live GPS";
     showToast("⚠️ " + (err.message || "GPS detection failed. Using default town coords."));
   }
+};
+
+
+// =========================================================================
+// SUPER ADMIN: RIDER TELEMETRY SIDE DRAWER & STALE GPS MONITOR
+// =========================================================================
+
+window.openRiderDrawer = function(rider) {
+  const drawer = document.getElementById('riderDrawer');
+  const backdrop = document.getElementById('sideDrawerBackdrop');
+  const content = document.getElementById('riderDrawerContent');
+  const title = document.getElementById('riderDrawerTitle');
+
+  if (!drawer || !backdrop || !content) {
+    alert('Rider Telemetry: ' + rider.name + '\nStatus: ' + rider.status + '\nVehicle: ' + rider.vehicle);
+    return;
+  }
+
+  if (title) title.innerText = rider.name + ' • ' + rider.vehicle;
+
+  const isStale = rider.isGpsStale || false;
+  const isBusy = rider.status === 'in_transit';
+
+  content.innerHTML = 
+    '<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<div>' +
+        '<div style="font-size:11px; color:var(--slate-400); text-transform:uppercase;">Telemetry Status</div>' +
+        '<div style="font-size:15px; font-weight:800; color:' + (isBusy ? '#c084fc' : '#38bdf8') + '; margin-top:2px;">' + (isBusy ? 'BUSY (ON ACTIVE TRIP)' : 'AVAILABLE (READY)') + '</div>' +
+      '</div>' +
+      '<div>' +
+        (isStale 
+          ? '<span class="badge-stale-gps"><span class="pulse-dot"></span> GPS Stale (3m ago)</span>'
+          : '<span class="badge-live-gps"><span class="pulse-dot"></span> Live Telemetry (1s)</span>') +
+      '</div>' +
+    '</div>' +
+
+    '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">' +
+      '<div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); text-align:center;">' +
+        '<div style="font-size:10px; color:var(--slate-400);">ELEVATION</div>' +
+        '<div style="font-size:16px; font-weight:800; color:#fff; margin-top:2px;">' + (rider.elevation || '1,640') + 'm</div>' +
+      '</div>' +
+      '<div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); text-align:center;">' +
+        '<div style="font-size:10px; color:var(--slate-400);">SPEED</div>' +
+        '<div style="font-size:16px; font-weight:800; color:#38bdf8; margin-top:2px;">' + (rider.speed || '24') + ' km/h</div>' +
+      '</div>' +
+      '<div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); text-align:center;">' +
+        '<div style="font-size:10px; color:var(--slate-400);">BATTERY</div>' +
+        '<div style="font-size:16px; font-weight:800; color:#10b981; margin-top:2px;">' + (rider.battery || '86%') + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<h4 style="margin:0 0 10px 0; color:#fff; font-size:13px;">Active Trip & Destination</h4>' +
+      (isBusy 
+        ? '<div style="font-size:12px; line-height:1.6;">' +
+            '<div><span style="color:var(--slate-400);">Order ID:</span> <code style="color:var(--sky-400);">' + rider.activeOrder + '</code></div>' +
+            '<div><span style="color:var(--slate-400);">Destination:</span> Near DC Office, Mall Road</div>' +
+            '<div><span style="color:var(--slate-400);">Terrain ETA:</span> <b style="color:var(--emerald-400);">18 mins (Steep Climb)</b></div>' +
+          '</div>'
+        : '<div style="font-size:12px; color:var(--slate-400); padding:10px 0;">No active trip assigned. Rider is positioned at staging hub.</div>') +
+    '</div>' +
+
+    '<div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">' +
+      '<h4 style="margin:0 0 10px 0; color:#fff; font-size:13px;">Daily Shift & Wallet</h4>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">' +
+        '<span style="color:var(--slate-400);">Completed Orders:</span> <b>' + (rider.completedOrders || 7) + '</b>' +
+      '</div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">' +
+        '<span style="color:var(--slate-400);">Today\'s Earnings:</span> <b style="color:var(--emerald-400); font-family:var(--font-mono);">₹' + (rider.todayEarnings || 640) + '</b>' +
+      '</div>' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px;">' +
+        '<span style="color:var(--slate-400);">Cash-on-Delivery Holding:</span> <b style="color:#f59e0b; font-family:var(--font-mono);">₹' + (rider.codHolding || 1250) + '</b>' +
+      '</div>' +
+    '</div>' +
+
+    '<div style="display:flex; gap:8px;">' +
+      '<button class="btn btn-secondary btn-sm" onclick="alert(\'Calling rider via masked IVR...\')" style="flex:1;">📞 Call Rider</button>' +
+      '<button class="btn btn-secondary btn-sm" onclick="alert(\'Dispatch notification sent to rider app\')" style="flex:1;">📲 Send Alert</button>' +
+    '</div>';
+
+  drawer.classList.add('active');
+  backdrop.classList.add('active');
+};
+
+window.closeRiderDrawer = function() {
+  const drawer = document.getElementById('riderDrawer');
+  const backdrop = document.getElementById('sideDrawerBackdrop');
+  if (drawer) drawer.classList.remove('active');
+  if (backdrop) backdrop.classList.remove('active');
 };
