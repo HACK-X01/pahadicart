@@ -18,6 +18,12 @@
 
 /* Mobile Devices (<= 768px) */
 @media screen and (max-width: 768px) {
+  .app-container {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+  }
   :root {
     --sidebar-width: 0px;
   }
