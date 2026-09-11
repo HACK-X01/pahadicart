@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PahadiCart — Login into Himachal Hyperlocal Delivery</title>
-  <meta name="description" content="PahadiCart Universal Authentication Gateway: Choose your role as Customer, Shopkeeper, Rider Partner, or Super Admin.">
+  <title>PahadiCart — Login & Multi-Role Onboarding</title>
+  <meta name="description" content="PahadiCart: Himachal Hyperlocal 2-Hour Delivery. Customer login, Rider Partner KYC verification, and Merchant Store onboarding.">
 
   <!-- PWA Meta Tags -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#059669">
+  <meta name="theme-color" content="#7c3aed">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="PahadiCart">
@@ -22,19 +22,22 @@
 
   <style>
     :root {
-      --bg: #030712;
-      --surface: #0b1324;
-      --card-bg: #101c34;
-      --card-hover: #152546;
-      --primary: #10b981;
-      --primary-dark: #059669;
-      --primary-glow: rgba(16, 185, 129, 0.35);
-      --accent: #f59e0b;
+      --bg: #0b0f19;
+      --card-bg: #131b2e;
+      --hero-bg: linear-gradient(180deg, #ecdcfd 0%, #f6efff 65%, #ffffff 100%);
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --primary-gradient: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      --emerald: #10b981;
+      --emerald-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --amber: #f59e0b;
       --sky: #0ea5e9;
-      --purple: #a855f7;
-      --border: rgba(255, 255, 255, 0.09);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-light: #e2e8f0;
+      --radius-pill: 9999px;
+      --radius-card: 20px;
+      --radius-sm: 12px;
       --font-heading: 'Outfit', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
@@ -42,623 +45,1623 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font-body);
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: #f8fafc;
+      color: #0f172a;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      background-image: 
-        radial-gradient(circle at 10% 15%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
-        radial-gradient(circle at 90% 85%, rgba(14, 165, 233, 0.10) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+      justify-content: center;
+      align-items: flex-start;
+      -webkit-tap-highlight-color: transparent;
       overflow-x: hidden;
     }
 
-    /* Ambient Mountain Topography Header */
-    .hero-top {
-      text-align: center;
-      padding: 36px 20px 20px;
-      position: relative;
-    }
-
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      padding: 6px 14px;
-      border-radius: 9999px;
-      font-size: 11.5px;
-      font-weight: 800;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 14px;
-      animation: pulseGlow 2.5s infinite;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 rgba(16, 185, 129, 0); }
-      50% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
-    }
-
-    .main-title {
-      font-family: var(--font-heading);
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 60%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
-
-    .main-subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
+    .app-shell {
+      width: 100%;
       max-width: 520px;
-      margin: 0 auto;
-      line-height: 1.5;
+      min-height: 100vh;
+      background: #ffffff;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Active Session Banner */
-    #activeSessionBox {
-      max-width: 680px;
-      width: calc(100% - 32px);
-      margin: 10px auto 16px;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.12) 100%);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      border-radius: 16px;
-      padding: 14px 20px;
+    .session-banner {
       display: none;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      gap: 10px;
+      padding: 10px 16px;
+      background: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #334155;
     }
-
-    /* Role Cards Grid */
-    .container {
-      max-width: 780px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 10px 16px 40px;
-      flex: 1;
-    }
-
-    .role-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 640px) {
-      .role-grid { grid-template-columns: 1fr; }
-      .main-title { font-size: 26px; }
-    }
-
-    .role-card {
-      background: var(--card-bg);
-      border: 2px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
+    .session-banner button {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
       cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-resume { background: #10b981; color: white; }
+    .btn-switch-sm { background: #e2e8f0; color: #475569; }
+
+    /* Top Hero Banner (Zepto Inspired) */
+    .hero-container {
       position: relative;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--hero-bg);
+      padding: 24px 20px 16px;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      overflow: hidden;
+    }
+
+    .hero-top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      color: #6d28d9;
+      box-shadow: 0 2px 8px rgba(109, 40, 217, 0.12);
+    }
+    .brand-pill span { color: #10b981; }
+
+    .skip-btn {
+      background: #ffffff;
+      color: #d946ef;
+      border: 1px solid #f0abfc;
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(217, 70, 239, 0.15);
+      transition: transform 0.15s, background 0.15s;
+    }
+    .skip-btn:hover {
+      transform: scale(1.04);
+      background: #fdf4ff;
+    }
+
+    .hero-illustration {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 12px 0 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-illustration svg {
+      width: 100%;
+      height: 100%;
+      max-height: 180px;
+      filter: drop-shadow(0 10px 15px rgba(109, 40, 217, 0.1));
+    }
+
+    /* Role Switcher Pill Tabs */
+    .role-switcher-wrap {
+      padding: 16px 20px 8px;
+      background: #ffffff;
+    }
+    .role-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      gap: 4px;
+    }
+    .role-tab-btn {
+      padding: 8px 6px;
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .role-tab-btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .role-tab-btn.active[data-role="customer"] { color: #6d28d9; }
+    .role-tab-btn.active[data-role="rider"] { color: #0284c7; }
+    .role-tab-btn.active[data-role="merchant"] { color: #d97706; }
+
+    /* Content Area */
+    .content-area {
+      padding: 12px 20px 30px;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      user-select: none;
     }
 
-    .role-card:hover {
-      transform: translateY(-3px);
-      background: var(--card-hover);
-      border-color: rgba(255, 255, 255, 0.2);
+    .headline-wrap {
+      margin-bottom: 20px;
+    }
+    .headline-wrap h1 {
+      font-family: var(--font-heading);
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+    }
+    .headline-wrap h1 .hl-purple { color: #7c3aed; }
+    .headline-wrap h1 .hl-sky { color: #0284c7; }
+    .headline-wrap h1 .hl-amber { color: #d97706; }
+    .headline-wrap p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      font-weight: 500;
     }
 
-    .role-card.selected {
-      border-color: var(--primary);
-      background: #11233e;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25), inset 0 0 20px rgba(16, 185, 129, 0.08);
-    }
-
-    .card-top {
+    /* Sub-mode Switcher (Login vs Signup) */
+    .sub-mode-pills {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 20px;
+      gap: 6px;
+    }
+    .sub-mode-btn {
+      flex: 1;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .sub-mode-btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     }
 
-    .role-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+    .form-label .req { color: #ef4444; margin-left: 2px; }
+
+    /* Phone Input Box (Zepto Style) */
+    .phone-input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 4px 14px;
+      background: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .phone-input-wrap:focus-within {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+    .country-code-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      padding-right: 12px;
+      border-right: 1.5px solid #e2e8f0;
+      background: transparent;
+      border-top: none;
+      border-bottom: none;
+      border-left: none;
+      cursor: default;
+    }
+    .country-code-btn img {
+      width: 22px;
+      height: 16px;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+    .phone-field {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 12px 12px;
+      font-size: 16px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .phone-field::placeholder {
+      font-weight: 500;
+      color: #94a3b8;
+    }
+
+    /* Text Inputs */
+    .input-field {
+      width: 100%;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+
+    /* Town Selector Pills */
+    .town-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .town-pill-btn {
+      padding: 9px 8px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .town-pill-btn.active {
+      border-color: #7c3aed;
+      background: #f5f3ff;
+      color: #6d28d9;
+      box-shadow: 0 2px 6px rgba(124, 58, 237, 0.1);
+    }
+    .town-pill-btn small {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .town-pill-btn.active small { color: #8b5cf6; }
+
+    /* Primary Action Buttons */
+    .btn-continue {
+      width: 100%;
+      padding: 15px;
+      border-radius: var(--radius-pill);
+      border: none;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      background: var(--primary-gradient);
+      cursor: pointer;
+      box-shadow: 0 6px 20px -3px rgba(124, 58, 237, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-continue:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px -2px rgba(124, 58, 237, 0.45);
+    }
+    .btn-continue:active { transform: scale(0.98); }
+
+    .btn-rider-action {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      box-shadow: 0 6px 20px -3px rgba(2, 132, 199, 0.35);
+    }
+    .btn-merchant-action {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      box-shadow: 0 6px 20px -3px rgba(217, 119, 6, 0.35);
+    }
+
+    /* Document Upload Card */
+    .doc-upload-box {
+      border: 1.5px dashed #cbd5e1;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .doc-upload-box:hover {
+      border-color: #7c3aed;
+      background: #faf5ff;
+    }
+    .doc-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .doc-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #ede9fe;
+      color: #7c3aed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .doc-details h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .doc-details p {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .doc-preview-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1.5px solid #10b981;
+      display: none;
+    }
+    .badge-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .btn-upload-sm {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: #334155;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Selfie Photo Avatar Preview */
+    .selfie-preview-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px;
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: var(--radius-sm);
+      margin-top: 6px;
+    }
+    .selfie-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 2px solid #8b5cf6;
+      object-fit: cover;
+      background: #ede9fe;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
     }
 
-    .role-radio {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid #475569;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Vehicle Pills */
+    .vehicle-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .veh-btn {
+      padding: 10px 6px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      text-align: center;
       transition: all 0.2s;
     }
-
-    .role-card.selected .role-radio {
-      border-color: var(--primary);
-      background: var(--primary);
+    .veh-btn.active {
+      border-color: #0284c7;
+      background: #f0f9ff;
+      color: #0369a1;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12);
     }
 
-    .role-radio-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #fff;
-      display: none;
-    }
-
-    .role-card.selected .role-radio-dot {
-      display: block;
-    }
-
-    .role-badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      margin-bottom: 6px;
-    }
-
-    .role-title {
-      font-family: var(--font-heading);
-      font-size: 18px;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .role-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 14px;
-    }
-
-    .role-footer-tag {
-      font-size: 11px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    /* Login Form Card */
-    .login-form-box {
-      background: var(--surface);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 22px;
-      padding: 24px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .form-header {
+    /* Demo Quick Fill Chip */
+    .demo-chip-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin: 12px 0 6px;
+      padding: 8px 12px;
+      background: #f1f5f9;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #475569;
     }
-
-    .form-title {
-      font-family: var(--font-heading);
-      font-size: 17px;
+    .btn-quick-fill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #4338ca;
+      font-size: 11px;
       font-weight: 800;
-      color: #fff;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .btn-quick-fill:hover { background: #eef2ff; }
+
+    /* OTP Screen View */
+    .otp-modal {
+      display: none;
+      flex-direction: column;
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .input-group {
-      margin-bottom: 16px;
-    }
-
-    .input-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .input-wrap {
+    .otp-boxes {
       display: flex;
-      align-items: center;
-      background: #08101e;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 10px 14px;
       gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .otp-digit {
+      width: 46px;
+      height: 52px;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 800;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      outline: none;
+      background: #ffffff;
       transition: all 0.2s;
     }
-
-    .input-wrap:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 14px var(--primary-glow);
+    .otp-digit:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
     }
 
-    .input-wrap input, .input-wrap select {
+    .resend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+    .resend-btn {
       background: transparent;
       border: none;
-      color: #fff;
-      font-family: var(--font-body);
-      font-size: 14px;
-      width: 100%;
-      outline: none;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-      color: #ffffff;
-      border: none;
-      padding: 14px 20px;
-      border-radius: 14px;
-      font-size: 15px;
+      color: #7c3aed;
       font-weight: 800;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-      transition: all 0.2s;
-      margin-top: 6px;
     }
 
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 26px rgba(16, 185, 129, 0.5);
-    }
-
-    .btn-otp-toggle {
-      width: 100%;
-      background: transparent;
-      border: 1px dashed rgba(255, 255, 255, 0.16);
-      color: var(--text-muted);
-      padding: 10px;
-      border-radius: 12px;
+    /* Terms Footer */
+    .terms-text {
+      text-align: center;
       font-size: 12px;
+      color: #94a3b8;
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+    .terms-text a {
+      color: #7c3aed;
+      text-decoration: none;
       font-weight: 700;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.2s;
     }
 
-    .btn-otp-toggle:hover {
-      background: rgba(255, 255, 255, 0.04);
-      color: #fff;
+    /* Admin Footer Link */
+    .admin-footer-bar {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid #f1f5f9;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+      background: #fafafa;
     }
+    .admin-link {
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .admin-link:hover { color: #0f172a; }
 
-    /* Modal / Launch Overlay */
+    /* Launch Loading Overlay */
     .launch-overlay {
       position: fixed;
-      inset: 0;
-      background: rgba(3, 7, 18, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      z-index: 999999;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(11, 15, 25, 0.94);
+      backdrop-filter: blur(10px);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      z-index: 1000;
+      color: white;
       text-align: center;
+      padding: 24px;
     }
-
     .spinner {
-      width: 54px;
-      height: 54px;
-      border: 4px solid rgba(16, 185, 129, 0.2);
-      border-top-color: var(--primary);
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.15);
+      border-top-color: #10b981;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin-bottom: 20px;
     }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 11.5px;
-      color: #64748b;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
+
+    /* Helper hidden inputs */
+    .hidden-file { display: none; }
   </style>
 </head>
 <body>
 
-  <!-- Top Hero Header -->
-  <header class="hero-top">
-    <div class="brand-badge">
-      <span>🏔️</span>
-      <span>Himachal Hyperlocal Delivery Ecosystem</span>
-    </div>
-    <h1 class="main-title">PahadiCart Login Gate</h1>
-    <p class="main-subtitle">Sabse pehle apna role select karein. Chunav ke anusaar aapka dedicated portal khulega.</p>
-  </header>
+  <div class="app-shell">
 
-  <!-- Active Session Notification (if user already logged in) -->
-  <div id="activeSessionBox">
-    <div>
-      <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Active Session Found</div>
-      <div style="font-size: 14px; font-weight: 800; color: #fff;" id="activeSessionUser">Rohit Verma (Rider) • Solan</div>
+    <!-- Active Session Resume Banner -->
+    <div class="session-banner" id="activeSessionBox">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 14px;">🏔️</span>
+        <span id="activeSessionUser">Aman Thakur (Rider)</span>
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <button class="btn-resume" id="btnContinueActive">🚀 Open</button>
+        <button class="btn-switch-sm" id="btnSwitchActive">Switch</button>
+      </div>
     </div>
-    <div style="display: flex; gap: 8px;">
-      <button id="btnContinueActive" style="background: #10b981; color:#fff; border:none; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer;">
-        🚀 Open My Portal
-      </button>
-      <button id="btnSwitchActive" style="background: rgba(255,255,255,0.08); color:#cbd5e1; border:none; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">
-        Switch Role
-      </button>
+
+    <!-- Zepto-Style Hero Banner Section -->
+    <div class="hero-container">
+      <div class="hero-top-nav">
+        <div class="brand-pill">
+          🏔️ Pahadi<span>Cart</span>
+        </div>
+        <button class="skip-btn" id="btnSkipGuest" title="Direct guest browse into customer store">Skip</button>
+      </div>
+
+      <!-- Modern Colorful Himalayan Quick-Commerce Illustration -->
+      <div class="hero-illustration">
+        <svg viewBox="0 0 420 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#ede9fe" stop-opacity="0.4"/>
+            </linearGradient>
+            <linearGradient id="bagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#d97706"/>
+              <stop offset="100%" stop-color="#b45309"/>
+            </linearGradient>
+            <linearGradient id="appleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ef4444"/>
+              <stop offset="100%" stop-color="#991b1b"/>
+            </linearGradient>
+            <linearGradient id="mtnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ddd6fe"/>
+              <stop offset="100%" stop-color="#c4b5fd"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Mountain Backdrop -->
+          <path d="M40 180L120 70L170 140L230 50L310 160L350 110L420 180H40Z" fill="url(#mtnGrad)" opacity="0.45"/>
+          <path d="M120 70L135 95L105 95Z" fill="#ffffff" opacity="0.75"/>
+          <path d="M230 50L250 80L210 80Z" fill="#ffffff" opacity="0.85"/>
+
+          <!-- Speed lines & Clouds -->
+          <ellipse cx="60" cy="50" rx="40" ry="18" fill="url(#cloudGrad)"/>
+          <ellipse cx="370" cy="65" rx="35" ry="15" fill="url(#cloudGrad)"/>
+          <path d="M110 35L140 35" stroke="#a78bfa" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 6"/>
+          <path d="M280 25L320 25" stroke="#a78bfa" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 8"/>
+
+          <!-- Left Delivery Partner Arm & Glove -->
+          <path d="M-10 120C40 110 90 125 140 135" stroke="#8b5cf6" stroke-width="26" stroke-linecap="round"/>
+          <circle cx="140" cy="135" r="14" fill="#6d28d9"/>
+
+          <!-- Grocery Paper Bag with PahadiCart Brand -->
+          <rect x="130" y="70" width="130" height="100" rx="10" fill="url(#bagGrad)"/>
+          <path d="M145 70V55C145 47 155 42 165 42H185" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+          <path d="M225 70V55C225 47 215 42 205 42H185" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+          <!-- Bag Text -->
+          <text x="195" y="125" font-family="'Outfit', sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="-0.5">pahadi<tspan fill="#fde047">cart</tspan></text>
+          <text x="195" y="142" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="9" fill="#fef08a" text-anchor="middle" letter-spacing="1">HIMACHAL 2-HR</text>
+
+          <!-- Fresh Himachal Produce Popping Out of Bag -->
+          <!-- Shimla Red Apple -->
+          <circle cx="160" cy="60" r="17" fill="url(#appleGrad)"/>
+          <path d="M160 45C161 40 166 38 168 36" stroke="#15803d" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="166" cy="38" rx="4" ry="2" fill="#22c55e" transform="rotate(-20 166 38)"/>
+          <!-- Kinnaur Organic Milk / Juice Carton -->
+          <rect x="180" y="40" width="26" height="36" rx="4" fill="#38bdf8"/>
+          <path d="M180 48L193 40L206 48" fill="#0284c7"/>
+          <circle cx="193" cy="58" r="4" fill="#ffffff"/>
+          <!-- Solan Mushroom / Tomato -->
+          <circle cx="220" cy="58" r="16" fill="#f43f5e"/>
+          <circle cx="216" cy="54" r="3" fill="#ffffff" opacity="0.6"/>
+
+          <!-- Right Happy Customer with Purple Headphones -->
+          <!-- Shoulders & Outfit -->
+          <path d="M280 180C280 145 310 135 340 135C370 135 400 145 400 180H280Z" fill="#f59e0b"/>
+          <!-- Customer Arm receiving bag -->
+          <path d="M320 145C290 140 265 130 235 125" stroke="#fcd34d" stroke-width="22" stroke-linecap="round"/>
+          <!-- Face -->
+          <circle cx="340" cy="100" r="30" fill="#fcd34d"/>
+          <!-- Smile -->
+          <path d="M332 110C336 116 346 116 350 110" stroke="#78350f" stroke-width="3" stroke-linecap="round"/>
+          <!-- Eyes & Glasses -->
+          <circle cx="330" cy="98" r="9" stroke="#78350f" stroke-width="2" fill="none"/>
+          <circle cx="350" cy="98" r="9" stroke="#78350f" stroke-width="2" fill="none"/>
+          <path d="M339 98H341" stroke="#78350f" stroke-width="2"/>
+          <circle cx="332" cy="98" r="3" fill="#78350f"/>
+          <circle cx="352" cy="98" r="3" fill="#78350f"/>
+          <!-- Dark Hair -->
+          <path d="M312 90C312 68 330 65 345 65C365 65 375 75 372 95C368 90 360 88 355 90C340 92 330 85 312 90Z" fill="#1e1b4b"/>
+          <!-- Purple Headphones -->
+          <path d="M314 85C314 65 330 52 345 52C362 52 374 65 374 85" stroke="#7c3aed" stroke-width="6" fill="none"/>
+          <ellipse cx="314" cy="92" rx="7" ry="14" fill="#8b5cf6"/>
+          <ellipse cx="372" cy="92" rx="7" ry="14" fill="#8b5cf6"/>
+        </svg>
+      </div>
     </div>
+
+    <!-- 3-Role Switcher Tabs (Customer, Rider, Merchant) -->
+    <div class="role-switcher-wrap">
+      <div class="role-switcher">
+        <button class="role-tab-btn active" data-role="customer" id="tabCustomer" onclick="switchRoleView('customer')">
+          🛍️ Customer
+        </button>
+        <button class="role-tab-btn" data-role="rider" id="tabRider" onclick="switchRoleView('rider')">
+          🛵 Rider
+        </button>
+        <button class="role-tab-btn" data-role="merchant" id="tabMerchant" onclick="switchRoleView('merchant')">
+          🏪 Merchant
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Dynamic Form Content Area -->
+    <div class="content-area">
+
+      <!-- ============================================================== -->
+      <!-- VIEW 1: CUSTOMER (Zepto Style Mobile Flow)                     -->
+      <!-- ============================================================== -->
+      <div id="viewCustomer">
+        <!-- Initial Phone Entry -->
+        <div id="customerPhoneStep">
+          <div class="headline-wrap">
+            <h1>Groceries & Hill Produce in <span class="hl-purple">2 Hours</span></h1>
+            <p>Fresh from Solan & Shimla Mandi directly to your doorstep.</p>
+          </div>
+
+          <!-- Operating Town Selector -->
+          <div class="form-group">
+            <label class="form-label">Deliver To Himachal Town</label>
+            <div class="town-pills">
+              <button type="button" class="town-pill-btn active" data-town="solan" onclick="selectTown('solan', this)">
+                Solan
+                <small>1,502m</small>
+              </button>
+              <button type="button" class="town-pill-btn" data-town="shimla" onclick="selectTown('shimla', this)">
+                Shimla
+                <small>2,205m</small>
+              </button>
+              <button type="button" class="town-pill-btn" data-town="dharamshala" onclick="selectTown('dharamshala', this)">
+                Dharamshala
+                <small>1,457m</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- Phone Input (Matching User Screenshot) -->
+          <div class="form-group">
+            <label class="form-label">Mobile Number <span class="req">*</span></label>
+            <div class="phone-input-wrap">
+              <button type="button" class="country-code-btn">
+                <img src="https://flagcdn.com/w40/in.png" alt="India" onerror="this.style.display='none'">
+                <span>+91</span>
+                <span style="font-size: 11px; color: #94a3b8;">▼</span>
+              </button>
+              <input type="tel" class="phone-field" id="custPhone" placeholder="Enter Phone Number" maxlength="10" value="9816455443" oninput="validatePhoneInput(this)">
+            </div>
+          </div>
+
+          <!-- Fast Demo Profile Chip -->
+          <div class="demo-chip-bar">
+            <span>⚡ Test User: Pooja Chandel (+91 98164 55443)</span>
+            <button type="button" class="btn-quick-fill" onclick="setDemoCustomer()">Auto-Fill</button>
+          </div>
+
+          <!-- Continue Button -->
+          <button type="button" class="btn-continue" id="btnCustContinue" onclick="requestCustomerOtp()">
+            Continue ➔
+          </button>
+        </div>
+
+        <!-- Customer OTP Step -->
+        <div class="otp-modal" id="customerOtpStep">
+          <div class="headline-wrap">
+            <h1>Verify <span class="hl-purple">Mobile Number</span></h1>
+            <p>Enter the 6-digit OTP code sent via SMS to <b id="displayCustPhone">+91 98164 55443</b> <a href="javascript:void(0)" onclick="backToPhone('customer')" style="color: #7c3aed; margin-left: 6px; font-size: 12px; font-weight: 700;">Edit</a></p>
+          </div>
+
+          <div class="otp-boxes">
+            <input type="text" class="otp-digit cust-otp" maxlength="1" data-idx="0" value="4">
+            <input type="text" class="otp-digit cust-otp" maxlength="1" data-idx="1" value="2">
+            <input type="text" class="otp-digit cust-otp" maxlength="1" data-idx="2" value="1">
+            <input type="text" class="otp-digit cust-otp" maxlength="1" data-idx="3" value="0">
+            <input type="text" class="otp-digit cust-otp" maxlength="1" data-idx="4" value="9">
+            <input type="text" class="otp-digit cust-otp" maxlength="1" data-idx="5" value="9">
+          </div>
+
+          <div class="resend-row">
+            <span>Resend OTP in <b id="custTimer">00:28</b></span>
+            <button type="button" class="resend-btn" onclick="resendOtp('customer')">Resend Code</button>
+          </div>
+
+          <button type="button" class="btn-continue" onclick="verifyCustomerOtpAndLogin()">
+            Verify & Start Shopping 🛒
+          </button>
+        </div>
+
+        <div class="terms-text">
+          By continuing, you agree to our<br>
+          <a href="#">Terms of Use</a> & <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- VIEW 2: RIDER PARTNER (Login & Mandatory KYC/Vehicle Docs)    -->
+      <!-- ============================================================== -->
+      <div id="viewRider" style="display: none;">
+        <!-- Sub-Mode Pills (Login vs Signup) -->
+        <div class="sub-mode-pills">
+          <button type="button" class="sub-mode-btn active" id="riderModeLoginBtn" onclick="toggleRiderSubMode('login')">
+            🔑 Registered Rider Login
+          </button>
+          <button type="button" class="sub-mode-btn" id="riderModeSignupBtn" onclick="toggleRiderSubMode('signup')">
+            📝 New Rider KYC Signup
+          </button>
+        </div>
+
+        <!-- 2.A: Existing Rider Login -->
+        <div id="riderLoginWrap">
+          <div class="headline-wrap">
+            <h1>Pahadi Rider <span class="hl-sky">Cockpit Login</span></h1>
+            <p>Access high-altitude hill missions, steep stair navigation & payouts.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Registered Mobile Number <span class="req">*</span></label>
+            <div class="phone-input-wrap">
+              <button type="button" class="country-code-btn">
+                <img src="https://flagcdn.com/w40/in.png" alt="India">
+                <span>+91</span>
+                <span style="font-size: 11px; color: #94a3b8;">▼</span>
+              </button>
+              <input type="tel" class="phone-field" id="riderLoginPhone" placeholder="Enter Rider Phone" maxlength="10" value="9805111223">
+            </div>
+          </div>
+
+          <div class="demo-chip-bar">
+            <span>🛵 Active Rider: Aman Thakur (#01 - Solan)</span>
+            <button type="button" class="btn-quick-fill" onclick="setDemoRider()">Auto-Fill</button>
+          </div>
+
+          <button type="button" class="btn-continue btn-rider-action" onclick="requestRiderOtp()">
+            Continue to Rider Cockpit ➔
+          </button>
+
+          <!-- Rider OTP Step -->
+          <div class="otp-modal" id="riderOtpStep">
+            <div class="headline-wrap" style="margin-top: 18px;">
+              <h1>Verify <span class="hl-sky">Rider Phone</span></h1>
+              <p>Enter 6-digit OTP code sent to <b id="displayRiderPhone">+91 98051 11223</b></p>
+            </div>
+            <div class="otp-boxes">
+              <input type="text" class="otp-digit rider-otp" maxlength="1" value="4">
+              <input type="text" class="otp-digit rider-otp" maxlength="1" value="2">
+              <input type="text" class="otp-digit rider-otp" maxlength="1" value="1">
+              <input type="text" class="otp-digit rider-otp" maxlength="1" value="0">
+              <input type="text" class="otp-digit rider-otp" maxlength="1" value="9">
+              <input type="text" class="otp-digit rider-otp" maxlength="1" value="9">
+            </div>
+            <button type="button" class="btn-continue btn-rider-action" onclick="verifyRiderOtpAndLogin()">
+              Verify & Launch Cockpit 🛵
+            </button>
+          </div>
+        </div>
+
+        <!-- 2.B: New Rider Signup (Mandatory Identity, Background & Driving/Vehicle Docs) -->
+        <div id="riderSignupWrap" style="display: none;">
+          <div class="headline-wrap">
+            <h1>Rider Partner <span class="hl-sky">Onboarding & KYC</span></h1>
+            <p>Mandatory Himachal Transport & Identity Verification.</p>
+          </div>
+
+          <!-- Basic Details -->
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="req">*</span></label>
+            <input type="text" class="input-field" id="riderName" placeholder="e.g. Vikram Sharma" value="Vikram Sharma">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mobile Number (WhatsApp Enabled) <span class="req">*</span></label>
+            <div class="phone-input-wrap">
+              <button type="button" class="country-code-btn"><span>+91</span></button>
+              <input type="tel" class="phone-field" id="riderSignupPhone" placeholder="10-digit mobile" maxlength="10" value="9817099881">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Operating Corridor / Town <span class="req">*</span></label>
+            <div class="town-pills">
+              <button type="button" class="town-pill-btn active" onclick="selectRiderTown('solan', this)">Solan</button>
+              <button type="button" class="town-pill-btn" onclick="selectRiderTown('shimla', this)">Shimla</button>
+              <button type="button" class="town-pill-btn" onclick="selectRiderTown('dharamshala', this)">Dharamshala</button>
+            </div>
+          </div>
+
+          <!-- SECTION 1: MANDATORY IDENTITY & BACKGROUND VERIFICATION -->
+          <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: var(--radius-sm); padding: 14px; margin: 18px 0;">
+            <div style="font-size: 12px; font-weight: 900; color: #0369a1; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">
+              🛡️ 1. Mandatory Identity & Background Verification
+            </div>
+            <p style="font-size: 11.5px; color: #0284c7; margin-bottom: 12px;">Necessary for background checks, police verification & tax TDS deductions.</p>
+
+            <!-- Aadhaar Card -->
+            <div class="form-group">
+              <label class="form-label">Aadhaar Card Number (12 Digits) <span class="req">*</span></label>
+              <input type="text" class="input-field" id="riderAadhaar" placeholder="XXXX XXXX XXXX" maxlength="14" value="5412 8891 0023">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileAadhaar')">
+                <div class="doc-info">
+                  <div class="doc-icon">🪪</div>
+                  <div class="doc-details">
+                    <h4>Upload Aadhaar (Front & Back)</h4>
+                    <p id="txtAadhaarStatus">PNG, JPG or PDF • Max 5MB</p>
+                  </div>
+                </div>
+                <img id="prevAadhaar" class="doc-preview-thumb" alt="Aadhaar Preview">
+                <span class="badge-verified" id="badgeAadhaar" style="display: inline-flex;">UIDAI Ready ✅</span>
+                <input type="file" id="fileAadhaar" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevAadhaar', 'txtAadhaarStatus', 'badgeAadhaar')">
+              </div>
+            </div>
+
+            <!-- PAN Card -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">PAN Card Number (For TDS & Payouts) <span class="req">*</span></label>
+              <input type="text" class="input-field" id="riderPan" placeholder="ABCDE1234F" maxlength="10" style="text-transform: uppercase;" value="BPNPS4210M">
+              <div class="doc-upload-box" onclick="triggerDocUpload('filePan')">
+                <div class="doc-info">
+                  <div class="doc-icon">💳</div>
+                  <div class="doc-details">
+                    <h4>Upload PAN Card Photo</h4>
+                    <p id="txtPanStatus">Clear front photo for NSDL TDS match</p>
+                  </div>
+                </div>
+                <img id="prevPan" class="doc-preview-thumb" alt="PAN Preview">
+                <span class="badge-verified" id="badgePan" style="display: inline-flex;">NSDL OK ✅</span>
+                <input type="file" id="filePan" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevPan', 'txtPanStatus', 'badgePan')">
+              </div>
+            </div>
+
+            <!-- Rider Live Selfie Photo -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">Rider Profile Photo (Live App Selfie) <span class="req">*</span></label>
+              <div class="selfie-preview-box">
+                <div class="selfie-avatar" id="avatarBox">🧑‍✈️</div>
+                <div style="flex: 1;">
+                  <h4 style="font-size: 13px; font-weight: 700; color: #1e293b;">Take Clear Recent Selfie</h4>
+                  <p style="font-size: 11px; color: #64748b; margin: 3px 0 6px;">Used for customer doorstep identity badge</p>
+                  <button type="button" class="btn-upload-sm" onclick="triggerDocUpload('fileSelfie')">📸 Capture / Upload Selfie</button>
+                  <input type="file" id="fileSelfie" class="hidden-file" accept="image/*" onchange="handleSelfieFile(this)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: MANDATORY DRIVING & VEHICLE DOCUMENTS -->
+          <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px;">
+            <div style="font-size: 12px; font-weight: 900; color: #334155; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">
+              🏍️ 2. Mandatory Driving & Vehicle Documents
+            </div>
+            <p style="font-size: 11.5px; color: #64748b; margin-bottom: 12px;">For two-wheelers (commercial or private petrol / EV) climbing hill gradients.</p>
+
+            <div class="form-group">
+              <label class="form-label">Vehicle Category <span class="req">*</span></label>
+              <div class="vehicle-pills">
+                <button type="button" class="veh-btn active" onclick="selectVehicleType('bike', this)">🏍️ Petrol Bike (MCWG)</button>
+                <button type="button" class="veh-btn" onclick="selectVehicleType('ev', this)">🛵 Electric EV</button>
+                <button type="button" class="veh-btn" onclick="selectVehicleType('runner', this)">🚶 Mall Walker</button>
+              </div>
+            </div>
+
+            <!-- Driving License (DL) -->
+            <div class="form-group">
+              <label class="form-label">Driving License (Permanent MCWG) <span class="req">*</span></label>
+              <input type="text" class="input-field" id="riderDl" placeholder="HP-14-2022-0042109" value="HP-14-2022-0042109">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileDl')">
+                <div class="doc-info">
+                  <div class="doc-icon">📜</div>
+                  <div class="doc-details">
+                    <h4>Upload Driving License (DL)</h4>
+                    <p id="txtDlStatus">Permanent MCWG Valid Card</p>
+                  </div>
+                </div>
+                <img id="prevDl" class="doc-preview-thumb" alt="DL Preview">
+                <span class="badge-verified" id="badgeDl" style="display: inline-flex;">MCWG Valid ✅</span>
+                <input type="file" id="fileDl" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevDl', 'txtDlStatus', 'badgeDl')">
+              </div>
+            </div>
+
+            <!-- Vehicle Registration Certificate (RC) -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">Vehicle Registration Certificate (RC) <span class="req">*</span></label>
+              <input type="text" class="input-field" id="riderRc" placeholder="e.g. HP 14 B 4210" value="HP 14 B 4210">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileRc')">
+                <div class="doc-info">
+                  <div class="doc-icon">📑</div>
+                  <div class="doc-details">
+                    <h4>Upload Vehicle RC Smart Card</h4>
+                    <p id="txtRcStatus">Parivahan registered certificate</p>
+                  </div>
+                </div>
+                <img id="prevRc" class="doc-preview-thumb" alt="RC Preview">
+                <span class="badge-verified" id="badgeRc" style="display: inline-flex;">RC Active ✅</span>
+                <input type="file" id="fileRc" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevRc', 'txtRcStatus', 'badgeRc')">
+              </div>
+            </div>
+
+            <!-- Vehicle Insurance -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">Vehicle Insurance Policy <span class="req">*</span></label>
+              <input type="text" class="input-field" id="riderInsurance" placeholder="Policy No: NIC/2026/009412" value="NIC/2026/009412">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileInsurance')">
+                <div class="doc-info">
+                  <div class="doc-icon">🛡️</div>
+                  <div class="doc-details">
+                    <h4>Upload Insurance Policy</h4>
+                    <p id="txtInsStatus">Valid comprehensive or 3rd-party policy</p>
+                  </div>
+                </div>
+                <img id="prevInsurance" class="doc-preview-thumb" alt="Insurance Preview">
+                <span class="badge-verified" id="badgeInsurance" style="display: inline-flex;">Insured ✅</span>
+                <input type="file" id="fileInsurance" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevInsurance', 'txtInsStatus', 'badgeInsurance')">
+              </div>
+            </div>
+          </div>
+
+          <!-- Fast Fill Sample KYC Docs -->
+          <div class="demo-chip-bar">
+            <span>⚡ Ready for Instant Verification</span>
+            <button type="button" class="btn-quick-fill" onclick="autoFillRiderKyc()">Fill Sample KYC</button>
+          </div>
+
+          <button type="button" class="btn-continue btn-rider-action" onclick="submitRiderKycAndLaunch()">
+            🚀 Submit KYC & Launch Cockpit
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- VIEW 3: MERCHANT STORE (Login & Vyapar Mandal Onboarding)     -->
+      <!-- ============================================================== -->
+      <div id="viewMerchant" style="display: none;">
+        <!-- Sub-Mode Pills (Login vs Register) -->
+        <div class="sub-mode-pills">
+          <button type="button" class="sub-mode-btn active" id="merchantModeLoginBtn" onclick="toggleMerchantSubMode('login')">
+            🔑 Existing Store Login
+          </button>
+          <button type="button" class="sub-mode-btn" id="merchantModeSignupBtn" onclick="toggleMerchantSubMode('signup')">
+            🏪 Register New Store
+          </button>
+        </div>
+
+        <!-- 3.A: Existing Merchant Login -->
+        <div id="merchantLoginWrap">
+          <div class="headline-wrap">
+            <h1>Vyapar Mandal <span class="hl-amber">Merchant Login</span></h1>
+            <p>Accept customer orders, update store inventory & manage T+1 payouts.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Registered Merchant Mobile <span class="req">*</span></label>
+            <div class="phone-input-wrap">
+              <button type="button" class="country-code-btn">
+                <img src="https://flagcdn.com/w40/in.png" alt="India">
+                <span>+91</span>
+                <span style="font-size: 11px; color: #94a3b8;">▼</span>
+              </button>
+              <input type="tel" class="phone-field" id="merchantLoginPhone" placeholder="Enter Store Phone" maxlength="10" value="9816012345">
+            </div>
+          </div>
+
+          <div class="demo-chip-bar">
+            <span>🏪 Demo Store: Anand Sweet Shop & Bakers (Solan)</span>
+            <button type="button" class="btn-quick-fill" onclick="setDemoMerchant()">Auto-Fill</button>
+          </div>
+
+          <button type="button" class="btn-continue btn-merchant-action" onclick="requestMerchantOtp()">
+            Continue to Merchant Portal ➔
+          </button>
+
+          <!-- Merchant OTP Step -->
+          <div class="otp-modal" id="merchantOtpStep">
+            <div class="headline-wrap" style="margin-top: 18px;">
+              <h1>Verify <span class="hl-amber">Store Phone</span></h1>
+              <p>Enter 6-digit OTP code sent to <b id="displayMerchantPhone">+91 98160 12345</b></p>
+            </div>
+            <div class="otp-boxes">
+              <input type="text" class="otp-digit merch-otp" maxlength="1" value="4">
+              <input type="text" class="otp-digit merch-otp" maxlength="1" value="2">
+              <input type="text" class="otp-digit merch-otp" maxlength="1" value="1">
+              <input type="text" class="otp-digit merch-otp" maxlength="1" value="0">
+              <input type="text" class="otp-digit merch-otp" maxlength="1" value="9">
+              <input type="text" class="otp-digit merch-otp" maxlength="1" value="9">
+            </div>
+            <button type="button" class="btn-continue btn-merchant-action" onclick="verifyMerchantOtpAndLogin()">
+              Verify & Open Vyapar Portal 🏪
+            </button>
+          </div>
+        </div>
+
+        <!-- 3.B: New Merchant Signup (Store Images, FSSAI, GSTIN, Business PAN) -->
+        <div id="merchantSignupWrap" style="display: none;">
+          <div class="headline-wrap">
+            <h1>Register Your <span class="hl-amber">Himachal Store</span></h1>
+            <p>Onboard your local shop on PahadiCart for 2-hour doorstep delivery.</p>
+          </div>
+
+          <!-- Store Basic Profile -->
+          <div class="form-group">
+            <label class="form-label">Store Trade Name <span class="req">*</span></label>
+            <input type="text" class="input-field" id="merchStoreName" placeholder="e.g. Anand Sweet Shop & Bakers" value="Himalayan Organic Orchard Mandi">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Store Owner / Vyapar Head Name <span class="req">*</span></label>
+            <input type="text" class="input-field" id="merchOwnerName" placeholder="e.g. Ramesh Anand" value="Rajesh Sharma">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Store Phone Number <span class="req">*</span></label>
+            <div class="phone-input-wrap">
+              <button type="button" class="country-code-btn"><span>+91</span></button>
+              <input type="tel" class="phone-field" id="merchSignupPhone" placeholder="10-digit phone" maxlength="10" value="9816077889">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Town & Market Location <span class="req">*</span></label>
+            <div class="town-pills">
+              <button type="button" class="town-pill-btn active" onclick="selectMerchantTown('solan', this)">Solan</button>
+              <button type="button" class="town-pill-btn" onclick="selectMerchantTown('shimla', this)">Shimla</button>
+              <button type="button" class="town-pill-btn" onclick="selectMerchantTown('dharamshala', this)">Dharamshala</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Market Area / Landmark <span class="req">*</span></label>
+            <input type="text" class="input-field" id="merchMarketAddress" placeholder="e.g. Upper Bazaar / Mall Road Solan" value="Upper Mall Road, Near Old Bus Stand, Solan">
+          </div>
+
+          <!-- MANDATORY MERCHANT ONBOARDING DOCUMENTS (Requested by User) -->
+          <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: var(--radius-sm); padding: 14px; margin: 18px 0;">
+            <div style="font-size: 12px; font-weight: 900; color: #b45309; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">
+              📋 Mandatory Merchant Business Documents
+            </div>
+            <p style="font-size: 11.5px; color: #92400e; margin-bottom: 12px;">Store Images, FSSAI License, GSTIN, and Business PAN Card for compliance.</p>
+
+            <!-- 1. Store Images -->
+            <div class="form-group">
+              <label class="form-label">1. Store Images (Shop Front & Interior) <span class="req">*</span></label>
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileStoreImg')">
+                <div class="doc-info">
+                  <div class="doc-icon" style="background: #fef3c7; color: #d97706;">🏪</div>
+                  <div class="doc-details">
+                    <h4>Upload Store Facade & Shelf Photo</h4>
+                    <p id="txtStoreImgStatus">Helps riders identify shop pickup counter</p>
+                  </div>
+                </div>
+                <img id="prevStoreImg" class="doc-preview-thumb" alt="Store Preview">
+                <span class="badge-verified" id="badgeStoreImg" style="display: inline-flex;">Uploaded ✅</span>
+                <input type="file" id="fileStoreImg" class="hidden-file" accept="image/*" onchange="handleDocFile(this, 'prevStoreImg', 'txtStoreImgStatus', 'badgeStoreImg')">
+              </div>
+            </div>
+
+            <!-- 2. FSSAI License -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">2. FSSAI License Number (14 Digits) <span class="req">*</span></label>
+              <input type="text" class="input-field" id="merchFssaiNo" placeholder="14-digit FSSAI number e.g. 10924001004210" maxlength="14" value="10924001004210">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileFssai')">
+                <div class="doc-info">
+                  <div class="doc-icon" style="background: #fef3c7; color: #d97706;">🥗</div>
+                  <div class="doc-details">
+                    <h4>Upload FSSAI License Certificate</h4>
+                    <p id="txtFssaiStatus">Food Safety and Standards Authority of India</p>
+                  </div>
+                </div>
+                <img id="prevFssai" class="doc-preview-thumb" alt="FSSAI Preview">
+                <span class="badge-verified" id="badgeFssai" style="display: inline-flex;">FSSAI Valid ✅</span>
+                <input type="file" id="fileFssai" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevFssai', 'txtFssaiStatus', 'badgeFssai')">
+              </div>
+            </div>
+
+            <!-- 3. GSTIN (GST Certificate) -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">3. GSTIN (15 Digits Himachal Certificate) <span class="req">*</span></label>
+              <input type="text" class="input-field" id="merchGstNo" placeholder="e.g. 02ABCDE1234F1Z5" maxlength="15" style="text-transform: uppercase;" value="02AAACH1234F1Z8">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileGst')">
+                <div class="doc-info">
+                  <div class="doc-icon" style="background: #fef3c7; color: #d97706;">🏛️</div>
+                  <div class="doc-details">
+                    <h4>Upload GSTIN Certificate</h4>
+                    <p id="txtGstStatus">State Code 02 (Himachal Pradesh)</p>
+                  </div>
+                </div>
+                <img id="prevGst" class="doc-preview-thumb" alt="GST Preview">
+                <span class="badge-verified" id="badgeGst" style="display: inline-flex;">GST Active ✅</span>
+                <input type="file" id="fileGst" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevGst', 'txtGstStatus', 'badgeGst')">
+              </div>
+            </div>
+
+            <!-- 4. Business PAN Card -->
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">4. Business PAN Card <span class="req">*</span></label>
+              <input type="text" class="input-field" id="merchPanNo" placeholder="ABCDE1234F" maxlength="10" style="text-transform: uppercase;" value="AAACH1234F">
+              <div class="doc-upload-box" onclick="triggerDocUpload('fileMerchPan')">
+                <div class="doc-info">
+                  <div class="doc-icon" style="background: #fef3c7; color: #d97706;">💳</div>
+                  <div class="doc-details">
+                    <h4>Upload Business PAN Card</h4>
+                    <p id="txtMerchPanStatus">Proprietorship or Enterprise PAN</p>
+                  </div>
+                </div>
+                <img id="prevMerchPan" class="doc-preview-thumb" alt="PAN Preview">
+                <span class="badge-verified" id="badgeMerchPan" style="display: inline-flex;">PAN Verified ✅</span>
+                <input type="file" id="fileMerchPan" class="hidden-file" accept="image/*,.pdf" onchange="handleDocFile(this, 'prevMerchPan', 'txtMerchPanStatus', 'badgeMerchPan')">
+              </div>
+            </div>
+          </div>
+
+          <!-- Fast Fill Sample Store Docs -->
+          <div class="demo-chip-bar">
+            <span>⚡ Ready for Instant Onboarding</span>
+            <button type="button" class="btn-quick-fill" onclick="autoFillMerchantDocs()">Fill Sample Docs</button>
+          </div>
+
+          <button type="button" class="btn-continue btn-merchant-action" onclick="submitMerchantSignupAndLaunch()">
+            🏪 Register Store & Open Portal
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Admin & Developer Fast Links -->
+    <div class="admin-footer-bar">
+      <span>Need Central Logistics Command?</span>
+      <a href="/admin/" class="admin-link">🛡️ Super Admin Tower ➔</a>
+    </div>
+
   </div>
 
-  <main class="container">
-    <!-- Step 1: Select Role -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <span style="font-size:12px; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:1px;">STEP 1: SELECT YOUR ROLE</span>
-      <span style="font-size:11.5px; color:#94a3b8;">Click any card to continue</span>
-    </div>
-
-    <div class="role-grid">
-      <!-- 1. Customer -->
-      <div class="role-card" id="cardCustomer" onclick="selectRole('customer')">
-        <div>
-          <div class="card-top">
-            <div class="role-icon" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981;">🛒</div>
-            <div class="role-radio"><div class="role-radio-dot"></div></div>
-          </div>
-          <div class="role-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399;">Customer App</div>
-          <h3 class="role-title">Pahadi Customer</h3>
-          <p class="role-desc">Taaza Fal-Sabzi, Kirana, Siddu, Mithai aur Emergency Dawaiyan doorstep mangwayein.</p>
-        </div>
-        <div class="role-footer-tag" style="color: #34d399;">
-          <span>🛍️ 2-Hour Delivery &bull; Live GPS Tracking</span>
-        </div>
-      </div>
-
-      <!-- 2. Shopkeeper (Merchant) -->
-      <div class="role-card" id="cardMerchant" onclick="selectRole('merchant')">
-        <div>
-          <div class="card-top">
-            <div class="role-icon" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b;">🏪</div>
-            <div class="role-radio"><div class="role-radio-dot"></div></div>
-          </div>
-          <div class="role-badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24;">Vyapar Mandal</div>
-          <h3 class="role-title">Dukandaar (Shopkeeper)</h3>
-          <p class="role-desc">Naye orders accept karein, inventory manage karein aur daily T+1 settlement dekhein.</p>
-        </div>
-        <div class="role-footer-tag" style="color: #fbbf24;">
-          <span>📦 Order Kanban &bull; Payout Ledger</span>
-        </div>
-      </div>
-
-      <!-- 3. Rider Partner -->
-      <div class="role-card selected" id="cardRider" onclick="selectRole('rider')">
-        <div>
-          <div class="card-top">
-            <div class="role-icon" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.4); color: #0ea5e9;">🛵</div>
-            <div class="role-radio"><div class="role-radio-dot"></div></div>
-          </div>
-          <div class="role-badge" style="background: rgba(14, 165, 233, 0.18); color: #38bdf8;">Delivery Partner</div>
-          <h3 class="role-title">Pahadi Rider Partner</h3>
-          <p class="role-desc">Hill missions accept karein, steep staircase altitude dekhein aur OTP delivery karein.</p>
-        </div>
-        <div class="role-footer-tag" style="color: #38bdf8;">
-          <span>🏔️ Turn-by-Turn &bull; Battery Telemetry</span>
-        </div>
-      </div>
-
-      <!-- 4. Super Admin -->
-      <div class="role-card" id="cardAdmin" onclick="selectRole('admin')">
-        <div>
-          <div class="card-top">
-            <div class="role-icon" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #a855f7;">🛡️</div>
-            <div class="role-radio"><div class="role-radio-dot"></div></div>
-          </div>
-          <div class="role-badge" style="background: rgba(168, 85, 247, 0.18); color: #c084fc;">Command Tower</div>
-          <h3 class="role-title">Super Admin</h3>
-          <p class="role-desc">Central dispatch control, terrain ETA debugger, COD cash desk aur fleet telemetry.</p>
-        </div>
-        <div class="role-footer-tag" style="color: #c084fc;">
-          <span>⚡ 5-Role RBAC &bull; God View Map</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 2: Verification Form -->
-    <div class="login-form-box">
-      <div class="form-header">
-        <div>
-          <div style="font-size:11px; font-weight:800; color:#10b981; text-transform:uppercase;">STEP 2: AUTHENTICATE</div>
-          <div class="form-title" id="formHeaderTitle">Logging in as: Pahadi Rider Partner</div>
-        </div>
-        <span id="roleTargetTag" style="font-size:11px; font-weight:800; background:rgba(14,165,233,0.18); color:#38bdf8; border:1px solid #0ea5e9; padding:4px 10px; border-radius:20px;">
-          🛵 TARGET: /rider/
-        </span>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">Himachal Operating Town / Hub</label>
-        <div class="input-wrap">
-          <span>📍</span>
-          <select id="userTown">
-            <option value="solan">Solan (Mushroom City - 1,502m)</option>
-            <option value="shimla">Shimla (The Ridge - 2,276m)</option>
-            <option value="dharamshala">Dharamshala & McLeodGanj (1,457m)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">Mobile Number (+91)</label>
-        <div class="input-wrap">
-          <span style="font-weight:800; color:#38bdf8;">+91</span>
-          <input type="tel" id="userPhone" value="9805111223" maxlength="10" placeholder="Enter 10-digit mobile number" />
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">User / Business Name</label>
-        <div class="input-wrap">
-          <span>👤</span>
-          <input type="text" id="userName" value="Aman Thakur (Rider #01)" placeholder="Your Name or Shop Name" />
-        </div>
-      </div>
-
-      <!-- Instant 1-Click Launch Button -->
-      <button class="btn-submit" id="btnSubmitLogin" onclick="handleLoginSubmit()">
-        <span style="font-size:18px;">⚡</span>
-        <span id="btnSubmitText">1-Click Instant Login to Rider Cockpit</span>
-      </button>
-
-      <button class="btn-otp-toggle" onclick="toggleOtpMode()">
-        🔑 Need SMS OTP Verification? (Mock Code: 4421)
-      </button>
-
-      <div id="otpInputBlock" style="display:none; margin-top:14px; padding:14px; background:#08101e; border-radius:14px; border:1px solid rgba(255,255,255,0.08); text-align:center;">
-        <div style="font-size:12px; color:#cbd5e1; margin-bottom:8px;">Enter 4-Digit OTP sent to your phone</div>
-        <div style="display:flex; justify-content:center; gap:10px;">
-          <input type="text" maxlength="1" value="4" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
-          <input type="text" maxlength="1" value="4" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
-          <input type="text" maxlength="1" value="2" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
-          <input type="text" maxlength="1" value="1" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Fullscreen Launch Animation Overlay -->
+  <!-- Smooth Launch Loading Overlay -->
   <div class="launch-overlay" id="launchOverlay">
     <div class="spinner"></div>
     <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;">Authenticating Session</div>
-    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;" id="launchTitle">Opening Rider Cockpit...</h2>
-    <p style="font-size: 13px; color: #94a3b8; max-width: 380px;" id="launchDesc">Syncing mountain GPS coordinates, staircase cache & live hill weather.</p>
+    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;" id="launchTitle">Opening Portal...</h2>
+    <p style="font-size: 13px; color: #94a3b8; max-width: 380px;" id="launchDesc">Connecting with Himachal servers.</p>
   </div>
 
-  <footer>
-    PahadiCart &bull; Progressive Web App (PWA) V3.0 &bull; 100% Free & Open-Source Topography Engine
-  </footer>
-
-  <!-- Scripts -->
+  <!-- PWA & Session Engine Scripts -->
   <script src="/shared/pwaInit.js"></script>
   <script>
-    const ROLES = {
-      customer: {
-        title: 'Pahadi Customer',
-        targetUrl: '/customer/',
-        tagText: '🛒 TARGET: /customer/',
-        tagColor: '#34d399',
-        tagBorder: '#10b981',
-        defaultName: 'Pooja Chandel',
-        defaultPhone: '9816455443',
-        buttonText: '1-Click Instant Login to Customer Store',
-        launchTitle: 'Opening Customer Marketplace...',
-        launchDesc: 'Connecting with Solan & Shimla merchants and doorstep runners.'
-      },
-      merchant: {
-        title: 'Shopkeeper (Vyapar Mandal)',
-        targetUrl: '/merchant/',
-        tagText: '🏪 TARGET: /merchant/',
-        tagColor: '#fbbf24',
-        tagBorder: '#f59e0b',
-        defaultName: 'Anand Sweet Shop & Bakers',
-        defaultPhone: '9816012345',
-        buttonText: '1-Click Instant Login to Merchant Shop',
-        launchTitle: 'Opening Vyapar Mandal Portal...',
-        launchDesc: 'Loading live shop orders, inventory catalog and T+1 settlements.'
-      },
-      rider: {
-        title: 'Pahadi Rider Partner',
-        targetUrl: '/rider/',
-        tagText: '🛵 TARGET: /rider/',
-        tagColor: '#38bdf8',
-        tagBorder: '#0ea5e9',
-        defaultName: 'Aman Thakur (Rider #01)',
-        defaultPhone: '9805111223',
-        buttonText: '1-Click Instant Login to Rider Cockpit',
-        launchTitle: 'Opening Rider Cockpit...',
-        launchDesc: 'Syncing mountain GPS coordinates, staircase cache & hill missions.'
-      },
-      admin: {
-        title: 'Super Admin Command Tower',
-        targetUrl: '/admin/',
-        tagText: '🛡️ TARGET: /admin/',
-        tagColor: '#c084fc',
-        tagBorder: '#a855f7',
-        defaultName: 'Himachal Super Admin',
-        defaultPhone: '9800011111',
-        buttonText: '1-Click Instant Login to Admin Tower',
-        launchTitle: 'Opening Super Admin Command Center...',
-        launchDesc: 'Establishing 5-role RBAC, God-view map, PostGIS & dispatch telemetry.'
+    // State
+    let activeRole = 'customer';
+    let selectedCustomerTown = 'solan';
+    let selectedRiderTown = 'solan';
+    let selectedMerchantTown = 'solan';
+    let selectedVehicle = 'bike';
+    let timerInterval = null;
+
+    // Switch Role View
+    function switchRoleView(role) {
+      activeRole = role;
+      document.querySelectorAll('.role-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab' + role.charAt(0).toUpperCase() + role.slice(1)).classList.add('active');
+
+      document.getElementById('viewCustomer').style.display = role === 'customer' ? 'block' : 'none';
+      document.getElementById('viewRider').style.display = role === 'rider' ? 'block' : 'none';
+      document.getElementById('viewMerchant').style.display = role === 'merchant' ? 'block' : 'none';
+    }
+
+    // Town Selectors
+    function selectTown(town, el) {
+      selectedCustomerTown = town;
+      document.querySelectorAll('#viewCustomer .town-pill-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+    function selectRiderTown(town, el) {
+      selectedRiderTown = town;
+      document.querySelectorAll('#viewRider .town-pill-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+    function selectMerchantTown(town, el) {
+      selectedMerchantTown = town;
+      document.querySelectorAll('#viewMerchant .town-pill-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Vehicle Selector
+    function selectVehicleType(veh, el) {
+      selectedVehicle = veh;
+      document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Sub-mode Toggles
+    function toggleRiderSubMode(mode) {
+      document.getElementById('riderModeLoginBtn').classList.toggle('active', mode === 'login');
+      document.getElementById('riderModeSignupBtn').classList.toggle('active', mode === 'signup');
+      document.getElementById('riderLoginWrap').style.display = mode === 'login' ? 'block' : 'none';
+      document.getElementById('riderSignupWrap').style.display = mode === 'signup' ? 'block' : 'none';
+    }
+
+    function toggleMerchantSubMode(mode) {
+      document.getElementById('merchantModeLoginBtn').classList.toggle('active', mode === 'login');
+      document.getElementById('merchantModeSignupBtn').classList.toggle('active', mode === 'signup');
+      document.getElementById('merchantLoginWrap').style.display = mode === 'login' ? 'block' : 'none';
+      document.getElementById('merchantSignupWrap').style.display = mode === 'signup' ? 'block' : 'none';
+    }
+
+    // Skip Button (Guest Customer Browse)
+    document.getElementById('btnSkipGuest').addEventListener('click', () => {
+      saveSessionAndLaunch('customer', 'Guest Customer', '9816400000', selectedCustomerTown, '/customer/');
+    });
+
+    // -------------------------------------------------------------
+    // CUSTOMER OTP FLOW
+    // -------------------------------------------------------------
+    function validatePhoneInput(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+
+    function requestCustomerOtp() {
+      const phone = document.getElementById('custPhone').value.trim();
+      if (phone.length < 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
       }
-    };
+      document.getElementById('displayCustPhone').innerText = '+91 ' + phone;
+      document.getElementById('customerPhoneStep').style.display = 'none';
+      document.getElementById('customerOtpStep').style.display = 'flex';
+      startOtpCountdown('custTimer');
+      setupOtpInputHandlers('cust-otp');
+    }
 
-    let activeRole = 'rider';
+    function verifyCustomerOtpAndLogin() {
+      const phone = document.getElementById('custPhone').value.trim() || '9816455443';
+      saveSessionAndLaunch('customer', 'Pooja Chandel', phone, selectedCustomerTown, '/customer/');
+    }
 
-    function selectRole(roleKey) {
-      activeRole = roleKey;
-      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    function setDemoCustomer() {
+      document.getElementById('custPhone').value = '9816455443';
+      selectTown('solan', document.querySelector('#viewCustomer [data-town="solan"]'));
+    }
+
+    // -------------------------------------------------------------
+    // RIDER FLOWS
+    // -------------------------------------------------------------
+    function setDemoRider() {
+      document.getElementById('riderLoginPhone').value = '9805111223';
+    }
+
+    function requestRiderOtp() {
+      const phone = document.getElementById('riderLoginPhone').value.trim();
+      if (phone.length < 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      document.getElementById('displayRiderPhone').innerText = '+91 ' + phone;
+      document.getElementById('riderOtpStep').style.display = 'flex';
+      setupOtpInputHandlers('rider-otp');
+    }
+
+    function verifyRiderOtpAndLogin() {
+      const phone = document.getElementById('riderLoginPhone').value.trim() || '9805111223';
+      saveSessionAndLaunch('rider', 'Aman Thakur (#01)', phone, 'solan', '/rider/');
+    }
+
+    function autoFillRiderKyc() {
+      document.getElementById('riderName').value = 'Vikram Sharma (Rider #07)';
+      document.getElementById('riderSignupPhone').value = '9817099881';
+      document.getElementById('riderAadhaar').value = '5412 8891 0023';
+      document.getElementById('riderPan').value = 'BPNPS4210M';
+      document.getElementById('riderDl').value = 'HP-14-2022-0042109';
+      document.getElementById('riderRc').value = 'HP 14 B 4210';
+      document.getElementById('riderInsurance').value = 'NIC/2026/009412';
+
+      // Set Mock Previews
+      setMockPreview('prevAadhaar', 'txtAadhaarStatus', 'badgeAadhaar', 'Aadhaar_Verified.jpg');
+      setMockPreview('prevPan', 'txtPanStatus', 'badgePan', 'PAN_Verified.jpg');
+      setMockPreview('prevDl', 'txtDlStatus', 'badgeDl', 'DL_MCWG_Valid.jpg');
+      setMockPreview('prevRc', 'txtRcStatus', 'badgeRc', 'RC_SmartCard.jpg');
+      setMockPreview('prevInsurance', 'txtInsStatus', 'badgeInsurance', 'Insurance_Active.jpg');
+
+      const avatar = document.getElementById('avatarBox');
+      avatar.innerHTML = '👤';
+      avatar.style.borderColor = '#10b981';
+    }
+
+    function submitRiderKycAndLaunch() {
+      const name = document.getElementById('riderName').value.trim() || 'Vikram Sharma';
+      const phone = document.getElementById('riderSignupPhone').value.trim() || '9817099881';
       
-      const cardMap = { customer: 'cardCustomer', merchant: 'cardMerchant', rider: 'cardRider', admin: 'cardAdmin' };
-      const card = document.getElementById(cardMap[roleKey]);
-      if (card) card.classList.add('selected');
+      // Store KYC Data in localStorage
+      const kycData = {
+        name,
+        phone,
+        town: selectedRiderTown,
+        vehicle: selectedVehicle,
+        aadhaar: document.getElementById('riderAadhaar').value,
+        pan: document.getElementById('riderPan').value,
+        dl: document.getElementById('riderDl').value,
+        rc: document.getElementById('riderRc').value,
+        insurance: document.getElementById('riderInsurance').value,
+        status: 'VERIFIED_ACTIVE',
+        verifiedAt: new Date().toISOString()
+      };
+      localStorage.setItem('pahadicart_rider_kyc', JSON.stringify(kycData));
 
-      const config = ROLES[roleKey];
-      document.getElementById('formHeaderTitle').innerText = 'Logging in as: ' + config.title;
-      const tag = document.getElementById('roleTargetTag');
-      tag.innerText = config.tagText;
-      tag.style.color = config.tagColor;
-      tag.style.borderColor = config.tagBorder;
-      document.getElementById('btnSubmitText').innerText = config.buttonText;
-      document.getElementById('userName').value = config.defaultName;
-      document.getElementById('userPhone').value = config.defaultPhone;
+      saveSessionAndLaunch('rider', name, phone, selectedRiderTown, '/rider/');
     }
 
-    function toggleOtpMode() {
-      const el = document.getElementById('otpInputBlock');
-      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    // -------------------------------------------------------------
+    // MERCHANT FLOWS
+    // -------------------------------------------------------------
+    function setDemoMerchant() {
+      document.getElementById('merchantLoginPhone').value = '9816012345';
     }
 
-    function handleLoginSubmit() {
-      const phone = document.getElementById('userPhone').value.trim();
-      const name = document.getElementById('userName').value.trim();
-      const town = document.getElementById('userTown').value;
-      const config = ROLES[activeRole];
+    function requestMerchantOtp() {
+      const phone = document.getElementById('merchantLoginPhone').value.trim();
+      if (phone.length < 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      document.getElementById('displayMerchantPhone').innerText = '+91 ' + phone;
+      document.getElementById('merchantOtpStep').style.display = 'flex';
+      setupOtpInputHandlers('merch-otp');
+    }
 
-      // Save Session
+    function verifyMerchantOtpAndLogin() {
+      const phone = document.getElementById('merchantLoginPhone').value.trim() || '9816012345';
+      saveSessionAndLaunch('merchant', 'Anand Sweet Shop & Bakers', phone, 'solan', '/merchant/');
+    }
+
+    function autoFillMerchantDocs() {
+      document.getElementById('merchStoreName').value = 'Himalayan Organic Orchard Mandi';
+      document.getElementById('merchOwnerName').value = 'Rajesh Sharma';
+      document.getElementById('merchSignupPhone').value = '9816077889';
+      document.getElementById('merchMarketAddress').value = 'Upper Mall Road, Solan';
+      document.getElementById('merchFssaiNo').value = '10924001004210';
+      document.getElementById('merchGstNo').value = '02AAACH1234F1Z8';
+      document.getElementById('merchPanNo').value = 'AAACH1234F';
+
+      setMockPreview('prevStoreImg', 'txtStoreImgStatus', 'badgeStoreImg', 'Shop_Front.jpg');
+      setMockPreview('prevFssai', 'txtFssaiStatus', 'badgeFssai', 'FSSAI_Cert.pdf');
+      setMockPreview('prevGst', 'txtGstStatus', 'badgeGst', 'GST_HP_Cert.pdf');
+      setMockPreview('prevMerchPan', 'txtMerchPanStatus', 'badgeMerchPan', 'Business_PAN.jpg');
+    }
+
+    function submitMerchantSignupAndLaunch() {
+      const storeName = document.getElementById('merchStoreName').value.trim() || 'Himalayan Organic Mandi';
+      const phone = document.getElementById('merchSignupPhone').value.trim() || '9816077889';
+      
+      const storeData = {
+        storeName,
+        owner: document.getElementById('merchOwnerName').value.trim(),
+        phone,
+        town: selectedMerchantTown,
+        address: document.getElementById('merchMarketAddress').value.trim(),
+        fssai: document.getElementById('merchFssaiNo').value,
+        gstin: document.getElementById('merchGstNo').value,
+        pan: document.getElementById('merchPanNo').value,
+        status: 'APPROVED_ACTIVE',
+        approvedAt: new Date().toISOString()
+      };
+      localStorage.setItem('pahadicart_merchant_store', JSON.stringify(storeData));
+
+      saveSessionAndLaunch('merchant', storeName, phone, selectedMerchantTown, '/merchant/');
+    }
+
+    // -------------------------------------------------------------
+    // FILE UPLOAD & PREVIEW HELPERS
+    // -------------------------------------------------------------
+    function triggerDocUpload(inputId) {
+      document.getElementById(inputId).click();
+    }
+
+    function handleDocFile(input, previewId, statusId, badgeId) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById(statusId).innerText = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        const badge = document.getElementById(badgeId);
+        if (badge) {
+          badge.style.display = 'inline-flex';
+          badge.innerText = 'Uploaded ✅';
+        }
+
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.getElementById(previewId);
+            img.src = e.target.result;
+            img.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+
+    function handleSelfieFile(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const box = document.getElementById('avatarBox');
+          box.innerHTML = '';
+          box.style.backgroundImage = 'url(' + e.target.result + ')';
+          box.style.backgroundSize = 'cover';
+          box.style.backgroundPosition = 'center';
+          box.style.borderColor = '#10b981';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function setMockPreview(prevId, statId, badgeId, fileName) {
+      const prev = document.getElementById(prevId);
+      prev.src = 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=100&q=80';
+      prev.style.display = 'block';
+      document.getElementById(statId).innerText = fileName + ' (Attached)';
+      const badge = document.getElementById(badgeId);
+      if (badge) {
+        badge.style.display = 'inline-flex';
+        badge.innerText = 'Verified ✅';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // OTP INPUT AUTO-ADVANCE
+    // -------------------------------------------------------------
+    function setupOtpInputHandlers(className) {
+      const inputs = document.querySelectorAll('.' + className);
+      inputs.forEach((input, index) => {
+        input.addEventListener('input', () => {
+          input.value = input.value.replace(/[^0-9]/g, '');
+          if (input.value && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        });
+      });
+      if (inputs[0]) inputs[0].focus();
+    }
+
+    function startOtpCountdown(timerId) {
+      let seconds = 30;
+      const el = document.getElementById(timerId);
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        seconds--;
+        const formatted = '00:' + (seconds < 10 ? '0' : '') + seconds;
+        if (el) el.innerText = formatted;
+        if (seconds <= 0) clearInterval(timerInterval);
+      }, 1000);
+    }
+
+    function resendOtp(role) {
+      alert('A fresh 6-digit OTP has been sent via SMS to your mobile number!');
+      startOtpCountdown('custTimer');
+    }
+
+    function backToPhone(role) {
+      document.getElementById('customerPhoneStep').style.display = 'block';
+      document.getElementById('customerOtpStep').style.display = 'none';
+    }
+
+    // -------------------------------------------------------------
+    // LAUNCH & SESSION MANAGEMENT
+    // -------------------------------------------------------------
+    function saveSessionAndLaunch(role, name, phone, town, targetUrl) {
       const sessionData = {
-        role: activeRole,
-        name: name || config.defaultName,
-        phone: phone || config.defaultPhone,
-        town: town,
+        role,
+        name,
+        phone,
+        town: town || 'solan',
         loggedInAt: Date.now()
       };
 
@@ -666,18 +1669,18 @@
         window.PahadiAuth.setSession(sessionData);
       } else {
         localStorage.setItem('pahadicart_user_session', JSON.stringify(sessionData));
-        sessionStorage.setItem('pahadicart_auth_role', activeRole);
+        sessionStorage.setItem('pahadicart_auth_role', role);
       }
 
       // Show launch overlay
       const overlay = document.getElementById('launchOverlay');
-      document.getElementById('launchTitle').innerText = config.launchTitle;
-      document.getElementById('launchDesc').innerText = config.launchDesc;
+      document.getElementById('launchTitle').innerText = 'Opening ' + name + '...';
+      document.getElementById('launchDesc').innerText = 'Securing session in ' + (town ? town.toUpperCase() : 'HIMACHAL') + ' corridor.';
       overlay.style.display = 'flex';
 
       setTimeout(() => {
-        window.location.href = config.targetUrl;
-      }, 750);
+        window.location.href = targetUrl;
+      }, 700);
     }
 
     // Check existing session
@@ -686,14 +1689,21 @@
       if (existing) {
         try {
           const parsed = JSON.parse(existing);
-          if (parsed && parsed.role && ROLES[parsed.role]) {
+          if (parsed && parsed.role) {
             const box = document.getElementById('activeSessionBox');
             const userText = document.getElementById('activeSessionUser');
             box.style.display = 'flex';
-            userText.innerText = (parsed.name || 'User') + ' (' + ROLES[parsed.role].title + ') • ' + (parsed.town ? parsed.town.toUpperCase() : 'SOLAN');
+            userText.innerText = (parsed.name || 'User') + ' (' + parsed.role.toUpperCase() + ') • ' + (parsed.town || 'SOLAN').toUpperCase();
+
+            const targetMap = {
+              customer: '/customer/',
+              rider: '/rider/',
+              merchant: '/merchant/',
+              admin: '/admin/'
+            };
 
             document.getElementById('btnContinueActive').onclick = () => {
-              window.location.href = ROLES[parsed.role].targetUrl;
+              window.location.href = targetMap[parsed.role] || '/customer/';
             };
             document.getElementById('btnSwitchActive').onclick = () => {
               localStorage.removeItem('pahadicart_user_session');
