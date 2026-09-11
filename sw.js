@@ -1,28 +1,49 @@
-// PahadiCart Himalayan Offline Cache Service Worker
-const CACHE_NAME = 'pahadicart-v1';
-const STATIC_ASSETS = [
+// PahadiCart Himalayan Offline Cache Service Worker v3.0
+const CACHE_NAME = 'pahadicart-pwa-v3';
+
+const STATIC_SHELL = [
   '/',
-  '/admin/',
+  '/index.html',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/apple-touch-icon.png',
+  '/icons/favicon.png',
   '/customer/',
-  '/merchant/',
+  '/customer/index.html',
+  '/customer/css/customer.css',
+  '/customer/js/customerApp.js',
   '/rider/',
+  '/rider/index.html',
+  '/rider/css/rider.css',
+  '/rider/js/riderApp.js',
+  '/merchant/',
+  '/merchant/index.html',
+  '/merchant/css/merchant.css',
+  '/merchant/js/merchantApp.js',
+  '/admin/',
+  '/admin/index.html',
+  '/admin/css/tokens.css',
+  '/admin/css/layout.css',
+  '/admin/css/components.css',
+  '/admin/css/responsive.css',
+  '/shared/pwaInit.js',
+  '/shared/liveServices.js',
   '/shared/sharedData.js',
   '/shared/eventBus.js',
   '/shared/hillAudio.js',
   '/shared/dispatchEngine.js',
   '/shared/simulationEngine.js',
-  '/shared/offlineQueue.js',
-  '/admin/css/tokens.css',
-  '/admin/css/layout.css',
-  '/admin/css/components.css',
-  '/admin/css/responsive.css'
+  '/shared/offlineQueue.js'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching mountain shells & offline scripts');
-      return cache.addAll(STATIC_ASSETS).catch(err => console.warn('[SW] Caching notice:', err));
+      console.log('[SW] Pre-caching Himalayan shells & offline resources');
+      return cache.addAll(STATIC_SHELL).catch((err) => {
+        console.warn('[SW] Cache addAll notice (some assets may cache on first fetch):', err);
+      });
     })
   );
   self.skipWaiting();
@@ -41,25 +62,37 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
 
+  // Do not cache external dynamic APIs like Open-Meteo or analytics
+  if (url.origin !== self.location.origin) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Stale-while-revalidate for local assets
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch in background to update cache
-        fetch(event.request).then((networkResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
           }
-        }).catch(() => {});
-        return cachedResponse;
-      }
+          return networkResponse;
+        })
+        .catch(() => {
+          // If offline and request is navigation, return cached root or app shell
+          if (event.request.mode === 'navigate') {
+            return caches.match(event.request) || caches.match('/');
+          }
+        });
 
-      return fetch(event.request).catch(() => {
-        // Return cached root or offline fallback
-        if (event.request.mode === 'navigate') {
-          return caches.match('/');
-        }
-      });
+      return cachedResponse || fetchPromise;
     })
   );
 });

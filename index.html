@@ -2,476 +2,707 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PahadiCart (पहाड़ीकार्ट) - Himachal Hyperlocal Delivery Ecosystem</title>
-  <meta name="description" content="PahadiCart Unified Ecosystem Launcher: Super Admin Command Center, Customer Ordering Web App, Merchant Partner Portal, and Pahadi Rider Mobile Cockpit.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PahadiCart — Login into Himachal Hyperlocal Delivery</title>
+  <meta name="description" content="PahadiCart Universal Authentication Gateway: Choose your role as Customer, Shopkeeper, Rider Partner, or Super Admin.">
+
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#059669">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PahadiCart">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/icons/favicon.png">
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --primary: #065f46;
-      --primary-light: #10b981;
+      --bg: #030712;
+      --surface: #0b1324;
+      --card-bg: #101c34;
+      --card-hover: #152546;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.35);
       --accent: #f59e0b;
-      --accent-light: #fbbf24;
-      --bg-dark: #070d18;
-      --bg-surface: #0f1a2e;
-      --bg-card: #15233c;
-      --border-color: rgba(255, 255, 255, 0.1);
-      --border-glow: rgba(16, 185, 129, 0.4);
-      --text-main: #f8fafc;
+      --sky: #0ea5e9;
+      --purple: #a855f7;
+      --border: rgba(255, 255, 255, 0.09);
+      --text: #f8fafc;
       --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --radius-full: 9999px;
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;\n      --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: var(--font-sans);
-      background-color: var(--bg-dark);
-      color: var(--text-main);
+      font-family: var(--font-body);
+      background-color: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
       background-image: 
-        radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 70%, rgba(245, 158, 11, 0.08) 0%, transparent 40%);
+        radial-gradient(circle at 10% 15%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(14, 165, 233, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+      overflow-x: hidden;
     }
 
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 56px 32px 100px;
-    }
-
-    /* Hero Header */
-    .hero-section {
+    /* Ambient Mountain Topography Header */
+    .hero-top {
       text-align: center;
-      margin-bottom: 48px;
+      padding: 36px 20px 20px;
+      position: relative;
     }
-    .badge-pill {
+
+    .brand-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       background: rgba(16, 185, 129, 0.12);
-      border: 1px solid var(--border-glow);
-      color: var(--primary-light);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 6px 16px;
-      border-radius: var(--radius-full);
-      margin-bottom: 16px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      animation: pulseGlow 2.5s infinite;
     }
-    .hero-title {
-      font-size: 44px;
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(16, 185, 129, 0); }
+      50% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+    }
+
+    .main-title {
+      font-family: var(--font-heading);
+      font-size: 32px;
       font-weight: 900;
-      letter-spacing: -1px;
-      line-height: 1.15;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #ffffff 30%, #34d399 100%);
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 60%, #94a3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-    .hero-hindi {
-      font-size: 20px;
-      color: var(--accent-light);
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-    .hero-sub {
-      font-size: 16px;
-      color: var(--text-muted);
-      max-width: 720px;
-      margin: 0 auto 24px;
+      margin-bottom: 8px;
     }
 
-    /* Stats Strip */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    .main-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Active Session Banner */
+    #activeSessionBox {
+      max-width: 680px;
+      width: calc(100% - 32px);
+      margin: 10px auto 16px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.12) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 16px;
+      padding: 14px 20px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
       gap: 16px;
-      margin-bottom: 48px;
-    }
-    .stat-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      text-align: left;
-    }
-    .stat-num {
-      font-size: 26px;
-      font-weight: 900;
-      color: #fff;
-    }
-    .stat-title {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-top: 2px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
 
-    /* 4 Portals Grid */
-    .portals-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 32px;
-      margin-bottom: 48px;
+    /* Role Cards Grid */
+    .container {
+      max-width: 780px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 10px 16px 40px;
+      flex: 1;
     }
-    .portal-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 34px 32px; border-radius: 24px;
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .role-grid { grid-template-columns: 1fr; }
+      .main-title { font-size: 26px; }
+    }
+
+    .role-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
-      color: inherit;
+      user-select: none;
     }
-    .portal-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--primary-light);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.25);
-    }
-    .portal-card.admin-card:hover { border-color: #38bdf8; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.25); }
-    .portal-card.customer-card:hover { border-color: #10b981; }
-    .portal-card.merchant-card:hover { border-color: #f59e0b; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 158, 11, 0.25); }
-    .portal-card.rider-card:hover { border-color: #a855f7; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.25); }
 
-    .portal-icon {
-      font-size: 42px;
-      margin-bottom: 16px;
-      display: inline-block;
+    .role-card:hover {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: rgba(255, 255, 255, 0.2);
     }
-    .portal-badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 4px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .badge-admin { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
-    .badge-cust { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-merch { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-rider { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
 
-    .portal-name {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 8px;
+    .role-card.selected {
+      border-color: var(--primary);
+      background: #11233e;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25), inset 0 0 20px rgba(16, 185, 129, 0.08);
     }
-    .portal-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-    .portal-features {
-      list-style: none;
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 24px;
+
+    .card-top {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
-    .portal-features li {
+
+    .role-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .role-radio {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .role-card.selected .role-radio {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .role-radio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fff;
+      display: none;
+    }
+
+    .role-card.selected .role-radio-dot {
+      display: block;
+    }
+
+    .role-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .role-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .role-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .role-footer-tag {
+      font-size: 11px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .launch-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
+    /* Login Form Card */
+    .login-form-box {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .form-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
       font-weight: 800;
-      text-align: center;
+      color: #fff;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      background: #08101e;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 14px;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .input-wrap:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+
+    .input-wrap input, .input-wrap select {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: #ffffff;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
       transition: all 0.2s;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: #fff;
+      margin-top: 6px;
     }
-    .portal-card:hover .launch-btn {
-      background: var(--primary-light);
-      color: #000;
-      border-color: var(--primary-light);
-    }
-    .portal-card.admin-card:hover .launch-btn { background: #38bdf8; color: #000; }
-    .portal-card.merchant-card:hover .launch-btn { background: #f59e0b; color: #000; }
-    .portal-card.rider-card:hover .launch-btn { background: #a855f7; color: #fff; }
 
-    /* Interactive Simulation Sandbox Bar */
-    .sandbox-panel {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-top: 32px;
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(16, 185, 129, 0.5);
     }
-    .sandbox-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .sandbox-sub {
-      font-size: 13px;
+
+    .btn-otp-toggle {
+      width: 100%;
+      background: transparent;
+      border: 1px dashed rgba(255, 255, 255, 0.16);
       color: var(--text-muted);
-      margin-bottom: 16px;
-    }
-    .sandbox-buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .sim-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 10px 18px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      margin-top: 10px;
       transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
-    .sim-btn:hover {
-      border-color: var(--primary-light);
-      background: rgba(16, 185, 129, 0.15);
+
+    .btn-otp-toggle:hover {
+      background: rgba(255, 255, 255, 0.04);
       color: #fff;
     }
 
-    @media (max-width: 768px) {
-      .hero-title { font-size: 32px; }
-      .portals-grid { grid-template-columns: 1fr; }
+    /* Modal / Launch Overlay */
+    .launch-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 999999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 54px;
+      height: 54px;
+      border: 4px solid rgba(16, 185, 129, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 11.5px;
+      color: #64748b;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
   </style>
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-  <div class="container">
-    <!-- Hero -->
-    <header class="hero-section">
-      <div class="badge-pill">
-        <span>🏔️</span>
-        <span>Pre-Live Zero-Cost Architecture (100% Free Open-Source Stack)</span>
-      </div>
-      <h1 class="hero-title">PahadiCart (पहाड़ीकार्ट)</h1>
-      <div class="hero-hindi">"Aapka Apna Pahadi Bazaar • Har Mod Par Aapke Saath"</div>
-      <p class="hero-sub">Himachal's first dedicated 2-hour hyperlocal marketplace and rapid mountain delivery platform. Tailored for steep ridges, pedestrian mall roads, and staircase doorstep navigation.</p>
-      <div style="display:flex; justify-content:center; gap:16px; margin-top:24px;">
-        <button onclick="window.openSimModal()" style="background:linear-gradient(135deg, #10b981 0%, #047857 100%); color:#ffffff; border:none; padding:12px 28px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 0 24px rgba(16,185,129,0.45); display:inline-flex; align-items:center; gap:10px;">
-          <span style="font-size:18px;">⚡</span>
-          <span>1-Click Live Lifecycle Simulator</span>
-        </button>
-      </div>
-    </header>
+  <!-- Top Hero Header -->
+  <header class="hero-top">
+    <div class="brand-badge">
+      <span>🏔️</span>
+      <span>Himachal Hyperlocal Delivery Ecosystem</span>
+    </div>
+    <h1 class="main-title">PahadiCart Login Gate</h1>
+    <p class="main-subtitle">Sabse pehle apna role select karein. Chunav ke anusaar aapka dedicated portal khulega.</p>
+  </header>
 
-    <!-- Key Platform Stats -->
-    <section class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-num">3 Hubs</div>
-        <div class="stat-title">Solan • Shimla • Dharamshala</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">28 Partners</div>
-        <div class="stat-title">Vyapar Mandal Kirana & Dhabas</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">14 Riders</div>
-        <div class="stat-title">Mountain Scooters & Walkers</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">₹0 Cost</div>
-        <div class="stat-title">Zero Paid APIs • 100% Local Run</div>
-      </div>
-    </section>
-
-    <!-- 4 Portals Launchpad -->
-    <main class="portals-grid">
-      <!-- 1. Admin Tower -->
-      <a href="/admin/" class="portal-card admin-card">
-        <div>
-          <span class="portal-icon">🏢</span>
-          <span class="portal-badge badge-admin">Master Control Tower</span>
-          <h2 class="portal-name">Super Admin Command Center</h2>
-          <p class="portal-desc">Central business intelligence dashboard for business monitoring, rider telemetry, merchant approvals, and financial P&L audit.</p>
-          <ul class="portal-features">
-            <li><span>✓</span> Leaflet Multi-Town OSM God-View Map</li>
-            <li><span>✓</span> Order-by-Order Rupee Net Profit Waterfall</li>
-            <li><span>✓</span> ₹2,500 COD Floating Cash-in-Hand Lock</li>
-            <li><span>✓</span> Emergency SOS Hill Breakdown Desk</li>
-            <li><span>✓</span> 1-Click Instant Customer Wallet Refunds</li>
-            <li><span>✓</span> Himachal Colony Repeat Order Heatmap</li>
-            <li><span>✓</span> 1% TCS Tax Deduction Certificates & Excel Export</li>
-          </ul>
-        </div>
-        <div class="launch-btn">Launch Admin Portal ➔</div>
-      </a>
-
-      <!-- 2. Customer App -->
-      <a href="/customer/" class="portal-card customer-card">
-        <div>
-          <span class="portal-icon">🛍️</span>
-          <span class="portal-badge badge-cust">Customer PWA & Store</span>
-          <h2 class="portal-name">Customer Ordering Web App</h2>
-          <p class="portal-desc">Fast, responsive consumer marketplace with Himachal catalog, staircase address navigation, and live animated delivery tracking.</p>
-          <ul class="portal-features">
-            <li><span>✓</span> Kinnaur Apples, Fresh Siddu Dough & Dham Thalis</li>
-            <li><span>✓</span> Landmark & Staircase Hill Address Input</li>
-            <li><span>✓</span> Simulated PhonePe / GPay UPI QR & COD</li>
-            <li><span>✓</span> Live Hill Tracking Map with Animated Rider</li>
-            <li><span>✓</span> 4-Digit Secret Delivery OTP System</li>
-            <li><span>✓</span> Spill-Proof Hill Terrain Eco-Packaging</li>
-          </ul>
-        </div>
-        <div class="launch-btn">Launch Customer App ➔</div>
-      </a>
-
-      <!-- 3. Merchant Portal -->
-      <a href="/merchant/" class="portal-card merchant-card">
-        <div>
-          <span class="portal-icon">🏪</span>
-          <span class="portal-badge badge-merch">Vyapar Mandal Terminal</span>
-          <h2 class="portal-name">Merchant Partner Portal</h2>
-          <p class="portal-desc">Kitchen & counter order dispatch terminal for local Himachal shopkeepers, Dhabas, bakers, and pharmacies.</p>
-          <ul class="portal-features">
-            <li><span>✓</span> Resonant "Ghar Ki Ghanti" Web Audio Chime</li>
-            <li><span>✓</span> 3-Column Kanban Board (New ➔ Prep ➔ Picked)</li>
-            <li><span>✓</span> 1-Tap 15-Minute Prep Order Accept / Reject</li>
-            <li><span>✓</span> Real-Time Kirana Stock & Rate Controller</li>
-            <li><span>✓</span> Daily UTR Settlement & 1% TCS Ledger</li>
-            <li><span>✓</span> Instant Sync with Customer & Rider Tabs</li>
-          </ul>
-        </div>
-        <div class="launch-btn">Launch Merchant Portal ➔</div>
-      </a>
-
-      <!-- 4. Rider Cockpit -->
-      <a href="/rider/" class="portal-card rider-card">
-        <div>
-          <span class="portal-icon">🛵</span>
-          <span class="portal-badge badge-rider">Rider Delivery App</span>
-          <h2 class="portal-name">Pahadi Rider Mobile Cockpit</h2>
-          <p class="portal-desc">Glove-friendly mobile interface for delivery partners tackling steep hill climbs, hairpin turns, and pedestrian Mall Roads.</p>
-          <ul class="portal-features">
-            <li><span>✓</span> 56px Glove-Friendly Touch Hit Targets</li>
-            <li><span>✓</span> Hill Elevation Gain Telemetry (+140m Climb)</li>
-            <li><span>✓</span> Staircase Guidance ("Descend 35 stone steps")</li>
-            <li><span>✓</span> Flashing Emergency SOS Breakdown Alert</li>
-            <li><span>✓</span> Customer Secret OTP Verification</li>
-            <li><span>✓</span> COD Cash Collection with Balance Auto-Lock</li>
-          </ul>
-        </div>
-        <div class="launch-btn">Launch Rider Cockpit ➔</div>
-      </a>
-    </main>
-
-    <!-- Cross-App Simulation Sandbox -->
-    <section class="sandbox-panel">
-      <h3 class="sandbox-title">⚡ Interactive Cross-App Simulation Sandbox</h3>
-      <p class="sandbox-sub">Test the full end-to-end lifecycle across browser tabs. Clicking an action broadcasts real-time events to all open portals!</p>
-      <div class="sandbox-buttons">
-        <button class="sim-btn" onclick="window.testSim('ORDER')">
-          <span>🛒</span>
-          <span>1. Place Test Customer Order (#ORD-9901)</span>
-        </button>
-        <button class="sim-btn" onclick="window.testSim('CHIME')">
-          <span>🔔</span>
-          <span>2. Play "Ghar Ki Ghanti" Audio Bell</span>
-        </button>
-        <button class="sim-btn" onclick="window.testSim('RIDER')">
-          <span>🛵</span>
-          <span>3. Trigger Rider Dispatch Ping</span>
-        </button>
-        <button class="sim-btn" onclick="window.testSim('SOS')">
-          <span>🚨</span>
-          <span>4. Simulate Emergency Hill Breakdown SOS</span>
-        </button>
-      </div>
-    </section>
+  <!-- Active Session Notification (if user already logged in) -->
+  <div id="activeSessionBox">
+    <div>
+      <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase;">Active Session Found</div>
+      <div style="font-size: 14px; font-weight: 800; color: #fff;" id="activeSessionUser">Rohit Verma (Rider) • Solan</div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button id="btnContinueActive" style="background: #10b981; color:#fff; border:none; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer;">
+        🚀 Open My Portal
+      </button>
+      <button id="btnSwitchActive" style="background: rgba(255,255,255,0.08); color:#cbd5e1; border:none; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">
+        Switch Role
+      </button>
+    </div>
   </div>
 
-  <!-- Shared Scripts -->
-  <script src="/shared/hillAudio.js?v=2.9.0"></script>
-  <script src="/shared/sharedData.js?v=2.9.0"></script>
-  <script src="/shared/eventBus.js?v=2.9.0"></script>
-  <script>
-    window.testSim = function(type) {
-      if (!window.pahadiAudio) return;
+  <main class="container">
+    <!-- Step 1: Select Role -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span style="font-size:12px; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:1px;">STEP 1: SELECT YOUR ROLE</span>
+      <span style="font-size:11.5px; color:#94a3b8;">Click any card to continue</span>
+    </div>
 
-      if (type === 'CHIME') {
-        window.pahadiAudio.playGharKiGhanti();
-      } else if (type === 'RIDER') {
-        window.pahadiAudio.playRiderPing();
-      } else if (type === 'SOS') {
-        window.pahadiAudio.playSOSAlert();
-      } else if (type === 'ORDER') {
-        const testOrd = {
-          id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
-          customerName: 'Rohit Kanwar',
-          customerPhone: '98160-77112',
-          town: 'solan',
-          colony: 'Kotla Nullah Chowk',
-          landmark: 'Opposite Hill View Cafe',
-          staircaseNotes: '15 steps up from taxi stand, blue wooden door',
-          merchantId: 'm-101',
-          merchantName: 'Sharma Kirana & Fresh Produce',
-          items: [{ name: 'Kinnaur Crisp Royal Delicious Apples (1 kg)', qty: 2, price: 140 }],
-          itemTotal: 280,
-          deliveryFee: 35,
-          weatherSurge: 0,
-          grandTotal: 320,
-          paymentMode: 'UPI_ONLINE',
-          paymentStatus: 'Paid (UPI)',
-          status: 'Placed',
-          otp: '5521',
-          riderId: 'r-1',
-          riderName: 'Vikas Thakur',
-          riderPhone: '98161-12345',
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          createdTimestamp: Date.now()
-        };
-        if (window.pahadiBus) {
-          window.pahadiBus.placeOrder(testOrd);
-        }
-        window.pahadiAudio.playGharKiGhanti();
-        alert('🎉 Simulated Order #' + testOrd.id + ' broadcasted to Merchant, Rider, and Admin portals!');
+    <div class="role-grid">
+      <!-- 1. Customer -->
+      <div class="role-card" id="cardCustomer" onclick="selectRole('customer')">
+        <div>
+          <div class="card-top">
+            <div class="role-icon" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981;">🛒</div>
+            <div class="role-radio"><div class="role-radio-dot"></div></div>
+          </div>
+          <div class="role-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399;">Customer App</div>
+          <h3 class="role-title">Pahadi Customer</h3>
+          <p class="role-desc">Taaza Fal-Sabzi, Kirana, Siddu, Mithai aur Emergency Dawaiyan doorstep mangwayein.</p>
+        </div>
+        <div class="role-footer-tag" style="color: #34d399;">
+          <span>🛍️ 2-Hour Delivery &bull; Live GPS Tracking</span>
+        </div>
+      </div>
+
+      <!-- 2. Shopkeeper (Merchant) -->
+      <div class="role-card" id="cardMerchant" onclick="selectRole('merchant')">
+        <div>
+          <div class="card-top">
+            <div class="role-icon" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b;">🏪</div>
+            <div class="role-radio"><div class="role-radio-dot"></div></div>
+          </div>
+          <div class="role-badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24;">Vyapar Mandal</div>
+          <h3 class="role-title">Dukandaar (Shopkeeper)</h3>
+          <p class="role-desc">Naye orders accept karein, inventory manage karein aur daily T+1 settlement dekhein.</p>
+        </div>
+        <div class="role-footer-tag" style="color: #fbbf24;">
+          <span>📦 Order Kanban &bull; Payout Ledger</span>
+        </div>
+      </div>
+
+      <!-- 3. Rider Partner -->
+      <div class="role-card selected" id="cardRider" onclick="selectRole('rider')">
+        <div>
+          <div class="card-top">
+            <div class="role-icon" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.4); color: #0ea5e9;">🛵</div>
+            <div class="role-radio"><div class="role-radio-dot"></div></div>
+          </div>
+          <div class="role-badge" style="background: rgba(14, 165, 233, 0.18); color: #38bdf8;">Delivery Partner</div>
+          <h3 class="role-title">Pahadi Rider Partner</h3>
+          <p class="role-desc">Hill missions accept karein, steep staircase altitude dekhein aur OTP delivery karein.</p>
+        </div>
+        <div class="role-footer-tag" style="color: #38bdf8;">
+          <span>🏔️ Turn-by-Turn &bull; Battery Telemetry</span>
+        </div>
+      </div>
+
+      <!-- 4. Super Admin -->
+      <div class="role-card" id="cardAdmin" onclick="selectRole('admin')">
+        <div>
+          <div class="card-top">
+            <div class="role-icon" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #a855f7;">🛡️</div>
+            <div class="role-radio"><div class="role-radio-dot"></div></div>
+          </div>
+          <div class="role-badge" style="background: rgba(168, 85, 247, 0.18); color: #c084fc;">Command Tower</div>
+          <h3 class="role-title">Super Admin</h3>
+          <p class="role-desc">Central dispatch control, terrain ETA debugger, COD cash desk aur fleet telemetry.</p>
+        </div>
+        <div class="role-footer-tag" style="color: #c084fc;">
+          <span>⚡ 5-Role RBAC &bull; God View Map</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Verification Form -->
+    <div class="login-form-box">
+      <div class="form-header">
+        <div>
+          <div style="font-size:11px; font-weight:800; color:#10b981; text-transform:uppercase;">STEP 2: AUTHENTICATE</div>
+          <div class="form-title" id="formHeaderTitle">Logging in as: Pahadi Rider Partner</div>
+        </div>
+        <span id="roleTargetTag" style="font-size:11px; font-weight:800; background:rgba(14,165,233,0.18); color:#38bdf8; border:1px solid #0ea5e9; padding:4px 10px; border-radius:20px;">
+          🛵 TARGET: /rider/
+        </span>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Himachal Operating Town / Hub</label>
+        <div class="input-wrap">
+          <span>📍</span>
+          <select id="userTown">
+            <option value="solan">Solan (Mushroom City - 1,502m)</option>
+            <option value="shimla">Shimla (The Ridge - 2,276m)</option>
+            <option value="dharamshala">Dharamshala & McLeodGanj (1,457m)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Mobile Number (+91)</label>
+        <div class="input-wrap">
+          <span style="font-weight:800; color:#38bdf8;">+91</span>
+          <input type="tel" id="userPhone" value="9805111223" maxlength="10" placeholder="Enter 10-digit mobile number" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">User / Business Name</label>
+        <div class="input-wrap">
+          <span>👤</span>
+          <input type="text" id="userName" value="Aman Thakur (Rider #01)" placeholder="Your Name or Shop Name" />
+        </div>
+      </div>
+
+      <!-- Instant 1-Click Launch Button -->
+      <button class="btn-submit" id="btnSubmitLogin" onclick="handleLoginSubmit()">
+        <span style="font-size:18px;">⚡</span>
+        <span id="btnSubmitText">1-Click Instant Login to Rider Cockpit</span>
+      </button>
+
+      <button class="btn-otp-toggle" onclick="toggleOtpMode()">
+        🔑 Need SMS OTP Verification? (Mock Code: 4421)
+      </button>
+
+      <div id="otpInputBlock" style="display:none; margin-top:14px; padding:14px; background:#08101e; border-radius:14px; border:1px solid rgba(255,255,255,0.08); text-align:center;">
+        <div style="font-size:12px; color:#cbd5e1; margin-bottom:8px;">Enter 4-Digit OTP sent to your phone</div>
+        <div style="display:flex; justify-content:center; gap:10px;">
+          <input type="text" maxlength="1" value="4" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
+          <input type="text" maxlength="1" value="4" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
+          <input type="text" maxlength="1" value="2" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
+          <input type="text" maxlength="1" value="1" style="width:40px; height:44px; text-align:center; background:#101c34; border:1px solid #38bdf8; border-radius:8px; color:#fff; font-size:18px; font-weight:800;" />
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Fullscreen Launch Animation Overlay -->
+  <div class="launch-overlay" id="launchOverlay">
+    <div class="spinner"></div>
+    <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;">Authenticating Session</div>
+    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;" id="launchTitle">Opening Rider Cockpit...</h2>
+    <p style="font-size: 13px; color: #94a3b8; max-width: 380px;" id="launchDesc">Syncing mountain GPS coordinates, staircase cache & live hill weather.</p>
+  </div>
+
+  <footer>
+    PahadiCart &bull; Progressive Web App (PWA) V3.0 &bull; 100% Free & Open-Source Topography Engine
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/shared/pwaInit.js"></script>
+  <script>
+    const ROLES = {
+      customer: {
+        title: 'Pahadi Customer',
+        targetUrl: '/customer/',
+        tagText: '🛒 TARGET: /customer/',
+        tagColor: '#34d399',
+        tagBorder: '#10b981',
+        defaultName: 'Pooja Chandel',
+        defaultPhone: '9816455443',
+        buttonText: '1-Click Instant Login to Customer Store',
+        launchTitle: 'Opening Customer Marketplace...',
+        launchDesc: 'Connecting with Solan & Shimla merchants and doorstep runners.'
+      },
+      merchant: {
+        title: 'Shopkeeper (Vyapar Mandal)',
+        targetUrl: '/merchant/',
+        tagText: '🏪 TARGET: /merchant/',
+        tagColor: '#fbbf24',
+        tagBorder: '#f59e0b',
+        defaultName: 'Anand Sweet Shop & Bakers',
+        defaultPhone: '9816012345',
+        buttonText: '1-Click Instant Login to Merchant Shop',
+        launchTitle: 'Opening Vyapar Mandal Portal...',
+        launchDesc: 'Loading live shop orders, inventory catalog and T+1 settlements.'
+      },
+      rider: {
+        title: 'Pahadi Rider Partner',
+        targetUrl: '/rider/',
+        tagText: '🛵 TARGET: /rider/',
+        tagColor: '#38bdf8',
+        tagBorder: '#0ea5e9',
+        defaultName: 'Aman Thakur (Rider #01)',
+        defaultPhone: '9805111223',
+        buttonText: '1-Click Instant Login to Rider Cockpit',
+        launchTitle: 'Opening Rider Cockpit...',
+        launchDesc: 'Syncing mountain GPS coordinates, staircase cache & hill missions.'
+      },
+      admin: {
+        title: 'Super Admin Command Tower',
+        targetUrl: '/admin/',
+        tagText: '🛡️ TARGET: /admin/',
+        tagColor: '#c084fc',
+        tagBorder: '#a855f7',
+        defaultName: 'Himachal Super Admin',
+        defaultPhone: '9800011111',
+        buttonText: '1-Click Instant Login to Admin Tower',
+        launchTitle: 'Opening Super Admin Command Center...',
+        launchDesc: 'Establishing 5-role RBAC, God-view map, PostGIS & dispatch telemetry.'
       }
     };
+
+    let activeRole = 'rider';
+
+    function selectRole(roleKey) {
+      activeRole = roleKey;
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+      
+      const cardMap = { customer: 'cardCustomer', merchant: 'cardMerchant', rider: 'cardRider', admin: 'cardAdmin' };
+      const card = document.getElementById(cardMap[roleKey]);
+      if (card) card.classList.add('selected');
+
+      const config = ROLES[roleKey];
+      document.getElementById('formHeaderTitle').innerText = 'Logging in as: ' + config.title;
+      const tag = document.getElementById('roleTargetTag');
+      tag.innerText = config.tagText;
+      tag.style.color = config.tagColor;
+      tag.style.borderColor = config.tagBorder;
+      document.getElementById('btnSubmitText').innerText = config.buttonText;
+      document.getElementById('userName').value = config.defaultName;
+      document.getElementById('userPhone').value = config.defaultPhone;
+    }
+
+    function toggleOtpMode() {
+      const el = document.getElementById('otpInputBlock');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleLoginSubmit() {
+      const phone = document.getElementById('userPhone').value.trim();
+      const name = document.getElementById('userName').value.trim();
+      const town = document.getElementById('userTown').value;
+      const config = ROLES[activeRole];
+
+      // Save Session
+      const sessionData = {
+        role: activeRole,
+        name: name || config.defaultName,
+        phone: phone || config.defaultPhone,
+        town: town,
+        loggedInAt: Date.now()
+      };
+
+      if (window.PahadiAuth) {
+        window.PahadiAuth.setSession(sessionData);
+      } else {
+        localStorage.setItem('pahadicart_user_session', JSON.stringify(sessionData));
+        sessionStorage.setItem('pahadicart_auth_role', activeRole);
+      }
+
+      // Show launch overlay
+      const overlay = document.getElementById('launchOverlay');
+      document.getElementById('launchTitle').innerText = config.launchTitle;
+      document.getElementById('launchDesc').innerText = config.launchDesc;
+      overlay.style.display = 'flex';
+
+      setTimeout(() => {
+        window.location.href = config.targetUrl;
+      }, 750);
+    }
+
+    // Check existing session
+    window.addEventListener('DOMContentLoaded', () => {
+      const existing = localStorage.getItem('pahadicart_user_session');
+      if (existing) {
+        try {
+          const parsed = JSON.parse(existing);
+          if (parsed && parsed.role && ROLES[parsed.role]) {
+            const box = document.getElementById('activeSessionBox');
+            const userText = document.getElementById('activeSessionUser');
+            box.style.display = 'flex';
+            userText.innerText = (parsed.name || 'User') + ' (' + ROLES[parsed.role].title + ') • ' + (parsed.town ? parsed.town.toUpperCase() : 'SOLAN');
+
+            document.getElementById('btnContinueActive').onclick = () => {
+              window.location.href = ROLES[parsed.role].targetUrl;
+            };
+            document.getElementById('btnSwitchActive').onclick = () => {
+              localStorage.removeItem('pahadicart_user_session');
+              box.style.display = 'none';
+            };
+          }
+        } catch (e) {}
+      }
+    });
   </script>
-  <script src="shared/liveServices.js?v=2.9.0"></script>
-  <script src="shared/sharedData.js?v=2.9.0"></script>
-  <script src="shared/eventBus.js?v=2.9.0"></script>
-  <script src="shared/hillAudio.js?v=2.9.0"></script>
-  <script src="shared/dispatchEngine.js?v=2.9.0"></script>
-  <script src="shared/simulationEngine.js?v=2.9.0"></script>
-  <script src="shared/simulationModal.js?v=2.9.0"></script>
-  <script src="/shared/offlineQueue.js?v=2.9.0"></script>
-  <script src="/shared/whatsappBot.js?v=2.9.0"></script>
-  <script src="/shared/batchingEngine.js?v=2.9.0"></script>
-  <script src="/shared/gpsTrackingEngine.js?v=2.9.0"></script>
 </body>
 </html>
