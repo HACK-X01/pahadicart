@@ -1,343 +1,224 @@
-// PahadiCart Universal Profile Sidebar & Logout Engine
-// Exactly styled as user reference: Profile Drawer, Role-Tailored Cards & One-Click Logout
+﻿// PahadiCart Universal Profile Sidebar Drawer & Account Manager
 (function() {
-  // Do not mount on login gateway
-  if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-    return;
-  }
+  'use strict';
 
-  // Detect Active Role
-  let currentRole = 'customer';
-  const path = window.location.pathname.toLowerCase();
-  if (path.includes('/rider/')) currentRole = 'rider';
-  else if (path.includes('/merchant/')) currentRole = 'merchant';
-  else if (path.includes('/admin/')) currentRole = 'admin';
+  // 1. Resolve Active Session
+  const session = (window.PahadiAuth && window.PahadiAuth.getSession()) || 
+                  JSON.parse(localStorage.getItem('pahadicart_user_session') || '{}');
 
-  // Read Session
-  let session = null;
-  try {
-    const raw = localStorage.getItem('pahadicart_user_session');
-    if (raw) session = JSON.parse(raw);
-  } catch (e) {}
+  const role = session.role || (function() {
+    const p = window.location.pathname;
+    if (p.includes('/rider')) return 'rider';
+    if (p.includes('/merchant')) return 'merchant';
+    if (p.includes('/admin')) return 'admin';
+    return 'customer';
+  })();
 
-  // Fallback defaults per role
-  const DEFAULTS = {
+  const defaultProfiles = {
     customer: {
-      name: session && session.name ? session.name : 'Pooja Chandel',
-      phone: session && session.phone ? '+91 ' + session.phone : '+91 98164 55443',
-      town: session && session.town ? session.town.toUpperCase() : 'SOLAN (1,502M)',
-      avatarBg: '#8b5cf6',
-      badge: 'Himachal Shopper'
+      name: 'Pooja Chandel',
+      phone: '+91 98164 55443',
+      town: (session.town || 'Solan').toUpperCase(),
+      badge: 'Solan Resident (Upper Mall)'
     },
     rider: {
-      name: session && session.name ? session.name : 'Aman Thakur (Rider #01)',
-      phone: session && session.phone ? '+91 ' + session.phone : '+91 98051 11223',
-      town: session && session.town ? session.town.toUpperCase() : 'SOLAN HILL SECTOR',
-      avatarBg: '#0ea5e9',
-      badge: 'Verified Hill Pilot'
+      name: 'Karan Negi',
+      phone: '+91 98160 88990',
+      town: (session.town || 'Solan').toUpperCase(),
+      badge: 'Hill Pro Rider (MCWG Active)'
     },
     merchant: {
-      name: session && session.name ? session.name : 'Anand Sweet Shop & Bakers',
-      phone: session && session.phone ? '+91 ' + session.phone : '+91 98160 12345',
-      town: session && session.town ? session.town.toUpperCase() : 'UPPER MALL, SOLAN',
-      avatarBg: '#f59e0b',
-      badge: 'Vyapar Mandal Merchant'
+      name: 'Rajesh Sharma',
+      phone: '+91 98160 77889',
+      town: (session.town || 'Solan').toUpperCase(),
+      badge: 'Vyapar Mandal Member (Mall Road)'
     },
     admin: {
-      name: 'Super Admin Commander',
-      phone: '+91 98000 11111',
-      town: 'SHIMLA HQ (2,205M)',
-      avatarBg: '#10b981',
-      badge: 'Full Operations Access'
+      name: 'Pahadi Admin Command',
+      phone: '+91 98160 00001',
+      town: 'STATE COMMAND (HIMACHAL)',
+      badge: 'Central Dispatch Tower'
     }
   };
 
-  const user = DEFAULTS[currentRole] || DEFAULTS.customer;
+  const user = {
+    name: session.name || defaultProfiles[role]?.name || 'Pahadi User',
+    phone: session.phone ? ('+91 ' + session.phone.replace('+91', '').trim()) : defaultProfiles[role]?.phone,
+    town: (session.town || defaultProfiles[role]?.town || 'SOLAN').toUpperCase(),
+    badge: defaultProfiles[role]?.badge || 'Verified Member'
+  };
 
-  // 1. Inject Stylesheet
-  const style = document.createElement('style');
-  style.id = 'pahadiProfileDrawerStyles';
-  style.textContent = `
-    /* Top Profile Trigger Button */
-    .pahadi-profile-trigger-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      padding: 5px 12px;
-      border-radius: 9999px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    }
-    .pahadi-profile-trigger-btn:hover {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: #10b981;
-    }
-    .pahadi-avatar-dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: ${user.avatarBg};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: white;
-      font-weight: 800;
-    }
-
-    /* Backdrop Overlay */
+  // 2. Inject CSS Styles
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `
     .pahadi-drawer-backdrop {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 100000000;
+      background: rgba(3, 7, 18, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999999;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .pahadi-drawer-backdrop.active {
       opacity: 1;
       visibility: visible;
     }
-
-    /* Slide-out Profile Panel (Matching User Screenshots Exactly) */
     .pahadi-profile-drawer {
       position: fixed;
       top: 0;
-      left: 0;
-      bottom: 0;
+      right: -380px;
       width: 100%;
-      max-width: 440px;
-      background: #f8fafc;
-      color: #0f172a;
-      z-index: 100000001;
-      box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
-      transform: translateX(-100%);
-      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 360px;
+      height: 100%;
+      background: #0b1329;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: -15px 0 35px rgba(0, 0, 0, 0.7);
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      -webkit-overflow-scrolling: touch;
+      z-index: 1000000;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+      box-sizing: border-box;
+      padding-top: max(0px, env(safe-area-inset-top));
+      padding-bottom: max(0px, env(safe-area-inset-bottom));
     }
     .pahadi-profile-drawer.active {
-      transform: translateX(0);
+      transform: translateX(-380px);
     }
 
-    /* Top Navigation Header */
+    @media (max-width: 380px) {
+      .pahadi-profile-drawer {
+        max-width: 100%;
+        right: -100vw;
+      }
+      .pahadi-profile-drawer.active {
+        transform: translateX(-100vw);
+      }
+    }
+
+    /* Top Nav */
     .drawer-top-nav {
       display: flex;
       align-items: center;
-      gap: 14px;
+      justify-content: space-between;
       padding: 16px 20px;
-      background: #ffffff;
-      border-bottom: 1px solid #f1f5f9;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #090f1f;
+    }
+    .drawer-nav-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
     }
     .drawer-back-btn {
-      width: 36px;
-      height: 36px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 1px solid #e2e8f0;
-      background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      color: #334155;
       font-size: 16px;
-      font-weight: 800;
-      transition: all 0.15s;
+      cursor: pointer;
+      transition: all 0.2s;
     }
     .drawer-back-btn:hover {
-      background: #f1f5f9;
-      color: #0f172a;
-    }
-    .drawer-nav-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 19px;
-      font-weight: 800;
-      color: #0f172a;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
     }
 
-    /* User Profile Header Card */
+    /* User Profile Card */
     .drawer-user-card {
+      padding: 20px;
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, rgba(11, 19, 41, 0) 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 20px;
-      background: #ffffff;
     }
     .drawer-big-avatar {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      background: ${user.avatarBg};
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #022c22;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      color: #ffffff;
+      font-size: 26px;
+      font-weight: 900;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
       flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
     }
     .drawer-user-meta h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 800;
-      color: #0f172a;
-      line-height: 1.2;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1.25;
     }
     .drawer-user-meta p {
-      font-size: 13.5px;
-      color: #64748b;
-      margin-top: 3px;
+      font-size: 13px;
+      color: #94a3b8;
+      margin: 3px 0 0;
       font-weight: 600;
     }
     .drawer-badge {
-      display: inline-block;
-      margin-top: 5px;
-      padding: 2px 8px;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      padding: 3px 9px;
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
       font-size: 10.5px;
-      font-weight: 700;
-      color: #475569;
-    }
-
-    /* 3 Quick Action Cards Row (Exact Match to User Screenshots) */
-    .drawer-quick-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      padding: 4px 20px 16px;
-      background: #ffffff;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .quick-action-card {
-      background: #ffffff;
-      border: 1.5px solid #f1f5f9;
-      border-radius: 14px;
-      padding: 16px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-      transition: all 0.2s;
-    }
-    .quick-action-card:hover {
-      border-color: #cbd5e1;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    }
-    .quick-card-icon {
-      font-size: 24px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .quick-card-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: #334155;
-      line-height: 1.3;
-    }
-
-    /* Update Available Banner */
-    .drawer-banner-box {
-      margin: 14px 20px;
-      padding: 12px 14px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-    }
-    .banner-gear-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    .banner-text-wrap {
-      flex: 1;
-      min-width: 0;
-    }
-    .banner-title {
-      font-size: 13px;
       font-weight: 800;
-      color: #0f172a;
-    }
-    .banner-sub {
-      font-size: 11px;
-      color: #64748b;
-      margin-top: 1px;
-    }
-    .badge-new-pill {
-      background: #10b981;
-      color: #ffffff;
-      padding: 3px 8px;
       border-radius: 9999px;
-      font-size: 10px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 2px;
     }
 
-    /* Section Groups (Your Information & Other Information) */
+    /* Scrollable Drawer List */
+    .drawer-scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      -webkit-overflow-scrolling: touch;
+    }
     .drawer-section-title {
-      padding: 12px 20px 6px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 15px;
+      font-size: 11px;
       font-weight: 800;
-      color: #0f172a;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 14px 4px 8px;
     }
     .drawer-info-group {
-      margin: 4px 20px 14px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      background: #111c38;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      margin-bottom: 12px;
     }
     .drawer-list-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
-      border-bottom: 1px solid #f1f5f9;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       cursor: pointer;
       transition: background 0.15s;
     }
     .drawer-list-item:last-child {
       border-bottom: none;
     }
-    .drawer-list-item:hover {
-      background: #f8fafc;
+    .drawer-list-item:hover, .drawer-list-item:active {
+      background: rgba(255, 255, 255, 0.04);
     }
     .item-left {
       display: flex;
@@ -345,353 +226,345 @@
       gap: 12px;
     }
     .item-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      background: #f1f5f9;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
-      color: #334155;
+      font-size: 16px;
+      flex-shrink: 0;
     }
     .item-label {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #1e293b;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
     }
     .item-subtext {
       font-size: 11px;
-      font-weight: 500;
-      color: #64748b;
+      color: #94a3b8;
       margin-top: 1px;
     }
     .item-chevron {
-      color: #94a3b8;
+      color: #64748b;
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    /* Bottom Log Out Section */
+    /* Bottom Actions */
     .drawer-bottom-wrap {
-      margin-top: auto;
-      padding: 20px;
-      background: #f8fafc;
+      padding: 14px 16px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: #090f1f;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
-    .btn-drawer-logout {
+    .btn-drawer-install {
       width: 100%;
-      padding: 14px;
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 9999px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 15px;
+      padding: 11px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.25) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: 12px;
+      color: #34d399;
+      font-size: 13px;
       font-weight: 800;
-      color: #ef4444;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+    }
+    .btn-drawer-install:hover {
+      background: rgba(16, 185, 129, 0.3);
+    }
+    .btn-drawer-logout {
+      width: 100%;
+      padding: 11px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
     .btn-drawer-logout:hover {
-      background: #fef2f2;
-      border-color: #fca5a5;
+      background: rgba(239, 68, 68, 0.22);
+      color: #ffffff;
     }
     .btn-drawer-switch {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       background: transparent;
-      border: 1px solid #cbd5e1;
-      border-radius: 9999px;
-      font-size: 12.5px;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      color: #94a3b8;
+      font-size: 12px;
       font-weight: 700;
-      color: #475569;
       cursor: pointer;
+      text-align: center;
     }
     .btn-drawer-switch:hover {
-      background: #f1f5f9;
+      color: #ffffff;
+      border-color: #10b981;
     }
     .drawer-version-tag {
       text-align: center;
+      font-size: 10.5px;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    /* Top Nav Trigger Pill */
+    .pahadi-profile-trigger-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .pahadi-profile-trigger-btn:hover {
+      background: rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+    .pahadi-avatar-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #022c22;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 11px;
-      color: #94a3b8;
-      margin-top: 4px;
+      font-weight: 900;
     }
   `;
-  document.head.appendChild(style);
+  document.head.appendChild(styleEl);
 
-  // 2. Generate Role-Specific Drawer HTML
+  // Role-Specific Section Content
   function getRoleSectionsHtml() {
-    if (currentRole === 'customer') {
-      // Customer: E-gift cards, rewards, zepto cash REMOVED as requested!
+    if (role === 'customer') {
       return `
-        <!-- 3 Quick Cards -->
-        <div class="drawer-quick-row">
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('orders')">
-            <div class="quick-card-icon">👜</div>
-            <div class="quick-card-label">Your Orders</div>
-          </div>
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('support')">
-            <div class="quick-card-icon">💬</div>
-            <div class="quick-card-label">Help & Support</div>
-          </div>
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('addresses')">
-            <div class="quick-card-icon">📍</div>
-            <div class="quick-card-label">Saved Addresses</div>
-          </div>
-        </div>
-
-        <!-- Update Available Banner -->
-        <div class="drawer-banner-box" onclick="window.pahadiProfile.handleAction('update')">
-          <div class="banner-gear-icon">⚙️</div>
-          <div class="banner-text-wrap">
-            <div class="banner-title">Update Available</div>
-            <div class="banner-sub">Enjoy a more seamless hill shopping experience</div>
-          </div>
-          <div class="badge-new-pill">New ➔</div>
-        </div>
-
-        <!-- Section 1: Your Information -->
-        <div class="drawer-section-title">Your Information</div>
-        <div class="drawer-info-group">
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('refunds')">
-            <div class="item-left">
-              <div class="item-icon">₹</div>
-              <div>
-                <div class="item-label">Your Refunds</div>
-                <div class="item-subtext">Instant hill settlement balance</div>
+        <div class="drawer-scroll-body">
+          <div class="drawer-section-title">My Himachal Account</div>
+          <div class="drawer-info-group">
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('orders')">
+              <div class="item-left">
+                <div class="item-icon">🛍️</div>
+                <div class="item-label">My Orders & Live Hill Tracker</div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('support')">
-            <div class="item-left">
-              <div class="item-icon">💬</div>
-              <div class="item-label">Help & Support</div>
-            </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('addresses')">
-            <div class="item-left">
-              <div class="item-icon">📍</div>
-              <div>
-                <div class="item-label">Saved Addresses</div>
-                <div class="item-subtext">Doorstep stairway count & landmarks</div>
+            <div class="item-list-item drawer-list-item" onclick="window.pahadiProfile.handleAction('addresses')">
+              <div class="item-left">
+                <div class="item-icon">📍</div>
+                <div>
+                  <div class="item-label">Delivery Addresses & Staircases</div>
+                  <div class="item-subtext">Solan Mall Road • 42 Steps</div>
+                </div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('refunds')">
+              <div class="item-left">
+                <div class="item-icon">💰</div>
+                <div class="item-label">Refunds & Hill Weather Adjustments</div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
+            </div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('profile')">
+              <div class="item-left">
+                <div class="item-icon">👤</div>
+                <div class="item-label">Profile Information</div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
+            </div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('payments')">
+              <div class="item-left">
+                <div class="item-icon">💳</div>
+                <div class="item-label">Payment Methods & UPI COD</div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
+            </div>
           </div>
 
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('profile')">
-            <div class="item-left">
-              <div class="item-icon">👤</div>
-              <div class="item-label">Profile Details</div>
+          <div class="drawer-section-title">Help & Services</div>
+          <div class="drawer-info-group">
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('support')">
+              <div class="item-left">
+                <div class="item-icon">💬</div>
+                <div>
+                  <div class="item-label">Himachal Customer Support</div>
+                  <div class="item-subtext">24x7 Hill Incident Desk</div>
+                </div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('payments')">
-            <div class="item-left">
-              <div class="item-icon">💳</div>
-              <div class="item-label">Payment Management</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('suggest')">
+              <div class="item-left">
+                <div class="item-icon">💡</div>
+                <div class="item-label">Suggest Local Pahadi Products</div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-        </div>
-
-        <!-- Section 2: Other Information -->
-        <div class="drawer-section-title">Other Information</div>
-        <div class="drawer-info-group">
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('suggest')">
-            <div class="item-left">
-              <div class="item-icon">⭐</div>
-              <div class="item-label">Suggest Products</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('notifications')">
+              <div class="item-left">
+                <div class="item-icon">🔔</div>
+                <div class="item-label">Push Notification Preferences</div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('notifications')">
-            <div class="item-left">
-              <div class="item-icon">🔔</div>
-              <div class="item-label">Notifications</div>
-            </div>
-            <div class="item-chevron">➔</div>
-          </div>
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('general')">
-            <div class="item-left">
-              <div class="item-icon">ℹ️</div>
-              <div class="item-label">General Info & Hill SLA</div>
-            </div>
-            <div class="item-chevron">➔</div>
           </div>
         </div>
       `;
-    } else if (currentRole === 'rider') {
-      // Rider Partner
+    } else if (role === 'rider') {
       return `
-        <!-- 3 Quick Cards -->
-        <div class="drawer-quick-row">
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('rider_missions')">
-            <div class="quick-card-icon">🛵</div>
-            <div class="quick-card-label">Active Missions</div>
-          </div>
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('rider_earnings')">
-            <div class="quick-card-icon">💰</div>
-            <div class="quick-card-label">Cash Float</div>
-          </div>
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('rider_sos')">
-            <div class="quick-card-icon">🆘</div>
-            <div class="quick-card-label">Hill SOS</div>
-          </div>
-        </div>
-
-        <div class="drawer-section-title">Rider Information</div>
-        <div class="drawer-info-group">
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_kyc')">
-            <div class="item-left">
-              <div class="item-icon">🪪</div>
-              <div>
-                <div class="item-label">Aadhaar & PAN Verification</div>
-                <div class="item-subtext">UIDAI & NSDL Verified ✅</div>
+        <div class="drawer-scroll-body">
+          <div class="drawer-section-title">Rider Cockpit & Shifts</div>
+          <div class="drawer-info-group">
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_missions')">
+              <div class="item-left">
+                <div class="item-icon">🏍️</div>
+                <div class="item-label">Active Missions & Dispatch Queue</div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_vehicle')">
-            <div class="item-left">
-              <div class="item-icon">🏍️</div>
-              <div>
-                <div class="item-label">Driving License & Vehicle RC</div>
-                <div class="item-subtext">Permanent MCWG Valid ✅</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_earnings')">
+              <div class="item-left">
+                <div class="item-icon">💵</div>
+                <div>
+                  <div class="item-label">Today Earnings & COD Cash Ledger</div>
+                  <div class="item-subtext">Direct UPI Payouts</div>
+                </div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_stairs')">
-            <div class="item-left">
-              <div class="item-icon">🧗</div>
-              <div>
-                <div class="item-label">Stair Climbs & Elevation</div>
-                <div class="item-subtext">420 Steps Climbed Today</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_sos')">
+              <div class="item-left">
+                <div class="item-icon">🚨</div>
+                <div>
+                  <div class="item-label">Hill Emergency SOS Center</div>
+                  <div class="item-subtext">108 & Highway Patrol Linked</div>
+                </div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
           </div>
 
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('payments')">
-            <div class="item-left">
-              <div class="item-icon">💳</div>
-              <div class="item-label">Payout Bank Account / UPI</div>
+          <div class="drawer-section-title">Verified Documents & Bike</div>
+          <div class="drawer-info-group">
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_kyc')">
+              <div class="item-left">
+                <div class="item-icon">🪪</div>
+                <div>
+                  <div class="item-label">Aadhaar & PAN Verification</div>
+                  <div class="item-subtext">100% Verified Active</div>
+                </div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-        </div>
-
-        <div class="drawer-section-title">Work & Protocols</div>
-        <div class="drawer-info-group">
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('weather')">
-            <div class="item-left">
-              <div class="item-icon">🌧️</div>
-              <div class="item-label">Weather Surge & Anti-Skid Chains</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_vehicle')">
+              <div class="item-left">
+                <div class="item-icon">🛵</div>
+                <div>
+                  <div class="item-label">DL, RC & Insurance Policy</div>
+                  <div class="item-subtext">Valid 2-Wheeler Commercial</div>
+                </div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('notifications')">
-            <div class="item-left">
-              <div class="item-icon">🔔</div>
-              <div class="item-label">Order Broadcast Notifications</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('rider_stairs')">
+              <div class="item-left">
+                <div class="item-icon">🪜</div>
+                <div class="item-label">Mountain Staircase Climb Log</div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
           </div>
         </div>
       `;
     } else {
-      // Merchant / Vyapar Mandal
       return `
-        <!-- 3 Quick Cards -->
-        <div class="drawer-quick-row">
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('merchant_orders')">
-            <div class="quick-card-icon">🛍️</div>
-            <div class="quick-card-label">Live Orders</div>
-          </div>
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('merchant_wallet')">
-            <div class="quick-card-icon">💵</div>
-            <div class="quick-card-label">T+1 Wallet</div>
-          </div>
-          <div class="quick-action-card" onclick="window.pahadiProfile.handleAction('merchant_catalog')">
-            <div class="quick-card-icon">📦</div>
-            <div class="quick-card-label">Store Inventory</div>
-          </div>
-        </div>
-
-        <div class="drawer-section-title">Store & Compliance</div>
-        <div class="drawer-info-group">
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_fssai')">
-            <div class="item-left">
-              <div class="item-icon">🥗</div>
-              <div>
-                <div class="item-label">FSSAI License & Certificate</div>
-                <div class="item-subtext">14-Digit Active License ✅</div>
+        <div class="drawer-scroll-body">
+          <div class="drawer-section-title">Merchant Vyapar Store</div>
+          <div class="drawer-info-group">
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merchant_orders')">
+              <div class="item-left">
+                <div class="item-icon">📦</div>
+                <div class="item-label">Live Incoming Orders Board</div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_gst')">
-            <div class="item-left">
-              <div class="item-icon">🏛️</div>
-              <div>
-                <div class="item-label">GSTIN Himachal Certificate</div>
-                <div class="item-subtext">State Code 02 Active ✅</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merchant_wallet')">
+              <div class="item-left">
+                <div class="item-icon">🏦</div>
+                <div>
+                  <div class="item-label">Vyapar Settlement Wallet</div>
+                  <div class="item-subtext">T+1 Auto Payouts</div>
+                </div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_pan')">
-            <div class="item-left">
-              <div class="item-icon">💳</div>
-              <div>
-                <div class="item-label">Business PAN Card</div>
-                <div class="item-subtext">Verified Enterprise ✅</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merchant_catalog')">
+              <div class="item-left">
+                <div class="item-icon">📋</div>
+                <div class="item-label">Item Catalog & Live Inventory</div>
               </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
           </div>
 
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_photos')">
-            <div class="item-left">
-              <div class="item-icon">🏪</div>
-              <div class="item-label">Store Facade & Counter Images</div>
+          <div class="drawer-section-title">Verified Store Documents</div>
+          <div class="drawer-info-group">
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_fssai')">
+              <div class="item-left">
+                <div class="item-icon">📄</div>
+                <div>
+                  <div class="item-label">FSSAI Food License</div>
+                  <div class="item-subtext">Active License Verified</div>
+                </div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-        </div>
-
-        <div class="drawer-section-title">Store Settings</div>
-        <div class="drawer-info-group">
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('timings')">
-            <div class="item-left">
-              <div class="item-icon">⏰</div>
-              <div class="item-label">Store Operating Hours & Surge Lock</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_gst')">
+              <div class="item-left">
+                <div class="item-icon">🏛️</div>
+                <div>
+                  <div class="item-label">GSTIN Himachal Certificate</div>
+                  <div class="item-subtext">State Code 02 Active</div>
+                </div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
-          </div>
-          <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('notifications')">
-            <div class="item-left">
-              <div class="item-icon">🔔</div>
-              <div class="item-label">Order Chime & WhatsApp Broadcast</div>
+            <div class="drawer-list-item" onclick="window.pahadiProfile.handleAction('merch_pan')">
+              <div class="item-left">
+                <div class="item-icon">💳</div>
+                <div>
+                  <div class="item-label">Business PAN Card</div>
+                  <div class="item-subtext">Verified Enterprise</div>
+                </div>
+              </div>
+              <div class="item-chevron">&rsaquo;</div>
             </div>
-            <div class="item-chevron">➔</div>
           </div>
         </div>
       `;
@@ -711,7 +584,8 @@
     <!-- Top Nav -->
     <div class="drawer-top-nav">
       <button class="drawer-back-btn" onclick="window.pahadiProfile.close()">&larr;</button>
-      <div class="drawer-nav-title">Profile</div>
+      <div class="drawer-nav-title">My Account & Profile</div>
+      <div style="width: 32px;"></div>
     </div>
 
     <!-- User Meta -->
@@ -720,15 +594,19 @@
       <div class="drawer-user-meta">
         <h2>${user.name}</h2>
         <p>${user.phone}</p>
-        <div class="drawer-badge">🏔️ ${user.town} &bull; ${user.badge}</div>
+        <div class="drawer-badge">📍 ${user.town} • ${user.badge}</div>
       </div>
     </div>
 
     <!-- Dynamic Sections -->
     ${getRoleSectionsHtml()}
 
-    <!-- Bottom Actions: Logout -->
+    <!-- Bottom Actions: Install, Logout & Switch -->
     <div class="drawer-bottom-wrap">
+      <button class="btn-drawer-install" onclick="window.pahadiProfile.handleInstall()">
+        <span>📲</span>
+        <span>Download / Install App</span>
+      </button>
       <button class="btn-drawer-logout" onclick="window.pahadiProfile.logout()">
         <span>🚪</span>
         <span>Log Out</span>
@@ -737,7 +615,7 @@
         🔄 Switch Role / Portal
       </button>
       <div class="drawer-version-tag">
-        PahadiCart PWA v3.0 &bull; Build 26.8.6 v206-8
+        PahadiCart PWA v4.0 • Himachal Hyperlocal
       </div>
     </div>
   `;
@@ -745,7 +623,7 @@
   backdrop.appendChild(drawer);
   document.body.appendChild(backdrop);
 
-  // Close when clicking outside drawer
+  // Close on backdrop click
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop) window.pahadiProfile.close();
   });
@@ -759,6 +637,13 @@
     close() {
       backdrop.classList.remove('active');
       drawer.classList.remove('active');
+    },
+    handleInstall() {
+      if (window.PahadiPWA && window.PahadiPWA.promptInstall) {
+        window.PahadiPWA.promptInstall();
+      } else {
+        alert('PahadiCart App installer is ready.');
+      }
     },
     logout() {
       if (confirm('Kya aap PahadiCart se logout karna chahte hain?')) {
@@ -776,37 +661,32 @@
         orders: 'Opening active order queue & staircase tracking...',
         support: 'Connecting with PahadiCart Solan-Shimla WhatsApp Support...',
         addresses: 'Saved Addresses: 4 hill drop locations configured (Staircase count: 42 steps).',
-        refunds: 'Refunds Balance: ₹0.00 (All orders settled smoothly).',
+        refunds: 'Refunds Balance: Rs 0.00 (All orders settled smoothly).',
         profile: 'Profile Details: Name: ' + user.name + ' • Phone: ' + user.phone,
         payments: 'Payment Management: UPI AutoPay, Cash on Delivery (COD) Active.',
         suggest: 'Opening suggestion box for local Himachal organic items...',
         notifications: 'Push notifications are ACTIVE for hill delivery alerts.',
         general: 'PahadiCart: Himachal 2-Hour Hyperlocal Network (Solan, Shimla, Dharamshala).',
-        update: 'Your app is already running the latest PWA v3.0 build!',
         rider_missions: 'Showing active hill delivery missions...',
-        rider_earnings: 'Today Earnings: ₹840 • Cash Collected: ₹1,250.',
+        rider_earnings: 'Today Earnings: Rs 1,840 • Cash Collected: Rs 11,250.',
         rider_sos: '🚨 Hill SOS Activated: Emergency response notified.',
         rider_kyc: 'Aadhaar & PAN are verified and active on file.',
         rider_vehicle: 'Vehicle HP 14 B 4210: Permanent MCWG License Valid.',
         rider_stairs: 'Staircase Climb: 420 steps logged today across Upper Bazaar.',
-        weather: 'Current weather condition: Rain Alert (+15 min buffer active).',
         merchant_orders: 'Switching to live orders board...',
-        merchant_wallet: 'T+1 Settlement Balance: ₹14,280 ready for payout.',
+        merchant_wallet: 'T+1 Settlement Balance: Rs 14,280 ready for payout.',
         merchant_catalog: 'Opening store inventory & item pricing...',
         merch_fssai: 'FSSAI License: 10924001004210 (Valid until 2029).',
         merch_gst: 'GSTIN: 02AAACH1234F1Z8 (Himachal Pradesh).',
-        merch_pan: 'Business PAN: AAACH1234F verified on record.',
-        merch_photos: 'Store front & shelf photos are uploaded.',
-        timings: 'Store hours: 07:30 AM to 09:30 PM.'
+        merch_pan: 'Business PAN: AAACH1234F verified on record.'
       };
 
       alert(messages[actionKey] || 'PahadiCart: ' + actionKey);
     }
   };
 
-  // 5. Inject Profile Button into Navigation Bar
+  // 5. Inject Profile Trigger in Navbars
   function injectNavProfileButton() {
-    // Look for top navbar
     const navActions = document.querySelector('.nav-actions') || 
                        document.querySelector('.header-right') || 
                        document.querySelector('.top-bar-right') ||
@@ -827,7 +707,6 @@
       navActions.prepend(btn);
     }
 
-    // Also attach to any existing profile button
     document.querySelectorAll('[data-action="profile"], #btnProfile, .profile-icon-btn').forEach(el => {
       el.onclick = (e) => {
         e.preventDefault();

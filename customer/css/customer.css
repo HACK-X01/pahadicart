@@ -804,3 +804,108 @@ body {
     padding: 6px 10px !important;
   }
 }
+
+/* Universal Mobile Responsive Grid & Compact Devices (320px - 640px) */
+@media (max-width: 640px) {
+  .hero-banner {
+    padding: 16px 12px;
+    margin: 10px auto;
+    border-radius: var(--radius-lg);
+  }
+  .hero-title {
+    font-size: 19px;
+  }
+  .hero-subtitle {
+    font-size: 12.5px;
+  }
+  .products-section {
+    padding: 0 12px;
+  }
+  .category-container {
+    padding: 0 12px;
+    margin-bottom: 12px;
+  }
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .product-card {
+    padding: 10px;
+  }
+  .product-image-box {
+    height: 120px;
+  }
+  .product-title {
+    font-size: 13px;
+  }
+  .product-price {
+    font-size: 15px;
+  }
+  .btn-add-cart {
+    padding: 7px 10px;
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 375px) {
+  .products-section {
+    padding: 0 8px;
+  }
+  .category-container {
+    padding: 0 8px;
+    margin-bottom: 10px;
+  }
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .cat-pill {
+    padding: 6px 12px;
+    font-size: 11.5px;
+  }
+  .product-card {
+    padding: 8px;
+  }
+  .product-image-box {
+    height: 105px;
+  }
+  .product-title {
+    font-size: 12px;
+  }
+  .product-desc {
+    font-size: 10px;
+  }
+  .product-price {
+    font-size: 14px;
+  }
+  .btn-add-cart {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+  .navbar {
+    padding: 8px 10px;
+  }
+  .nav-actions {
+    gap: 6px;
+  }
+  .nav-actions button, .town-select-btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 325px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .product-image-box {
+    height: 140px;
+  }
+}
+
+/* Safe Area Insets for iPhones with Notches & Home Bars */
+body {
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-bottom: max(80px, calc(70px + env(safe-area-inset-bottom)));
+}

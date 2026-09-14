@@ -345,3 +345,91 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Universal Mobile Responsive Engine for Merchant Portal (320px - 768px) */
+@media (max-width: 768px) {
+  .merchant-header {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .shop-info-group {
+    gap: 10px;
+  }
+  .shop-avatar {
+    font-size: 28px;
+    padding: 6px 10px;
+  }
+  .shop-name-title {
+    font-size: 16px;
+  }
+  .header-controls {
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .metrics-deck {
+    padding: 12px 14px;
+  }
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .metric-box {
+    padding: 10px 12px;
+  }
+  .metric-val {
+    font-size: 18px;
+  }
+  .board-container {
+    padding: 0 14px 20px;
+  }
+}
+
+@media (max-width: 375px) {
+  .merchant-header {
+    padding: 10px 10px;
+  }
+  .shop-name-title {
+    font-size: 15px;
+  }
+  .metrics-deck {
+    padding: 10px 10px;
+  }
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .metric-box {
+    padding: 8px 8px;
+  }
+  .metric-label {
+    font-size: 10px;
+  }
+  .metric-val {
+    font-size: 16px;
+  }
+  .metric-sub {
+    font-size: 9.5px;
+  }
+  .board-container {
+    padding: 0 8px 16px;
+  }
+  .order-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 325px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+body {
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-bottom: max(60px, calc(50px + env(safe-area-inset-bottom)));
+}

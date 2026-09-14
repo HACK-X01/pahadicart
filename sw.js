@@ -1,5 +1,5 @@
-// PahadiCart Himalayan Offline Cache Service Worker v3.0
-const CACHE_NAME = 'pahadicart-pwa-v3';
+﻿// PahadiCart Himalayan Offline Cache Service Worker v4.0
+const CACHE_NAME = 'pahadicart-pwa-v4';
 
 const STATIC_SHELL = [
   '/',
@@ -28,6 +28,7 @@ const STATIC_SHELL = [
   '/admin/css/components.css',
   '/admin/css/responsive.css',
   '/shared/pwaInit.js',
+  '/shared/profileSidebar.js',
   '/shared/liveServices.js',
   '/shared/sharedData.js',
   '/shared/eventBus.js',
@@ -40,7 +41,7 @@ const STATIC_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching Himalayan shells & offline resources');
+      console.log('[SW] Pre-caching Himalayan shells & offline resources v4');
       return cache.addAll(STATIC_SHELL).catch((err) => {
         console.warn('[SW] Cache addAll notice (some assets may cache on first fetch):', err);
       });

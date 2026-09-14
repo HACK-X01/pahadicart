@@ -18,7 +18,25 @@ document.addEventListener("DOMContentLoaded", () => {
   renderSafetyAndCashDesk();
   renderSupportDesk();
   renderGrowthAnalytics();
+  
   updateMetricsDashboard();
+
+  // Cross-portal event synchronization
+  if (window.pahadiBus) {
+    window.pahadiBus.on('ORDER_PLACED', (order) => {
+      if (typeof playPahadiChime === 'function') playPahadiChime();
+      if (typeof renderOrdersFeed === 'function') renderOrdersFeed();
+      updateMetricsDashboard();
+      if (typeof renderFinancialLedger === 'function') renderFinancialLedger();
+    });
+
+    window.pahadiBus.on('ORDER_STATUS_CHANGED', () => {
+      if (typeof renderOrdersFeed === 'function') renderOrdersFeed();
+      updateMetricsDashboard();
+      if (typeof renderFinancialLedger === 'function') renderFinancialLedger();
+    });
+  }
+
 
   // Support direct hash routing
   if (window.location.hash) {
@@ -154,14 +172,26 @@ window.switchTab = switchTab;
 
 function updateMetricsDashboard() {
   const currentTown = document.getElementById("townSelect")?.value || "solan";
-  const townOrders = PahadiMockDB.orders.filter(o => o.town === currentTown);
-  const townMerchants = PahadiMockDB.merchants.filter(m => m.town === currentTown);
-  const townRiders = PahadiMockDB.riders.filter(r => r.town === currentTown);
+  
+  if (window.pahadiBus) {
+    const stats = window.pahadiBus.getStats(currentTown);
+    const gmvEl = document.getElementById("metricGMV");
+    const commEl = document.getElementById("metricCommission");
+    const ordersEl = document.getElementById("metricActiveOrders");
+    const ridersEl = document.getElementById("metricRidersOnline");
 
-  const totalGMV = townOrders.reduce((sum, o) => sum + o.amount, 0) + 18450;
+    if (gmvEl) gmvEl.textContent = "₹" + stats.gmv.toLocaleString('en-IN');
+    if (commEl) commEl.textContent = "₹" + stats.platformCommission.toLocaleString('en-IN');
+    if (ordersEl) ordersEl.textContent = stats.activeOrdersCount;
+    if (ridersEl) ridersEl.textContent = stats.activeRidersCount;
+    return;
+  }
+
+  const townOrders = PahadiMockDB.orders.filter(o => o.town === currentTown);
+  const totalGMV = townOrders.reduce((sum, o) => sum + o.amount, 0);
   const platformEarnings = Math.round(totalGMV * 0.11) + (townOrders.length * 5);
   const activeOrdersCount = townOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length;
-  const activeRidersCount = townRiders.filter(r => r.status !== 'offline').length;
+  const activeRidersCount = 8;
 
   const gmvEl = document.getElementById("metricGMV");
   const commEl = document.getElementById("metricCommission");
@@ -171,7 +201,7 @@ function updateMetricsDashboard() {
   if (gmvEl) gmvEl.textContent = "₹" + totalGMV.toLocaleString('en-IN');
   if (commEl) commEl.textContent = "₹" + platformEarnings.toLocaleString('en-IN');
   if (ordersEl) ordersEl.textContent = activeOrdersCount;
-  if (ridersEl) ridersEl.textContent = activeRidersCount + " / " + townRiders.length;
+  if (ridersEl) ridersEl.textContent = activeRidersCount;
 }
 
 function showToast(message) {

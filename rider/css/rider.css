@@ -314,3 +314,137 @@ body {
   border-radius: 8px;
   margin: 8px 0;
 }
+
+/* Universal Mobile Responsive Engine for Rider Cockpit (320px - 600px) */
+@media (max-width: 420px) {
+  .rider-top-bar {
+    padding: 10px 14px;
+  }
+  .rider-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+  }
+  .rider-name {
+    font-size: 14px;
+  }
+  .duty-toggle {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .telemetry-deck {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+  .stat-box {
+    padding: 10px 12px;
+  }
+  .stat-val {
+    font-size: 18px;
+  }
+  .cockpit-view {
+    padding: 0 14px;
+  }
+  .sos-strip {
+    padding: 0 14px;
+  }
+  .sos-btn {
+    padding: 10px;
+    font-size: 12px;
+  }
+  .incoming-radar-card {
+    padding: 14px;
+  }
+  .radar-payout {
+    font-size: 19px;
+  }
+  .big-action-btn {
+    height: 50px;
+    font-size: 15px;
+  }
+  .otp-input-field {
+    width: 150px;
+    font-size: 22px;
+    letter-spacing: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .rider-top-bar {
+    padding: 8px 10px;
+  }
+  .rider-info {
+    gap: 8px;
+  }
+  .rider-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 19px;
+  }
+  .rider-name {
+    font-size: 13px;
+  }
+  .rider-bike {
+    font-size: 10px;
+  }
+  .duty-toggle {
+    padding: 5px 8px;
+    font-size: 11px;
+    gap: 4px;
+  }
+  .telemetry-deck {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .stat-box {
+    padding: 8px 10px;
+  }
+  .stat-lbl {
+    font-size: 9.5px;
+  }
+  .stat-val {
+    font-size: 16px;
+  }
+  .stat-hint {
+    font-size: 9px;
+  }
+  .cockpit-view {
+    padding: 0 10px;
+  }
+  .sos-strip {
+    padding: 0 10px;
+  }
+  .sos-btn {
+    padding: 9px;
+    font-size: 11.5px;
+  }
+  .tag-pill {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  .big-action-btn {
+    height: 46px;
+    font-size: 14px;
+  }
+  .otp-input-field {
+    width: 130px;
+    font-size: 20px;
+    letter-spacing: 4px;
+  }
+}
+
+@media (max-width: 325px) {
+  .telemetry-deck {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .duty-toggle {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+}
+
+body {
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-bottom: max(80px, calc(70px + env(safe-area-inset-bottom)));
+}

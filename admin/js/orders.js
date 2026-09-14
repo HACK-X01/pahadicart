@@ -1,3 +1,80 @@
+
+// Universal Live Orders Resolution across Portals
+function getAdminLiveOrders(currentTown = null) {
+  let liveOrders = [];
+  if (window.pahadiBus) {
+    liveOrders = window.pahadiBus.getOrders();
+  }
+
+  const normalizedLive = liveOrders.map(o => {
+    const rawStatus = (o.status || 'placed').toLowerCase();
+    let normStatus = 'placed';
+    if (rawStatus.includes('deliv')) normStatus = 'delivered';
+    else if (rawStatus.includes('cancel')) normStatus = 'cancelled';
+    else if (rawStatus.includes('prep') || rawStatus.includes('pack')) normStatus = 'preparing';
+    else if (rawStatus.includes('pick') || rawStatus.includes('transit') || rawStatus.includes('route') || rawStatus.includes('climb')) normStatus = 'in_transit';
+    else if (rawStatus.includes('ready')) normStatus = 'preparing';
+
+    const amt = Number(o.grandTotal || (o.pricing && o.pricing.totalAmount) || o.itemTotal || o.amount || 250);
+    const mName = o.merchantName || (o.merchant && o.merchant.name) || 'Sharma Kirana & Fresh Produce';
+    const cName = o.customerName || (o.customer && o.customer.name) || 'Customer';
+    const rName = o.riderName || (o.rider && o.rider.name) || 'Vikas Thakur';
+    const cPhone = o.customerPhone || (o.customer && o.customer.phone) || '98160-12890';
+    const cColony = o.colony || (o.customer && o.customer.colony) || 'The Mall Road';
+    const cStairs = o.staircaseNotes || (o.customer && o.customer.staircaseDetails) || 'Direct road level';
+
+    return {
+      id: o.id,
+      town: (o.town || 'solan').toLowerCase(),
+      status: normStatus,
+      rawStatus: o.status,
+      customer: cName,
+      customerName: cName,
+      customerPhone: cPhone,
+      colony: cColony,
+      merchant: mName,
+      merchantName: mName,
+      rider: rName,
+      riderName: rName,
+      items: o.items || [{ name: 'Mountain Item', qty: 1 }],
+      amount: amt,
+      grandTotal: amt,
+      time: o.time || 'Live Shift',
+      payment: o.paymentMode || 'COD',
+      paymentMode: o.paymentMode || 'COD',
+      elevation: '+140m Climb',
+      stairs: cStairs,
+      staircaseNotes: cStairs,
+      otp: o.otp || '1234'
+    };
+  });
+
+  const merged = [...normalizedLive];
+  if (window.PahadiMockDB && window.PahadiMockDB.orders) {
+    window.PahadiMockDB.orders.forEach(mockOrder => {
+      if (!merged.find(m => m.id === mockOrder.id)) {
+        merged.push({
+          ...mockOrder,
+          customerName: mockOrder.customer || mockOrder.customerName,
+          merchantName: mockOrder.merchant || mockOrder.merchantName,
+          riderName: mockOrder.rider || mockOrder.riderName,
+          grandTotal: mockOrder.amount
+        });
+      }
+    });
+  }
+
+  if (currentTown && currentTown !== 'all') {
+    return merged.filter(o => (o.town || '').toLowerCase() === currentTown.toLowerCase());
+  }
+  return merged;
+}
+
+function getAdminOrderById(orderId) {
+  const all = getAdminLiveOrders('all');
+  return all.find(o => o.id === orderId) || null;
+}
+
 // Live Order Feed & Audio Chime Engine
 let chimeAudioContext = null;
 let isChimeEnabled = true;
@@ -55,7 +132,7 @@ function renderOrdersFeed(filterStatus = "all") {
   if (containers.length === 0) return;
 
   const currentTown = document.getElementById("townSelect")?.value || "solan";
-  let filtered = PahadiMockDB.orders.filter(o => o.town === currentTown);
+  let filtered = getAdminLiveOrders(currentTown);
 
   if (filterStatus !== "all") {
     filtered = filtered.filter(o => o.status === filterStatus);
@@ -123,7 +200,7 @@ function renderOrdersFeed(filterStatus = "all") {
 }
 
 function advanceOrderStatus(orderId, newStatus) {
-  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  const order = getAdminOrderById(orderId);
   if (!order) return;
 
   order.status = newStatus;
@@ -425,7 +502,7 @@ function setOrderViewMode(mode) {
 
 // Open Detailed Order Command Drawer
 window.openOrderCommandDrawer = function(orderId) {
-  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  const order = getAdminOrderById(orderId);
   if (!order) return;
 
   const drawer = document.getElementById('orderCommandDrawer');
@@ -537,7 +614,7 @@ window.advanceOrderStatusAndAudit = function(orderId, nextStatus) {
     return;
   }
 
-  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  const order = getAdminOrderById(orderId);
   if (!order) return;
 
   const oldStatus = order.status;
@@ -566,7 +643,7 @@ window.reassignRiderPrompt = function(orderId) {
   const newRider = prompt('Enter Rider Name or ID for manual re-assignment:', 'Vikram Rawat (EV Scooter)');
   if (!newRider) return;
 
-  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  const order = getAdminOrderById(orderId);
   if (!order) return;
   const oldRider = order.assignedRider || 'Unassigned';
   order.assignedRider = newRider;
@@ -594,7 +671,7 @@ window.cancelOrderPrompt = function(orderId) {
   const reason = prompt('Mandatory Audit: Enter reason for cancelling order ' + orderId + ':', 'Customer requested cancellation due to weather delay');
   if (!reason) return;
 
-  const order = PahadiMockDB.orders.find(o => o.id === orderId);
+  const order = getAdminOrderById(orderId);
   if (!order) return;
 
   const oldStatus = order.status;
