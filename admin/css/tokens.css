@@ -16,15 +16,8 @@ button {
   cursor: pointer;
 }
 
-/* Base Reset End */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 html {
-  background-color: #040813;
+  background-color: #0D2924;
   color-scheme: dark;
   overflow-x: clip;
   overflow-y: auto;
@@ -34,9 +27,9 @@ html {
 }
 
 body {
-  background-color: #040813;
-  color: #f1f5f9;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #0D2924;
+  color: #F7F8F5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: clip;
   overflow-y: visible;
   width: 100%;
@@ -47,74 +40,86 @@ body {
 }
 
 :root {
-  /* Brand & Mountain Theme Colors */
-  --primary-900: #064e3b;
-  --primary-800: #065f46;
-  --primary-700: #047857;
-  --primary-600: #059669;
-  --primary-500: #10b981;
-  --primary-400: #34d399;
-  --primary-100: #d1fae5;
-  --primary-50:  #ecfdf5;
+  /* PahadiCart Official Brand & Mountain Theme Colors (Design Guide) */
+  --pine-900: #0D2924;
+  --pine-800: #123C35;
+  --pine-600: #1F6F5B;
+  --pine-400: #4FA083;
+  --mountain-orange: #F28C28;
+  --orange-light: #FFF0DE;
+  --snow: #F7F8F5;
+  --white: #FFFFFF;
+  --text: #17211F;
+  --text-muted: #8FA29D;
+  --border: #E1E8E4;
 
-  /* Neutrals & Dark Mountain Slate */
-  --slate-950: #040813;
-  --slate-900: #0a1122;
-  --slate-850: #0f1a33;
-  --slate-800: #172442;
-  --slate-700: #253659;
-  --slate-600: #3b4f77;
-  --slate-500: #64748b;
-  --slate-400: #94a3b8;
-  --slate-300: #cbd5e1;
-  --slate-200: #e2e8f0;
-  --slate-100: #f1f5f9;
-  --slate-50:  #f8fafc;
+  --primary-900: #0D2924;
+  --primary-800: #123C35;
+  --primary-700: #164D44;
+  --primary-600: #1F6F5B;
+  --primary-500: #2C8C70;
+  --primary-400: #4FA083;
+  --primary-100: #D1EBE2;
+  --primary-50:  #F7F8F5;
+
+  /* Neutrals & Dark Mountain Slate (Deep Pine Command Center) */
+  --slate-950: #081C18;
+  --slate-900: #0D2924;
+  --slate-850: #112320;
+  --slate-800: #172824;
+  --slate-700: #1F3832;
+  --slate-600: #2E5048;
+  --slate-500: #66736F;
+  --slate-400: #8FA29D;
+  --slate-300: #B5C5C0;
+  --slate-200: #E1E8E4;
+  --slate-100: #F0F4F2;
+  --slate-50:  #F7F8F5;
   --white:     #ffffff;
 
   /* Accent & Status */
-  --amber-500: #f59e0b;
-  --amber-400: #fbbf24;
-  --amber-100: #fef3c7;
-  --rose-500:  #f43f5e;
-  --rose-400:  #fb7185;
-  --rose-100:  #ffe4e6;
-  --sky-500:   #0ea5e9;
-  --sky-400:   #38bdf8;
-  --sky-100:   #e0f2fe;
-  --purple-500:#a855f7;
-  --purple-400:#c084fc;
-  --purple-100:#f3e8ff;
+  --amber-500: #F28C28;
+  --amber-400: #FF9B35;
+  --amber-100: #FFF0DE;
+  --rose-500:  #D64545; /* Reserved strictly for SOS / Critical Destructive */
+  --rose-400:  #E05D5D;
+  --rose-100:  #FFEAEA;
+  --sky-500:   #1F6F5B;
+  --sky-400:   #4FA083;
+  --sky-100:   #E1F0EB;
+  --purple-500:#A855F7;
+  --purple-400:#C084FC;
+  --purple-100:#F3E8FF;
 
-  /* Spacious Layout Dimensions */
+  /* Layout Dimensions */
   --sidebar-width: 270px;
   --sidebar-collapsed-width: 72px;
   --header-height: 72px;
   --bottom-nav-height: 70px;
 
-  /* Premium Typography Hierarchy */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Border Radii (Curved & Modern) */
+  /* Border Radii (Design Guide: 12-14px buttons, 16px cards) */
   --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 26px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Glassmorphism & Elevation Shadows */
-  --glass-bg: rgba(15, 26, 51, 0.72);
-  --glass-card: rgba(23, 36, 66, 0.65);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-  --glass-border-hover: 1px solid rgba(16, 185, 129, 0.35);
+  /* Surfaces & Elevation */
+  --glass-bg: rgba(13, 41, 36, 0.9);
+  --glass-card: rgba(17, 35, 32, 0.9);
+  --glass-border: 1px solid rgba(225, 232, 228, 0.12);
+  --glass-border-hover: 1px solid rgba(79, 160, 131, 0.4);
   --shadow-sm: 0 2px 8px -1px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 10px 25px -4px rgba(0, 0, 0, 0.5), 0 4px 10px -2px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
-  --glow-emerald: 0 0 24px rgba(16, 185, 129, 0.28);
-  --glow-sky: 0 0 24px rgba(56, 189, 248, 0.28);
+  --glow-emerald: 0 0 24px rgba(31, 111, 91, 0.35);
+  --glow-sky: 0 0 24px rgba(242, 140, 40, 0.3);
 
   /* Transitions */
   --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);

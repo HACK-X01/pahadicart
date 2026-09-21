@@ -8,7 +8,9 @@
   <!-- Google Fonts: Plus Jakarta Sans, Space Grotesk, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
   <!-- Leaflet CSS (OpenStreetMap - 100% Free & No API Key Required) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=2.9.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -291,6 +293,22 @@
               <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span>Refresh Map</span>
             </button>
+          </div>
+        </div>
+
+        
+        <!-- Mountain Weather Alert (PahadiCart Official Design Guide Spec) -->
+        <div class="mountain-weather-alert-card" id="mountainWeatherAlertBanner">
+          <div class="alert-content">
+            <div class="alert-title">
+              <span class="alert-symbol">■</span>
+              <span>MOUNTAIN WEATHER ALERT</span>
+            </div>
+            <div class="alert-msg" id="mountainWeatherAlertMsg">Heavy rainfall expected in Shimla</div>
+          </div>
+          <div class="alert-action-wrap">
+            <div class="alert-buffer-tag">Delivery Buffer <strong>+15 MIN</strong></div>
+            <button class="btn-surge-enable" id="btnEnableWeatherSurge" onclick="if(window.PahadiWeather){window.PahadiWeather.setMode('rain')}else{this.textContent='SURGE ACTIVE'}">[ ENABLE SURGE ]</button>
           </div>
         </div>
 

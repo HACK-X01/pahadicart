@@ -36,6 +36,11 @@
       this.renderProducts();
     }
 
+    filterSearch(query) {
+      this.searchQuery = (query || '').toLowerCase().trim();
+      this.renderProducts();
+    },
+
     selectCategory(catId) {
       this.selectedCategory = catId;
       this.renderCategories();
@@ -71,6 +76,9 @@
       }
       if (this.selectedCategory !== 'all') {
         items = items.filter(p => p.category === this.selectedCategory);
+      }
+      if (this.searchQuery) {
+        items = items.filter(p => (p.name && p.name.toLowerCase().includes(this.searchQuery)) || (p.desc && p.desc.toLowerCase().includes(this.searchQuery)));
       }
 
       if (countEl) countEl.innerText = `Showing ${items.length} items`;

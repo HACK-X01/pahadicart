@@ -9,35 +9,13 @@
   <!-- Leaflet CSS for Hill Tracking Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=2.9.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <!-- Customer App CSS -->
+  <link rel="stylesheet" href="/shared/tokens.css">
   <link rel="stylesheet" href="css/customer.css?v=2.9.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html {
-      background-color: #030712 !important;
-      color-scheme: dark;
-      overflow-x: clip;
-      overflow-y: auto;
-      width: 100%;
-    }
-    body {
-      background-color: #030712 !important;
-      color-scheme: dark;
-      overflow-x: clip;
-      overflow-y: visible;
-      width: 100%;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
+  
 
   <link rel="manifest" href="../manifest.json">
   <!-- PWA Headers -->
@@ -111,6 +89,32 @@
       <button onclick="window.pahadiOffline.toggleSimulatedTunnel()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#fca5a5; padding:6px 12px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;"><span>🌲⛰️ Tunnel Mode</span></button>
     </div>
   </nav>
+
+  <!-- Search Bar (Home Hierarchy Step 2) -->
+  <div class="search-container">
+    <div class="search-bar-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="customerSearchInput" class="search-input" placeholder="Search Kinnaur apples, Siddu, local sweets, groceries..." oninput="window.customerApp && window.customerApp.filterSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- Mountain Delivery Component (Home Hierarchy Step 3) -->
+  <div class="mountain-delivery-widget">
+    <div class="mdw-title">
+      <span class="mdw-icon">🏔️</span>
+      <strong>Mountain Delivery</strong>
+    </div>
+    <div class="mdw-info">
+      <span class="mdw-item"><strong>ETA:</strong> 1h 18m</span>
+      <span class="mdw-dot">•</span>
+      <span class="mdw-item"><strong>Stairs:</strong> 42 stairs</span>
+      <span class="mdw-dot">•</span>
+      <span class="mdw-item"><strong>Distance:</strong> 2.3 km</span>
+      <span class="mdw-dot">•</span>
+      <span class="mdw-item mdw-buffer">🌧️ Rain buffer +15 min</span>
+    </div>
+  </div>
+
 
   <!-- Hero Banner -->
   <header class="hero-banner">

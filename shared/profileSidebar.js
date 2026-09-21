@@ -54,7 +54,7 @@
     .pahadi-drawer-backdrop {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(3, 7, 18, 0.7);
+      background: rgba(13, 41, 36, 0.75);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       z-index: 999999;
@@ -73,7 +73,7 @@
       width: 100%;
       max-width: 360px;
       height: 100%;
-      background: #0b1329;
+      background: #0D2924;
       border-left: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: -15px 0 35px rgba(0, 0, 0, 0.7);
       display: flex;
@@ -81,7 +81,7 @@
       z-index: 1000000;
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       color: #f8fafc;
-      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
       box-sizing: border-box;
       padding-top: max(0px, env(safe-area-inset-top));
       padding-bottom: max(0px, env(safe-area-inset-bottom));
@@ -107,7 +107,7 @@
       justify-content: space-between;
       padding: 16px 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      background: #090f1f;
+      background: #081C18;
     }
     .drawer-nav-title {
       font-size: 16px;
@@ -136,7 +136,7 @@
     /* User Profile Card */
     .drawer-user-card {
       padding: 20px;
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, rgba(11, 19, 41, 0) 100%);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, rgba(13, 41, 36, 0) 100%);
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
@@ -146,7 +146,7 @@
       width: 58px;
       height: 58px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #1F6F5B 0%, #123C35 100%);
       color: #022c22;
       display: flex;
       align-items: center;
@@ -177,7 +177,7 @@
       padding: 3px 9px;
       background: rgba(16, 185, 129, 0.18);
       border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
+      color: #4FA083;
       font-size: 10.5px;
       font-weight: 800;
       border-radius: 9999px;
@@ -256,7 +256,7 @@
     .drawer-bottom-wrap {
       padding: 14px 16px 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      background: #090f1f;
+      background: #081C18;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -267,7 +267,7 @@
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.25) 100%);
       border: 1px solid rgba(16, 185, 129, 0.45);
       border-radius: 12px;
-      color: #34d399;
+      color: #4FA083;
       font-size: 13px;
       font-weight: 800;
       display: flex;
@@ -315,7 +315,7 @@
     }
     .btn-drawer-switch:hover {
       color: #ffffff;
-      border-color: #10b981;
+      border-color: #1F6F5B;
     }
     .drawer-version-tag {
       text-align: center;
@@ -331,7 +331,7 @@
       gap: 6px;
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #34d399;
+      color: #4FA083;
       font-family: inherit;
       font-size: 12px;
       font-weight: 800;
@@ -349,7 +349,7 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: #10b981;
+      background: #1F6F5B;
       color: #022c22;
       display: flex;
       align-items: center;

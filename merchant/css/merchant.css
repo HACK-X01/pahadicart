@@ -1,26 +1,39 @@
-button { font-family: inherit; cursor: pointer; }
-/* PahadiCart Merchant Partner Portal CSS */
+﻿/* PahadiCart Merchant Partner Terminal CSS - Light, Practical POS-like Theme */
+/* Compliant with PahadiCart UI/UX Theme & Design Guide, September 2026 */
+
 :root {
-  --primary: #065f46;
-  --primary-light: #10b981;
-  --bg-dark: #090f1a;
-  --bg-surface: #111a2e;
-  --bg-card: #18243c;
-  --border-color: rgba(255, 255, 255, 0.1);
-  --border-active: rgba(16, 185, 129, 0.4);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --accent: #f59e0b;
-  --danger: #ef4444;
-  --success: #10b981;
+  /* Master Palette */
+  --pine-900: #0D2924;
+  --pine-800: #123C35;
+  --pine-600: #1F6F5B;
+  --pine-400: #4FA083;
+
+  --mountain-orange: #F28C28;
+  --orange-light: #FFF0DE;
+
+  --snow: #F7F8F5;
+  --white: #FFFFFF;
+
+  --text-main: #17211F;
+  --text-muted: #66736F;
+  --border-color: #E1E8E4;
+
+  --success: #2E8B57;
+  --warning: #E6A23C;
+  --sos-error: #D64545;
+
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  --radius-modal: 20px;
+  --btn-height: 46px;
+
+  --shadow-subtle: 0 2px 8px rgba(13, 41, 36, 0.04);
+  --shadow-card: 0 4px 14px rgba(13, 41, 36, 0.07);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -28,33 +41,42 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-dark);
+  font-family: var(--font-primary);
+  background-color: var(--snow);
   color: var(--text-main);
   min-height: 100vh;
   line-height: 1.5;
-  padding-bottom: 60px;
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-bottom: max(60px, calc(50px + env(safe-area-inset-bottom)));
+  overflow-x: hidden;
 }
 
-/* Switch Bar */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+/* 1. Quick Switch Bar */
 .portal-switch-bar {
-  background: #050a12;
-  border-bottom: 1px solid var(--border-color);
+  background: var(--pine-900);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 12.5px;
+  color: #cbd5e1;
 }
 .portal-switch-links {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   overflow-x: auto;
   scrollbar-width: none;
 }
 .portal-switch-links::-webkit-scrollbar { display: none; }
 .portal-link {
-  color: var(--text-muted);
+  color: #94a3b8;
   text-decoration: none;
   padding: 4px 10px;
   border-radius: var(--radius-sm);
@@ -62,25 +84,27 @@ body {
   white-space: nowrap;
 }
 .portal-link:hover, .portal-link.active {
-  color: #fff;
-  background: rgba(16, 185, 129, 0.15);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
 }
 .portal-link.active {
-  color: var(--primary-light);
+  color: #34d399;
   font-weight: 600;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(52, 211, 153, 0.35);
 }
 
-/* Header */
+/* 2. Merchant Header (Pine 800) */
 .merchant-header {
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
+  background: var(--pine-800);
+  color: #ffffff;
+  border-bottom: 1px solid var(--pine-900);
   padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
+  box-shadow: 0 4px 16px rgba(13, 41, 36, 0.12);
 }
 .shop-info-group {
   display: flex;
@@ -88,93 +112,105 @@ body {
   gap: 14px;
 }
 .shop-avatar {
-  font-size: 36px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid var(--primary-light);
-  border-radius: var(--radius-md);
+  font-size: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-card);
   padding: 8px 12px;
 }
 .shop-name-title {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
 }
 .vyapar-cert-tag {
   font-size: 12px;
-  color: var(--primary-light);
-  font-weight: 600;
+  color: #a7f3d0;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-top: 2px;
 }
 
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .chime-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--accent);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
   padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
+  border-radius: var(--radius-btn);
+  font-size: 12.5px;
   font-weight: 600;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.chime-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.online-toggle-btn {
+  background: #047857;
+  color: #ffffff;
+  border: 1px solid #10b981;
+  padding: 8px 16px;
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.online-toggle-btn {
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid var(--primary-light);
-  color: var(--primary-light);
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
 
-/* Daily Settlement Bar */
+/* 3. POS Daily Settlement Metrics Deck */
 .settlement-strip {
   max-width: 1400px;
-  margin: 20px auto;
+  margin: 16px auto;
   padding: 0 20px;
 }
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 14px;
 }
 .metric-box {
-  background: var(--bg-surface);
+  background: var(--white);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px 18px;
+  border-radius: var(--radius-card);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-subtle);
 }
 .metric-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   margin-bottom: 4px;
 }
 .metric-val {
   font-size: 22px;
-  font-weight: 800;
-  color: #fff;
+  font-weight: 700;
+  color: var(--pine-900);
 }
 .metric-sub {
-  font-size: 11px;
-  color: var(--text-dim);
+  font-size: 11.5px;
+  color: #64748b;
   margin-top: 2px;
 }
 
-/* Kanban Board Container */
+/* 4. Kanban Dispatch Board (5-Column Flow: NEW -> ACCEPTED -> PREPARING -> READY -> COMPLETED) */
 .board-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 20px 30px;
 }
 .board-header {
   display: flex;
@@ -185,251 +221,194 @@ body {
 .board-title {
   font-size: 18px;
   font-weight: 700;
+  color: var(--pine-900);
   display: flex;
   align-items: center;
   gap: 8px;
+}
+.stock-drawer-btn {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  color: var(--pine-800);
+  padding: 8px 14px;
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-subtle);
 }
 
 .kanban-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
-
 .kanban-col {
-  background: var(--bg-surface);
+  background: #f1f5f3;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
-  min-height: 520px;
 }
 .col-header {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
 }
 .col-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .col-count {
-  background: var(--bg-card);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: var(--white);
+  border: 1px solid var(--border-color);
 }
 
 .col-cards {
-  padding: 14px;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  overflow-y: auto;
+  gap: 12px;
+  flex: 1;
 }
 
-/* Order Card */
+/* Order Cards - POS Clean White */
 .order-card {
-  background: var(--bg-card);
+  background: var(--white);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-subtle);
+  transition: box-shadow 0.2s, transform 0.15s;
 }
-.order-card.incoming {
-  border-color: var(--accent);
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
-  animation: pulseCard 2s infinite;
+.order-card:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
 }
-@keyframes pulseCard {
-  0% { border-color: rgba(245, 158, 11, 0.4); }
-  50% { border-color: rgba(245, 158, 11, 1); }
-  100% { border-color: rgba(245, 158, 11, 0.4); }
-}
-
 .order-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 8px;
 }
 .order-id {
   font-size: 14px;
-  font-weight: 800;
-  color: #fff;
+  font-weight: 700;
+  color: var(--pine-900);
 }
 .order-time {
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.stair-alert {
-  background: rgba(245, 158, 11, 0.1);
-  border-left: 3px solid var(--accent);
-  padding: 8px 10px;
-  border-radius: 4px;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  margin-bottom: 10px;
 }
-
-.item-list-box {
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-  padding: 8px 0;
-  margin-bottom: 12px;
-  font-size: 12px;
-}
-.item-line {
-  display: flex;
-  justify-content: space-between;
+.order-customer {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
   margin-bottom: 4px;
 }
+.order-items {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 10px;
+  background: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
+  margin-top: 8px;
+}
+.order-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pine-800);
+}
 
-.action-row {
+/* POS Action Buttons */
+.order-actions {
   display: flex;
   gap: 8px;
 }
 .btn-action {
-  flex: 1;
-  padding: 10px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: var(--radius-btn);
+  font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: transform 0.15s;
+  transition: all 0.2s;
 }
-.btn-action:active { transform: scale(0.97); }
 .btn-accept {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #000;
+  background: var(--mountain-orange);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(242, 140, 40, 0.3);
 }
-.btn-reject {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid var(--danger);
-  color: var(--danger);
+.btn-accept:hover {
+  background: #d97706;
 }
 .btn-ready {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #fff;
-  width: 100%;
+  background: var(--pine-600);
+  color: #ffffff;
+}
+.btn-reject {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
 }
 
-/* Stock Toggle Drawer */
-.stock-drawer-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
+/* Mobile Responsiveness Rules (320px - 768px) */
 @media (max-width: 960px) {
   .kanban-grid {
     grid-template-columns: 1fr;
   }
 }
-
-/* Universal Mobile Responsive Engine for Merchant Portal (320px - 768px) */
 @media (max-width: 768px) {
   .merchant-header {
-    padding: 12px 14px;
     flex-direction: column;
     align-items: stretch;
+    padding: 12px 16px;
     gap: 12px;
   }
-  .shop-info-group {
-    gap: 10px;
-  }
-  .shop-avatar {
-    font-size: 28px;
-    padding: 6px 10px;
-  }
-  .shop-name-title {
-    font-size: 16px;
-  }
   .header-controls {
-    justify-content: space-between;
     width: 100%;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .metrics-deck {
-    padding: 12px 14px;
+    justify-content: space-between;
   }
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
-  .metric-box {
-    padding: 10px 12px;
-  }
-  .metric-val {
-    font-size: 18px;
-  }
-  .board-container {
-    padding: 0 14px 20px;
-  }
 }
-
 @media (max-width: 375px) {
-  .merchant-header {
-    padding: 10px 10px;
-  }
-  .shop-name-title {
-    font-size: 15px;
-  }
-  .metrics-deck {
-    padding: 10px 10px;
-  }
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
   .metric-box {
-    padding: 8px 8px;
-  }
-  .metric-label {
-    font-size: 10px;
+    padding: 10px 10px;
   }
   .metric-val {
     font-size: 16px;
   }
-  .metric-sub {
+  .metric-label {
     font-size: 9.5px;
   }
-  .board-container {
-    padding: 0 8px 16px;
-  }
-  .order-card {
-    padding: 12px;
-  }
 }
-
 @media (max-width: 325px) {
   .metrics-grid {
     grid-template-columns: 1fr;
-    gap: 6px;
   }
-}
-
-body {
-  padding-top: max(0px, env(safe-area-inset-top));
-  padding-bottom: max(60px, calc(50px + env(safe-area-inset-bottom)));
 }

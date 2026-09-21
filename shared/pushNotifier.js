@@ -163,16 +163,16 @@
         transform: translateX(-50%);
         max-width: 440px;
         width: calc(100% - 24px);
-        background: rgba(11, 19, 41, 0.96);
-        border: 2px solid #10b981;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(16, 185, 129, 0.35);
+        background: rgba(13, 41, 36, 0.96);
+        border: 2px solid #F28C28;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 30px rgba(242, 140, 40, 0.35);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
-        border-radius: 18px;
+        border-radius: 16px;
         padding: 14px 16px;
         z-index: 9999999;
         color: #fff;
-        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+        font-family: 'Inter', system-ui, sans-serif;
         animation: slideDownAlert 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       `;
 
@@ -196,10 +196,10 @@
         </div>
 
         <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
-          <button id="btnAcknowledgeAlert" style="flex: 1; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; padding: 8px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+          <button id="btnAcknowledgeAlert" style="flex: 1; background: #F28C28; color: #fff; border: none; padding: 8px 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(242,140,40,0.35);">
             ✓ Acknowledge / View
           </button>
-          <button id="btnMuteAlert" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <button id="btnMuteAlert" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
             🔇 Mute
           </button>
         </div>
@@ -273,7 +273,7 @@
           justify-content: space-between;
           gap: 12px;
           color: #f8fafc;
-          font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+          font-family: 'Inter', system-ui, sans-serif;
           box-shadow: 0 4px 14px rgba(0,0,0,0.3);
         `;
 

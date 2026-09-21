@@ -1,0 +1,58 @@
+﻿/* PahadiCart Official Design Tokens & Master Palette */
+/* Derived from PahadiCart UI/UX Theme & Design Guide, September 2026 */
+
+:root {
+  /* 1. Master Palette */
+  --pine-900: #0D2924; /* Deep backgrounds, strong headings */
+  --pine-800: #123C35; /* Primary brand color, navigation */
+  --pine-600: #1F6F5B; /* Primary actions, active states */
+  --pine-400: #4FA083; /* Secondary accents, charts */
+
+  --mountain-orange: #F28C28; /* Primary CTA, attention/action */
+  --orange-light: #FFF0DE;    /* CTA backgrounds, alerts */
+
+  --snow: #F7F8F5;            /* Main app background (Customer / Merchant) */
+  --white: #FFFFFF;           /* Cards, modals, surfaces */
+
+  --text-main: #17211F;       /* Primary text */
+  --text-muted: #66736F;      /* Secondary text */
+  --border: #E1E8E4;          /* Dividers, card borders */
+
+  --success: #2E8B57;         /* Completed/success states */
+  --warning: #E6A23C;         /* Weather/warning states */
+  --sos-error: #D64545;       /* Emergency / SOS / destructive actions ONLY */
+
+  /* 2. Rider Dark Theme Specifics */
+  --rider-bg: #0D1715;
+  --rider-card: #172824;
+  --rider-primary: #2C8C70;
+  --rider-accent: #FF9B35;
+  --rider-text: #FFFFFF;
+
+  /* 3. Typography */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --weight-bold: 700;    /* Major headings & important numbers */
+  --weight-semibold: 600;/* Card titles, navigation, buttons */
+  --weight-medium: 500;  /* Labels and supporting UI */
+  --weight-regular: 400; /* Descriptions and body copy */
+
+  /* 4. Component Radii (No excessive pills) */
+  --radius-sm: 8px;
+  --radius-btn: 12px;    /* 12-14px for buttons */
+  --radius-card: 16px;   /* ~16px for cards */
+  --radius-modal: 20px;
+
+  /* 5. Button Heights */
+  --btn-height-standard: 46px; /* 44-48px customer / merchant */
+  --btn-height-rider: 54px;    /* 52-56px rider glove-friendly */
+
+  /* 6. Spacing */
+  --space-unit: 4px;
+  --page-padding-mobile: 16px;
+  --page-padding-desktop: 24px;
+
+  /* 7. Subtle Restrained Shadows */
+  --shadow-subtle: 0 2px 8px rgba(13, 41, 36, 0.05);
+  --shadow-card: 0 4px 16px rgba(13, 41, 36, 0.08);
+  --shadow-dropdown: 0 8px 24px rgba(13, 41, 36, 0.12);
+}

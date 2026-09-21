@@ -27,6 +27,7 @@ const STATIC_SHELL = [
   '/admin/css/layout.css',
   '/admin/css/components.css',
   '/admin/css/responsive.css',
+  '/shared/tokens.css',
   '/shared/pwaInit.js',
   '/shared/profileSidebar.js',
   '/shared/hillAudio.js',
