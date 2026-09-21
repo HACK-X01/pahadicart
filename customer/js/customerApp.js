@@ -39,7 +39,7 @@
     filterSearch(query) {
       this.searchQuery = (query || '').toLowerCase().trim();
       this.renderProducts();
-    },
+    }
 
     selectCategory(catId) {
       this.selectedCategory = catId;
