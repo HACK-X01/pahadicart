@@ -1,5 +1,5 @@
-﻿// PahadiCart Himalayan Offline Cache Service Worker v4.0
-const CACHE_NAME = 'pahadicart-pwa-v4';
+﻿// PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.0
+const CACHE_NAME = 'pahadicart-pwa-v5';
 
 const STATIC_SHELL = [
   '/',
@@ -29,10 +29,11 @@ const STATIC_SHELL = [
   '/admin/css/responsive.css',
   '/shared/pwaInit.js',
   '/shared/profileSidebar.js',
+  '/shared/hillAudio.js',
+  '/shared/pushNotifier.js',
   '/shared/liveServices.js',
   '/shared/sharedData.js',
   '/shared/eventBus.js',
-  '/shared/hillAudio.js',
   '/shared/dispatchEngine.js',
   '/shared/simulationEngine.js',
   '/shared/offlineQueue.js'
@@ -41,9 +42,9 @@ const STATIC_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching Himalayan shells & offline resources v4');
+      console.log('[SW] Pre-caching Himalayan shells & offline resources v5');
       return cache.addAll(STATIC_SHELL).catch((err) => {
-        console.warn('[SW] Cache addAll notice (some assets may cache on first fetch):', err);
+        console.warn('[SW] Cache addAll notice:', err);
       });
     })
   );
@@ -65,7 +66,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // Do not cache external dynamic APIs like Open-Meteo or analytics
+  // Do not cache external dynamic APIs
   if (url.origin !== self.location.origin) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
@@ -87,13 +88,71 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // If offline and request is navigation, return cached root or app shell
           if (event.request.mode === 'navigate') {
             return caches.match(event.request) || caches.match('/');
           }
         });
 
       return cachedResponse || fetchPromise;
+    })
+  );
+});
+
+// ==========================================
+// WEB PUSH NOTIFICATIONS & INTERACTION
+// ==========================================
+self.addEventListener('push', (event) => {
+  console.log('[SW] Push event received');
+  let data = {};
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data = { title: 'PahadiCart Alert', body: event.data.text() };
+    }
+  }
+
+  const title = data.title || '🔔 PahadiCart Order Update';
+  const options = {
+    body: data.body || 'New live update from Himachal delivery network.',
+    icon: data.icon || '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    tag: data.tag || 'pahadi-order-' + Date.now(),
+    vibrate: [250, 100, 250, 100, 250],
+    data: {
+      url: data.url || '/'
+    },
+    actions: [
+      { action: 'open', title: '👀 View Order' },
+      { action: 'close', title: '✕ Dismiss' }
+    ]
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'close') {
+    return;
+  }
+
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // If a tab is already open, focus it and navigate
+      for (let client of windowClients) {
+        if (client.url.includes(self.location.origin)) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      // If no tab is open, open a new window
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
     })
   );
 });

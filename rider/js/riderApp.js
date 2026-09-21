@@ -172,6 +172,7 @@
     }
 
     acceptOrder(orderId) {
+      if (window.pahadiAudio) window.pahadiAudio.stopRepeatChime();
       const orders = window.pahadiBus.getOrders();
       const order = orders.find(o => o.id === orderId);
       if (!order) return;

@@ -235,6 +235,7 @@
     }
 
     acceptOrder(orderId) {
+      if (window.pahadiAudio) window.pahadiAudio.stopRepeatChime();
       if (window.pahadiBus) {
         window.pahadiBus.updateOrderStatus(orderId, 'Preparing');
         if (window.pahadiAudio) window.pahadiAudio.playSuccessTune();
@@ -243,6 +244,7 @@
     }
 
     rejectOrder(orderId) {
+      if (window.pahadiAudio) window.pahadiAudio.stopRepeatChime();
       if (confirm('Kya aap is order ko cancel karna chahte hain?')) {
         if (window.pahadiBus) {
           window.pahadiBus.updateOrderStatus(orderId, 'Cancelled (Merchant Unavailable)');
