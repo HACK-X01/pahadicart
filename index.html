@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    if ('caches' in window && localStorage.getItem('pahadi_v9_instant_purge') !== 'true') {
+      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+      localStorage.removeItem('pahadicart_cart_data');
+      localStorage.removeItem('pahadicart_orders_db');
+      localStorage.removeItem('pahadicart_products');
+      localStorage.setItem('pahadi_v9_instant_purge', 'true');
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>PahadiCart — Himachal 2-Hour Hyperlocal Delivery</title>
