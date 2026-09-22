@@ -22,6 +22,16 @@
   }
 
   // 2. Global Session Helpers
+  window.pahadiLogout = function() {
+    if (confirm('Kya aap PahadiCart se logout karna chahte hain?')) {
+      try {
+        localStorage.removeItem('pahadicart_user_session');
+        sessionStorage.removeItem('pahadicart_auth_role');
+      } catch (e) {}
+      window.location.href = '/';
+    }
+  };
+
   window.PahadiAuth = {
     getSession() {
       try {
