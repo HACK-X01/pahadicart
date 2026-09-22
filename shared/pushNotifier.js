@@ -1,4 +1,4 @@
-﻿// PahadiCart Universal Web Push & Order Sound Chime Engine
+// PahadiCart Universal Web Push & Order Sound Chime Engine
 (function() {
   'use strict';
 

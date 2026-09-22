@@ -1,4 +1,4 @@
-﻿// PahadiCart Web Audio API Synthesizer & Looping Chime Engine
+// PahadiCart Web Audio API Synthesizer & Looping Chime Engine
 // 100% Zero external audio files required - works offline and cross-device
 class PahadiAudioEngine {
   constructor() {

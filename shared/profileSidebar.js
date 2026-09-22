@@ -1,4 +1,4 @@
-﻿// PahadiCart Universal Profile Sidebar Drawer & Account Manager
+// PahadiCart Universal Profile Sidebar Drawer & Account Manager
 (function() {
   'use strict';
 
