@@ -611,9 +611,6 @@
         <span>🚪</span>
         <span>Log Out</span>
       </button>
-      <button class="btn-drawer-switch" onclick="window.PahadiAuth.switchRole()">
-        🔄 Switch Role / Portal
-      </button>
       <div class="drawer-version-tag">
         PahadiCart PWA v4.0 • Himachal Hyperlocal
       </div>
