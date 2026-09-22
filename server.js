@@ -24,22 +24,43 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   let reqPath = req.url.split('?')[0];
-  if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
+  if (reqPath === '' || reqPath === '/') reqPath = '/index.html';
 
-  let filePath = path.join(ROOT_DIR, reqPath);
+  const possibleRoots = [ROOT_DIR, process.cwd(), path.resolve('.'), path.join(__dirname, '..')];
+  let filePath = null;
 
-  // If path is a directory without trailing slash, or directory with trailing slash
-  if (fs.existsSync(filePath)) {
-    const stat = fs.statSync(filePath);
-    if (stat.isDirectory()) {
-      filePath = path.join(filePath, 'index.html');
+  for (const root of possibleRoots) {
+    if (!root) continue;
+    const cleanPath = reqPath.replace(/^\/+/, '');
+    let candidate = path.join(root, cleanPath);
+    if (fs.existsSync(candidate)) {
+      try {
+        if (fs.statSync(candidate).isDirectory()) {
+          candidate = path.join(candidate, 'index.html');
+        }
+      } catch (e) {}
+    } else {
+      const withIdx = path.join(candidate, 'index.html');
+      if (fs.existsSync(withIdx)) candidate = withIdx;
     }
-  } else {
-    // Try appending index.html if it's a directory route
-    const withIndex = path.join(filePath, 'index.html');
-    if (fs.existsSync(withIndex)) {
-      filePath = withIndex;
+    if (fs.existsSync(candidate)) {
+      try {
+        if (!fs.statSync(candidate).isDirectory()) {
+          filePath = candidate;
+          break;
+        }
+      } catch (e) {}
     }
+  }
+
+  if (!filePath) {
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
+    let rootFiles = [];
+    try { rootFiles = fs.readdirSync(ROOT_DIR); } catch (e) { rootFiles = [e.message]; }
+    let cwdFiles = [];
+    try { cwdFiles = fs.readdirSync(process.cwd()); } catch (e) { cwdFiles = [e.message]; }
+    res.end('<h1>404 - PahadiCart Route Not Found</h1><p>Requested: ' + reqPath + '</p><p>ROOT_DIR: ' + ROOT_DIR + ' [' + rootFiles.join(', ') + ']</p><p>CWD: ' + process.cwd() + ' [' + cwdFiles.join(', ') + ']</p><a href="/">Return to Super Hub</a>');
+    return;
   }
 
   const ext = path.extname(filePath).toLowerCase();
@@ -47,13 +68,8 @@ const server = http.createServer((req, res) => {
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
-      if (err.code === 'ENOENT') {
-        res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
-        res.end('<h1>404 - PahadiCart Route Not Found</h1><p>Requested: ' + reqPath + '</p><a href="/">Return to Super Hub</a>');
-      } else {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Server Error: ' + err.code);
-      }
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Server Error: ' + err.code);
     } else {
       const resHeaders = {
         'Content-Type': contentType,
