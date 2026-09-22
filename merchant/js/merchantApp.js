@@ -11,6 +11,11 @@
       this.updateShopProfileUI();
       this.renderOrders();
 
+      // Bind Menu & Stock Drawer button
+      document.querySelectorAll('.stock-drawer-btn').forEach(b => {
+        b.addEventListener('click', (e) => { e.preventDefault(); this.openStockModal(); });
+      });
+
       // Listen to real-time events across tabs
       if (window.pahadiBus) {
         window.pahadiBus.on('ORDER_PLACED', (order) => {
@@ -300,7 +305,7 @@
       } else {
         alert('Naya Item Dukaan Me Safalta Se Jud Gaya!');
       }
-    },
+    }
 
     openStockModal() {
       const modal = document.getElementById('stockModal');
@@ -320,21 +325,45 @@
           </div>
         `;
       } else {
-        list.innerHTML = items.map(p => `
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-          <div>
-            <div style="font-size: 13px; font-weight: 700;">${p.name}</div>
-            <div style="font-size: 11px; color: var(--text-dim);">₹${p.price} per ${p.unit}</div>
+        list.innerHTML = items.map(p => {
+          const inStock = p.inStock !== false;
+          return `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: ${inStock ? '#f8fafc' : '#94a3b8'};">
+                ${p.name}
+                ${!inStock ? '<span style="color: #ef4444; font-size: 10px; font-weight: 600; margin-left: 6px;">(Out of Stock)</span>' : ''}
+              </div>
+              <div style="font-size: 11px; color: var(--text-dim);">₹${p.price} per ${p.unit || 'unit'}</div>
+            </div>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;">
+              <input type="checkbox" ${inStock ? 'checked' : ''} onchange="window.merchantApp && window.merchantApp.toggleProductStock('${p.id}', this.checked)" style="accent-color: #10b981; transform: scale(1.2);">
+              <span style="color: ${inStock ? '#10b981' : '#ef4444'}; font-weight: 600;">${inStock ? 'In Stock' : 'Out'}</span>
+            </label>
           </div>
-          <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer;">
-            <input type="checkbox" checked style="accent-color: #10b981; transform: scale(1.2);">
-            <span>In Stock</span>
-          </label>
-        </div>
-      `).join('');
+        `;
+        }).join('');
       }
 
       modal.style.display = 'flex';
+    }
+
+    toggleProductStock(prodId, isInStock) {
+      if (!window.PAHADICART_DATA || !window.PAHADICART_DATA.products) return;
+      const p = window.PAHADICART_DATA.products.find(item => item.id === prodId);
+      if (p) {
+        p.inStock = !!isInStock;
+        try {
+          localStorage.setItem('pahadicart_products', JSON.stringify(window.PAHADICART_DATA.products));
+        } catch(e) {}
+        if (window.pahadiBus) {
+          window.pahadiBus.emit('PRODUCT_STOCK_CHANGED', { id: prodId, inStock: p.inStock });
+        }
+        if (window.pahadiPWA && window.pahadiPWA.showToast) {
+          window.pahadiPWA.showToast(p.name + (isInStock ? ' In-Stock mark ho gaya' : ' Out-of-Stock mark ho gaya'));
+        }
+        this.openStockModal();
+      }
     }
 
     closeStockModal() {

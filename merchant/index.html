@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PahadiCart Merchant Terminal — Vyapar Mandal Himachal</title>
   <link rel="stylesheet" href="/shared/tokens.css">
-  <link rel="stylesheet" href="css/merchant.css?v=3.3.0">
+  <link rel="stylesheet" href="css/merchant.css?v=3.4.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -185,8 +185,10 @@
         <h3 style="font-size: 18px; font-weight: 800;">📦 Dukaan Stock & Rates Controller</h3>
         <button style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;" onclick="window.merchantApp.closeStockModal()">&times;</button>
       </div>
+
       <div style="flex-grow: 1; overflow-y: auto; max-height: 250px;" id="stockItemsList">
         <!-- Injected by JS -->
+      </div>
       
       <div style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border-color);">
         <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">➕ Naya Item List Karein</div>
@@ -204,20 +206,20 @@
           <button type="button" onclick="window.merchantApp && window.merchantApp.addNewProduct()" style="flex: 1; background: #10b981; border: none; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">+ Dukaan Me Jodein</button>
         </div>
       </div>
-    </div>
+
       <button class="btn-action btn-ready" style="margin-top: 16px;" onclick="window.merchantApp.closeStockModal()">Save & Update Menu</button>
     </div>
   </div>
 
   <!-- Shared Scripts -->
-  <script src="/shared/hillAudio.js?v=3.3.0"></script>
+  <script src="/shared/hillAudio.js?v=3.4.0"></script>
   <script src="/shared/pushNotifier.js"></script>
-  <script src="/shared/sharedData.js?v=3.3.0"></script>
-  <script src="/shared/eventBus.js?v=3.3.0"></script>
+  <script src="/shared/sharedData.js?v=3.4.0"></script>
+  <script src="/shared/eventBus.js?v=3.4.0"></script>
   <!-- Merchant Logic -->
-  <script src="js/thermalPrinter.js?v=3.3.0"></script>
-  <script src="js/barcodeScanner.js?v=3.3.0"></script>
-  <script src="js/merchantApp.js?v=3.3.0"></script>
+  <script src="js/thermalPrinter.js?v=3.4.0"></script>
+  <script src="js/barcodeScanner.js?v=3.4.0"></script>
+  <script src="js/merchantApp.js?v=3.4.0"></script>
 <script src="/shared/pwaInit.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>

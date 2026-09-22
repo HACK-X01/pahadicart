@@ -22,6 +22,10 @@
 
       // Listen to cross-portal status changes
       if (window.pahadiBus) {
+        window.pahadiBus.on('PRODUCT_STOCK_CHANGED', () => {
+          this.renderProducts();
+          this.updateCartUI();
+        });
         window.pahadiBus.on('PRODUCT_ADDED', () => {
           this.renderProducts();
           this.updateCartUI();
