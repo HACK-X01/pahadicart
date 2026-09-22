@@ -74,7 +74,18 @@
     hasNativePrompt: () => !!deferredPrompt,
     
     async promptInstall() {
-      // If native deferred prompt is available (Android Chrome/Edge)
+      const triggerDownload = () => {
+        const a = document.createElement('a');
+        a.href = '/PahadiCart.apk';
+        a.download = 'PahadiCart.apk';
+        a.setAttribute('download', 'PahadiCart.apk');
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => a.remove(), 400);
+        showConnectivityToast('📲 PahadiCart App download shuru ho gaya hai! Downloads check karein.', '#10b981');
+      };
+
+      // 1. If native PWA prompt is ready, trigger native install dialog
       if (deferredPrompt) {
         try {
           deferredPrompt.prompt();
@@ -84,15 +95,27 @@
             deferredPrompt = null;
             const banner = document.getElementById('pahadiPwaInstallBanner');
             if (banner) banner.remove();
+            showConnectivityToast('✅ PahadiCart App install ho raha hai!', '#10b981');
             return;
           }
         } catch (err) {
-          console.warn('[PWA] deferredPrompt failed, opening modal:', err);
+          console.warn('[PWA] deferredPrompt failed, proceeding to direct download:', err);
         }
       }
-      
-      // Fallback: Open Device-Specific Instruction Modal
-      openInstallModal();
+
+      // 2. If iOS Safari (does not support APK execution)
+      if (isIOS) {
+        openInstallModal('ios');
+        return;
+      }
+
+      // 3. For Android and Desktop: Trigger immediate direct download!
+      triggerDownload();
+
+      const banner = document.getElementById('pahadiPwaInstallBanner');
+      if (banner) {
+        setTimeout(() => banner.remove(), 1500);
+      }
     },
 
     openGuide(platform) {
@@ -365,11 +388,10 @@
       <img src="/icons/icon-192.png" alt="PahadiCart" style="width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.4);" />
       <div style="flex: 1; min-width: 0;">
         <div style="font-size: 13px; font-weight: 800; color: #fff; line-height: 1.25;">Install PahadiCart App</div>
-        <div style="font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Offline mode, fast hill GPS & orders</div>
+        <div style="font-size: 11px; color: #34d399; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Direct APK Download & Fast Hill GPS</div>
       </div>
       <button id="pwaInstallNowBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; padding: 7px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 800; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(16,185,129,0.3); display: flex; align-items: center; gap: 4px;">
-        📲 Install
-      </button>
+        📲 Download App</button>
       <button id="pwaDismissBannerBtn" style="background: transparent; border: none; color: #64748b; font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1;" title="Dismiss">&times;</button>
     `;
 

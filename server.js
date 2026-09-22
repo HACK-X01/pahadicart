@@ -17,7 +17,9 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
   '.webp': 'image/webp',
   '.wav': 'audio/wav',
-  '.mp3': 'audio/mpeg'
+  '.mp3': 'audio/mpeg',
+  '.apk': 'application/vnd.android.package-archive',
+  '.aab': 'application/octet-stream'
 };
 
 const server = http.createServer((req, res) => {
@@ -53,13 +55,18 @@ const server = http.createServer((req, res) => {
         res.end('Server Error: ' + err.code);
       }
     } else {
-      res.writeHead(200, {
+      const resHeaders = {
         'Content-Type': contentType,
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0',
         'Access-Control-Allow-Origin': '*'
-      });
+      };
+      resHeaders['Content-Length'] = content.length;
+      if (ext === '.apk') {
+        resHeaders['Content-Disposition'] = 'attachment; filename="PahadiCart.apk"';
+      }
+      res.writeHead(200, resHeaders);
       res.end(content);
     }
   });

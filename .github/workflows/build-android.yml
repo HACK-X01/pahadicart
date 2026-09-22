@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,13 +22,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Setup Gradle Wrapper
+      - name: Generate Gradle Wrapper
         working-directory: android
-        run: |
-          gradle wrapper --gradle-version 8.5
+        run: gradle wrapper --gradle-version 8.5
+
+      - name: Make Gradlew Executable
+        working-directory: android
+        run: chmod +x gradlew
 
       - name: Build Debug APK
         working-directory: android
@@ -41,8 +47,13 @@ jobs:
           name: PahadiCart-Debug-APK
           path: android/app/build/outputs/apk/debug/*.apk
 
-      - name: Upload Release Bundle (AAB) Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: PahadiCart-PlayStore-AAB
-          path: android/app/build/outputs/bundle/release/*.aab
+      - name: Deploy APK to Repository Root for Direct Download
+        run: |
+          if ls android/app/build/outputs/apk/debug/*.apk 1> /dev/null 2>&1; then
+            cp android/app/build/outputs/apk/debug/*.apk PahadiCart.apk
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add PahadiCart.apk
+            git commit -m "chore(apk): update prebuilt PahadiCart.apk [skip ci]" || echo "No changes"
+            git push origin main || echo "Push failed"
+          fi
