@@ -1,3 +1,9 @@
+
+  // Invalidate stale caches to ensure 100% fresh demo-free catalog
+  if ('caches' in window && localStorage.getItem('pahadi_sw_cleared_v7') !== 'true') {
+    caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))));
+    localStorage.setItem('pahadi_sw_cleared_v7', 'true');
+  }
 ﻿// PahadiCart Universal Multi-Device PWA Engine & Service Worker Registration
 (function() {
   'use strict';
