@@ -15,86 +15,7 @@
     : null;
 
   // Default Seed Orders (Himachal Hyperlocal)
-  const SEED_ORDERS = [
-    {
-      id: 'ORD-5192',
-      town: 'solan',
-      createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
-      status: 'preparing',
-      customer: {
-        name: 'Sunita Verma',
-        phone: '+91 98160 44321',
-        colony: 'Upper Mall Road',
-        landmark: 'Near Old DC Office',
-        staircaseDetails: 'Climb 24 wooden steps, 1st floor balcony',
-        stairsTotal: 24,
-        stairsCompleted: 0
-      },
-      merchant: {
-        id: 'mer_solan_1',
-        name: 'Sharma Sweets & Hill Dairy',
-        address: 'Mall Road, Solan'
-      },
-      rider: {
-        id: 'rider_1',
-        name: 'Karan Negi',
-        phone: '+91 98160 88990',
-        vehicle: 'Hero Splendor (HP-14-A-4432)'
-      },
-      items: [
-        { name: 'Fresh Himachali Siddu (2 pcs)', qty: 2, price: 120 },
-        { name: 'Desi Cow Ghee (500g)', qty: 1, price: 450 }
-      ],
-      pricing: {
-        itemTotal: 690,
-        deliveryFee: 25,
-        weatherBufferFee: 0,
-        totalAmount: 715
-      },
-      payMode: 'UPI',
-      otp: '6291',
-      etaMinutes: 28
-    },
-    {
-      id: 'ORD-7821',
-      town: 'solan',
-      createdAt: new Date(Date.now() - 35 * 60000).toISOString(),
-      status: 'in_transit',
-      customer: {
-        name: 'Rohit Kaundal',
-        phone: '+91 98161 77882',
-        colony: 'Shamti Pine Valley',
-        landmark: 'Near Forest Rest House',
-        staircaseDetails: 'Descend 42 stone steps, green gate',
-        stairsTotal: 42,
-        stairsCompleted: 27
-      },
-      merchant: {
-        id: 'mer_solan_2',
-        name: 'Himalayan Organic Orchard Hub',
-        address: 'Kotlan Nala, Solan'
-      },
-      rider: {
-        id: 'rider_2',
-        name: 'Vikas Thakur',
-        phone: '+91 98161 12345',
-        vehicle: 'Honda Activa 6G (HP-14-B-8821)'
-      },
-      items: [
-        { name: 'Royal Delicious Kinnaur Apples (1 kg)', qty: 2, price: 180 },
-        { name: 'Local Wild Pine Honey (250g)', qty: 1, price: 340 }
-      ],
-      pricing: {
-        itemTotal: 700,
-        deliveryFee: 25,
-        weatherBufferFee: 15,
-        totalAmount: 740
-      },
-      payMode: 'COD',
-      otp: '4829',
-      etaMinutes: 12
-    }
-  ];
+  const SEED_ORDERS = [];
 
   class PahadiMockApi {
     constructor() {
@@ -105,9 +26,13 @@
     // Initialize or seed DB
     initDatabase() {
       try {
+        if (localStorage.getItem('pahadicart_fresh_v3') !== 'true') {
+          localStorage.removeItem(DB_KEY);
+          localStorage.setItem('pahadicart_fresh_v3', 'true');
+        }
         const existing = localStorage.getItem(DB_KEY);
         if (!existing) {
-          localStorage.setItem(DB_KEY, JSON.stringify(SEED_ORDERS));
+          localStorage.setItem(DB_KEY, JSON.stringify([]));
         }
       } catch (e) {
         console.warn('[MockApi] Storage init error:', e);

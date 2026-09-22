@@ -1,52 +1,26 @@
 // PahadiCart Cash On Delivery (COD) Reconciliation & Float Locker
 (function() {
-  const MOCK_COD_RECORDS = [
-    {
-      orderId: 'PC-8924',
-      riderName: 'Vikas Thakur',
-      riderId: 'r-1',
-      town: 'solan',
-      orderAmount: 520,
-      cashCollected: 520,
-      cashSubmitted: 0,
-      mismatch: 0,
-      status: 'COLLECTED',
-      timestamp: 'Today 12:40 PM',
-      riskScore: 'LOW'
-    },
-    {
-      orderId: 'PC-8921',
-      riderName: 'Sunil Kumar',
-      riderId: 'r-2',
-      town: 'shimla',
-      orderAmount: 640,
-      cashCollected: 640,
-      cashSubmitted: 640,
-      mismatch: 0,
-      status: 'RECONCILED',
-      timestamp: 'Today 11:15 AM',
-      riskScore: 'CLEAN'
-    },
-    {
-      orderId: 'PC-8890',
-      riderName: 'Pankaj Negi',
-      riderId: 'r-4',
-      town: 'solan',
-      orderAmount: 480,
-      cashCollected: 450,
-      cashSubmitted: 450,
-      mismatch: -30,
-      status: 'MISMATCH',
-      timestamp: 'Yesterday 06:20 PM',
-      riskScore: 'FLAGGED'
-    }
-  ];
+  const MOCK_COD_RECORDS = [];
 
   function renderCodReconciliation() {
     const container = document.getElementById('codTableBody');
     if (!container) return;
 
-    container.innerHTML = MOCK_COD_RECORDS.map(c => `
+    const liveCodOrders = (window.pahadiBus ? window.pahadiBus.getOrders() : []).filter(o => o.paymentMode === 'COD');
+    if (liveCodOrders.length === 0 && MOCK_COD_RECORDS.length === 0) {
+      container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);">No Cash On Delivery (COD) transactions yet. All fleet floats are clean.</td></tr>';
+      return;
+    }
+    const codList = liveCodOrders.length > 0 ? liveCodOrders.map(o => ({
+      orderId: o.id,
+      riderName: o.riderName || 'Assigned Rider',
+      orderAmount: o.grandTotal || o.amount || 0,
+      cashCollected: o.grandTotal || o.amount || 0,
+      cashSubmitted: o.status === 'delivered' ? (o.grandTotal || o.amount || 0) : 0,
+      mismatch: 0,
+      status: o.status === 'delivered' ? 'RECONCILED' : 'COLLECTED'
+    })) : MOCK_COD_RECORDS;
+    container.innerHTML = codList.map(c => `
       <tr>
         <td><strong>#${c.orderId}</strong></td>
         <td>${c.riderName}</td>

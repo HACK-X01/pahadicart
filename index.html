@@ -1026,15 +1026,12 @@
                 <img src="https://flagcdn.com/w40/in.png" alt="India">
                 <span>+91</span>
               </button>
-              <input type="tel" class="phone-field" id="custPhone" placeholder="Enter 10-digit mobile" maxlength="10" value="9816455443" oninput="validatePhoneInput(this)">
+              <input type="tel" class="phone-field" id="custPhone" placeholder="Enter 10-digit mobile" maxlength="10" value="" oninput="validatePhoneInput(this)">
             </div>
           </div>
 
           <!-- Quick Test Profile -->
-          <div class="demo-bar">
-            <span>⚡ Demo: Pooja Chandel (+91 98164 55443)</span>
-            <button type="button" class="btn-fast-fill" onclick="setDemoCustomer()">Auto-Fill</button>
-          </div>
+          
 
           <!-- Continue Button -->
           <button type="button" class="btn-continue" id="btnCustContinue" onclick="requestCustomerOtp()">
@@ -1098,14 +1095,11 @@
             <label class="form-label">Registered Mobile Number <span class="req">*</span></label>
             <div class="phone-input-wrap">
               <button type="button" class="country-code-btn"><span>+91</span></button>
-              <input type="tel" class="phone-field" id="riderLoginPhone" placeholder="Enter Rider Phone" maxlength="10" value="9805111223">
+              <input type="tel" class="phone-field" id="riderLoginPhone" placeholder="Enter Rider Phone" maxlength="10" value="">
             </div>
           </div>
 
-          <div class="demo-bar">
-            <span>🛵 Demo: Aman Thakur (#01 - Solan)</span>
-            <button type="button" class="btn-fast-fill" onclick="setDemoRider()">Auto-Fill</button>
-          </div>
+          
 
           <button type="button" class="btn-continue btn-sky-action" onclick="requestRiderOtp()">
             Continue to Rider Cockpit ➔
@@ -1152,10 +1146,7 @@
           </div>
 
           <!-- Demo Quick Pre-fill -->
-          <div class="demo-bar">
-            <span>⚡ Test: Vikram Sharma (#07)</span>
-            <button type="button" class="btn-fast-fill" onclick="autoFillRiderWizard()">Fill All Steps</button>
-          </div>
+          
 
           <!-- WIZARD STEP 1: Basic Info -->
           <div id="riderWizardStep1">
@@ -1166,7 +1157,7 @@
 
             <div class="form-group">
               <label class="form-label">Full Name <span class="req">*</span></label>
-              <input type="text" class="input-field" id="riderName" placeholder="e.g. Vikram Sharma" value="Vikram Sharma">
+              <input type="text" class="input-field" id="riderName" placeholder="e.g. Vikram Sharma" value="">
             </div>
 
             <div class="form-group">
@@ -1359,14 +1350,11 @@
             <label class="form-label">Registered Merchant Mobile <span class="req">*</span></label>
             <div class="phone-input-wrap">
               <button type="button" class="country-code-btn"><span>+91</span></button>
-              <input type="tel" class="phone-field" id="merchantLoginPhone" placeholder="Enter Store Phone" maxlength="10" value="9816012345">
+              <input type="tel" class="phone-field" id="merchantLoginPhone" placeholder="Enter Store Phone" maxlength="10" value="">
             </div>
           </div>
 
-          <div class="demo-bar">
-            <span>🏪 Demo: Anand Sweet Shop (Solan)</span>
-            <button type="button" class="btn-fast-fill" onclick="setDemoMerchant()">Auto-Fill</button>
-          </div>
+          
 
           <button type="button" class="btn-continue btn-amber-action" onclick="requestMerchantOtp()">
             Continue to Merchant Portal ➔
@@ -1413,10 +1401,7 @@
           </div>
 
           <!-- Demo Quick Pre-fill -->
-          <div class="demo-bar">
-            <span>⚡ Test: Himalayan Organic Mandi</span>
-            <button type="button" class="btn-fast-fill" onclick="autoFillMerchantWizard()">Fill All Steps</button>
-          </div>
+          
 
           <!-- WIZARD STEP 1: Store Details -->
           <div id="merchWizardStep1">

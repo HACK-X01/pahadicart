@@ -9,9 +9,9 @@ function renderFinancialLedger() {
   const currentTown = document.getElementById("townSelect")?.value || "solan";
   const townOrders = PahadiMockDB.orders.filter(o => o.town === currentTown);
 
-  const totalGMV = townOrders.reduce((sum, o) => sum + o.amount, 0) + 18450;
+  const totalGMV = townOrders.reduce((sum, o) => sum + (o.amount || o.pricing?.totalAmount || o.grandTotal || 0), 0);
   const merchantPayouts = Math.round(totalGMV * 0.885);
-  const riderPayouts = townOrders.reduce((sum, o) => sum + o.riderPayout, 0) + 1420;
+  const riderPayouts = townOrders.reduce((sum, o) => sum + (o.riderPayout || o.pricing?.deliveryFee || 0), 0);
   const gatewayAndSms = Math.round(totalGMV * 0.018);
   const netFounderProfit = totalGMV - merchantPayouts - (riderPayouts - townOrders.reduce((sum, o) => sum + o.deliveryFee, 0)) - gatewayAndSms;
 
@@ -27,7 +27,7 @@ function renderFinancialLedger() {
             <h3 style="font-size:22px; font-weight:800; color:var(--slate-50); margin-top:2px;">
               Net Founder Profit: <span style="color:var(--primary-400);">+₹${netFounderProfit.toLocaleString('en-IN')}</span> 
               <span style="font-size:13px; font-weight:600; color:var(--primary-300); background:rgba(16,185,129,0.15); padding:2px 8px; border-radius:999px; margin-left:6px;">
-                ${((netFounderProfit / totalGMV) * 100).toFixed(1)}% Net Margin
+                ${totalGMV > 0 ? ((netFounderProfit / totalGMV) * 100).toFixed(1) : "0.0"}% Net Margin
               </span>
             </h3>
           </div>

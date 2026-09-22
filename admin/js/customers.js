@@ -4,7 +4,7 @@
  */
 
 window.CustomerService = (function() {
-  const mockCustomers = [
+  const mockCustomers = []; const legacyMockCustomers = [
     {
       id: 'CUST-801',
       name: 'Ananya Sharma',
@@ -93,7 +93,40 @@ window.CustomerService = (function() {
     }
   ];
 
-  let currentCustomers = [...mockCustomers];
+  // Derive customers dynamically from live orders or start completely fresh
+  function getLiveCustomers() {
+    const orders = window.pahadiBus ? window.pahadiBus.getOrders('all') : [];
+    const customerMap = new Map();
+    orders.forEach(o => {
+      const phone = o.customerPhone || (o.customer && o.customer.phone) || 'Phone';
+      const name = o.customerName || (o.customer && o.customer.name) || 'Customer';
+      if (!customerMap.has(phone)) {
+        customerMap.set(phone, {
+          id: 'CUST-' + Math.abs(phone.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0) % 900 + 100),
+          name: name,
+          phone: phone,
+          town: (o.town || 'solan').toLowerCase(),
+          townName: (o.town || 'solan').toUpperCase(),
+          address: o.colony || (o.customer && o.customer.colony) || 'Himachal Pradesh',
+          elevation: 1550,
+          stairCount: 15,
+          landmark: o.staircaseNotes || 'Roadside drop',
+          ordersCount: 1,
+          totalSpend: o.grandTotal || o.amount || 250,
+          lastOrderDate: 'Recent',
+          status: 'ACTIVE',
+          rating: 5.0,
+          tags: ['Customer']
+        });
+      } else {
+        const c = customerMap.get(phone);
+        c.ordersCount += 1;
+        c.totalSpend += (o.grandTotal || o.amount || 0);
+      }
+    });
+    return Array.from(customerMap.values());
+  }
+  let currentCustomers = getLiveCustomers();
   let filterTown = 'all';
   let filterStatus = 'all';
   let searchQuery = '';
@@ -112,7 +145,11 @@ window.CustomerService = (function() {
       return true;
     });
 
+    currentCustomers = getLiveCustomers();
     if (filtered.length === 0) {
+      container.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:36px; color:var(--slate-400);"><div style="font-size:26px; margin-bottom:8px;">👥</div>No customer accounts registered yet. Profiles will automatically stream in when real orders are placed.</td></tr>';
+      return;
+    }
       container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);">No customers match current filter criteria.</td></tr>';
       return;
     }

@@ -5,6 +5,10 @@
     if (!container || !window.PahadiAdminApi) return;
 
     const logs = window.PahadiAdminApi.getAuditLogs();
+    if (!logs || logs.length === 0) {
+      container.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--slate-400);"><div style="font-size:24px; margin-bottom:8px;">📜</div>No administrative audit events recorded yet. Clean launch state.</td></tr>';
+      return;
+    }
     container.innerHTML = logs.map(l => `
       <tr>
         <td>
