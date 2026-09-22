@@ -169,9 +169,26 @@
         <h3 style="font-size: 18px; font-weight: 800;">📦 Dukaan Stock & Rates Controller</h3>
         <button style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;" onclick="window.merchantApp.closeStockModal()">&times;</button>
       </div>
-      <div style="flex-grow: 1; overflow-y: auto;" id="stockItemsList">
+      <div style="flex-grow: 1; overflow-y: auto; max-height: 250px;" id="stockItemsList">
         <!-- Injected by JS -->
+      
+      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border-color);">
+        <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">➕ Naya Item List Karein</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="text" id="newProdName" placeholder="Item Name (e.g. Desi Ghee 500g)" style="flex: 2; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px;">
+          <input type="number" id="newProdPrice" placeholder="₹ Price" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px;">
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <select id="newProdCat" style="flex: 1; background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 11px;">
+            <option value="kirana">Kirana & Fresh</option>
+            <option value="dhaba">Dhaba & Food</option>
+            <option value="bakery">Bakery</option>
+            <option value="meds">Pharmacy</option>
+          </select>
+          <button type="button" onclick="window.merchantApp && window.merchantApp.addNewProduct()" style="flex: 1; background: #10b981; border: none; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">+ Dukaan Me Jodein</button>
+        </div>
       </div>
+    </div>
       <button class="btn-action btn-ready" style="margin-top: 16px;" onclick="window.merchantApp.closeStockModal()">Save & Update Menu</button>
     </div>
   </div>

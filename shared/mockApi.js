@@ -26,9 +26,9 @@
     // Initialize or seed DB
     initDatabase() {
       try {
-        if (localStorage.getItem('pahadicart_fresh_v3') !== 'true') {
+        if (localStorage.getItem('pahadicart_fresh_v5') !== 'true') {
           localStorage.removeItem(DB_KEY);
-          localStorage.setItem('pahadicart_fresh_v3', 'true');
+          localStorage.setItem('pahadicart_fresh_v5', 'true');
         }
         const existing = localStorage.getItem(DB_KEY);
         if (!existing) {

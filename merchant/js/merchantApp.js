@@ -261,6 +261,47 @@
       this.renderOrders();
     }
 
+    addNewProduct() {
+      const nameEl = document.getElementById('newProdName');
+      const priceEl = document.getElementById('newProdPrice');
+      const catEl = document.getElementById('newProdCat');
+      const name = nameEl ? nameEl.value.trim() : '';
+      const price = priceEl ? Number(priceEl.value) : 0;
+      const cat = catEl ? catEl.value : 'kirana';
+      if (!name || !price || price <= 0) {
+        alert('Kripya product ka naam aur sahi price dalein.');
+        return;
+      }
+      const newProd = {
+        id: 'p-' + Date.now(),
+        merchantId: this.currentMerchantId,
+        name: name,
+        category: cat,
+        price: price,
+        prepTime: 10,
+        unit: 'unit',
+        rating: 5.0,
+        badge: 'Fresh',
+        desc: name + ' - Fresh store listing.'
+      };
+      if (!window.PAHADICART_DATA.products) window.PAHADICART_DATA.products = [];
+      window.PAHADICART_DATA.products.push(newProd);
+      try {
+        localStorage.setItem('pahadicart_products', JSON.stringify(window.PAHADICART_DATA.products));
+      } catch(e) {}
+      if (window.pahadiBus) {
+        window.pahadiBus.emit('PRODUCT_ADDED', newProd);
+      }
+      nameEl.value = '';
+      priceEl.value = '';
+      this.openStockModal();
+      if (window.pahadiPWA && window.pahadiPWA.showToast) {
+        window.pahadiPWA.showToast('✅ Naya Item Dukaan Me Add Ho Gaya!');
+      } else {
+        alert('Naya Item Dukaan Me Safalta Se Jud Gaya!');
+      }
+    },
+
     openStockModal() {
       const modal = document.getElementById('stockModal');
       const list = document.getElementById('stockItemsList');
@@ -270,7 +311,16 @@
         ? window.PAHADICART_DATA.products.filter(p => p.merchantId === this.currentMerchantId)
         : [];
 
-      list.innerHTML = items.map(p => `
+      if (items.length === 0) {
+        list.innerHTML = `
+          <div style="text-align: center; padding: 24px 12px; color: var(--text-dim);">
+            <div style="font-size: 32px; margin-bottom: 8px;">📦</div>
+            <p style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px;">Abhi koi product list nahi hai</p>
+            <p style="font-size: 11px;">Niche form se naya item turant apni dukaan me add karein.</p>
+          </div>
+        `;
+      } else {
+        list.innerHTML = items.map(p => `
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
           <div>
             <div style="font-size: 13px; font-weight: 700;">${p.name}</div>
@@ -282,6 +332,7 @@
           </label>
         </div>
       `).join('');
+      }
 
       modal.style.display = 'flex';
     }

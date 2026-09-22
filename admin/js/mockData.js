@@ -335,41 +335,7 @@ const PahadiMockDB = {
   orders: [],
 
   // Customer Support & Tickets
-  supportTickets: [
-    {
-      id: "TKT-104",
-      customerName: "Kapil Chauhan",
-      customerPhone: "+91 98165 99441",
-      orderId: "PC-8912",
-      issueType: "Damaged Items (Hill Curve Spill)",
-      description: "Amul Milk pouch leaked during steep scooter climb near Shamti curve.",
-      refundAmount: 68,
-      status: "open", // open, refunded, closed
-      createdTime: "12 mins ago"
-    },
-    {
-      id: "TKT-103",
-      customerName: "Sunita Verma",
-      customerPhone: "+91 94182 33110",
-      orderId: "PC-8908",
-      issueType: "Late Delivery due to Rain",
-      description: "Order arrived 35 mins late due to fog. Requesting compensation voucher.",
-      refundAmount: 50,
-      status: "open",
-      createdTime: "40 mins ago"
-    },
-    {
-      id: "TKT-101",
-      customerName: "Rajesh Sood",
-      customerPhone: "+91 98055 22119",
-      orderId: "PC-8899",
-      issueType: "Wrong Sweet Box Delivered",
-      description: "Ordered Kaju Katli, received Gulab Jamun. Issue verified by merchant.",
-      refundAmount: 240,
-      status: "refunded",
-      createdTime: "2 hours ago"
-    }
-  ],
+  supportTickets: [],
 
   // Growth & Colony Heatmap Intelligence
   colonyHeatmap: [],
@@ -381,21 +347,16 @@ const PahadiMockDB = {
   inactiveCustomers: [],
 
   financialSummary: {
-    monthToDateGMV: 184250,
-    merchantPayoutsProcessed: 156400,
-    merchantDuesPending: 18240,
-    riderPayoutsProcessed: 14850,
-    gatewayAndSmsFees: 2950,
-    netFounderProfitMtd: 21850,
-    netProfitMarginPct: 11.8,
-    averageOrderValue: 468,
-    totalCompletedOrdersMonth: 394
+    monthToDateGMV: 0,
+    merchantPayoutsProcessed: 0,
+    merchantDuesPending: 0,
+    riderPayoutsProcessed: 0,
+    gatewayAndSmsFees: 0,
+    netFounderProfitMtd: 0,
+    netProfitMarginPct: 0,
+    averageOrderValue: 0,
+    totalCompletedOrdersMonth: 0
   },
 
-  categoryShare: [
-    { name: "Grocery & Kirana", percent: 41, gmv: 75542, avgComm: "6.2%" },
-    { name: "Bakery & Sweets", percent: 24, gmv: 44220, avgComm: "14.0%" },
-    { name: "Cafes & Restaurants", percent: 23, gmv: 42377, avgComm: "17.4%" },
-    { name: "Pharmacy & Emergency", percent: 12, gmv: 22111, avgComm: "5.0%" }
-  ]
+  categoryShare: []
 };

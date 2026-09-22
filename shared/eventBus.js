@@ -13,11 +13,13 @@
 
     initStorage() {
       // Auto-purge legacy demo orders to ensure 100% fresh production state
-      if (localStorage.getItem('pahadicart_fresh_v3') !== 'true') {
+      if (localStorage.getItem('pahadicart_fresh_v5') !== 'true') {
         localStorage.removeItem(STORAGE_KEY_ORDERS);
         localStorage.removeItem('pahadicart_orders_db');
         localStorage.removeItem('pahadi_audit_logs');
-        localStorage.setItem('pahadicart_fresh_v3', 'true');
+        localStorage.removeItem('pahadicart_cart_data');
+        localStorage.removeItem('pahadicart_products');
+        localStorage.setItem('pahadicart_fresh_v5', 'true');
       }
       if (!localStorage.getItem(STORAGE_KEY_ORDERS)) {
         localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify([]));

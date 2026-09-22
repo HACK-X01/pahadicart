@@ -4,14 +4,7 @@
  */
 
 window.InventoryService = (function() {
-  const mockInventory = [
-    { id: 'SKU-SOL-101', name: 'Himachal Button Mushrooms (A-Grade)', merchant: 'Solan Mushroom Farm', town: 'solan', townName: 'Solan', category: 'Fresh Produce', commissionRate: '8%', mrp: 140, sellingPrice: 120, stock: 45, unit: 'kg', active: true },
-    { id: 'SKU-SOL-102', name: 'Organic Wild Honey (Dharampur Forest)', merchant: 'Solan Mushroom Farm', town: 'solan', townName: 'Solan', category: 'Kirana', commissionRate: '6%', mrp: 450, sellingPrice: 399, stock: 3, unit: 'bottle', active: true },
-    { id: 'SKU-SHM-201', name: 'Traditional Steamed Siddu with Ghee', merchant: 'Mall Road Flavours', town: 'shimla', townName: 'Shimla', category: 'Restaurants', commissionRate: '18%', mrp: 150, sellingPrice: 130, stock: 28, unit: 'plate', active: true },
-    { id: 'SKU-SHM-202', name: 'Freshly Baked Walnut Fudge Cake', merchant: 'The Ridge Bakehouse', town: 'shimla', townName: 'Shimla', category: 'Bakery', commissionRate: '14%', mrp: 350, sellingPrice: 320, stock: 0, unit: 'box', active: false },
-    { id: 'SKU-DHM-301', name: 'Tibetan Herbal Butter Tea Packets', merchant: 'Tibetan Herbal & Spice Store', town: 'dharamshala', townName: 'Dharamshala', category: 'Kirana', commissionRate: '6%', mrp: 220, sellingPrice: 195, stock: 62, unit: 'pack', active: true },
-    { id: 'SKU-DHM-302', name: 'Kangra Valley Orthodox Green Tea (FTGFOP)', merchant: 'Kangra Tea Emporium', town: 'dharamshala', townName: 'Dharamshala', category: 'Specialty Tea', commissionRate: '12%', mrp: 580, sellingPrice: 520, stock: 4, unit: 'tin', active: true }
-  ];
+  const mockInventory = [];
 
   let currentInventory = [...mockInventory];
   let filterCategory = 'all';

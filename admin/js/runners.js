@@ -1,52 +1,6 @@
 // PahadiCart Walking Runner Partner Management (Vehicle-Restricted Zones)
 (function() {
-  const MOCK_RUNNERS = [
-    {
-      id: 'run-1',
-      name: 'Rohan Dogra',
-      phone: '+91 98160-55441',
-      town: 'solan',
-      zone: 'Upper Mall Road Pedestrian Alley',
-      coordinates: [30.9088, 77.0995],
-      elevation: 1520,
-      availability: 'ONLINE',
-      rating: 4.9,
-      completedJobsToday: 11,
-      totalClimbMeters: 640,
-      walletBalance: 825,
-      status: 'ACTIVE'
-    },
-    {
-      id: 'run-2',
-      name: 'Pooja Verma',
-      phone: '+91 98161-99882',
-      town: 'shimla',
-      zone: 'The Ridge & Lakkar Bazaar Steps',
-      coordinates: [31.1052, 77.1740],
-      elevation: 2210,
-      availability: 'ONLINE',
-      rating: 4.85,
-      completedJobsToday: 8,
-      totalClimbMeters: 510,
-      walletBalance: 610,
-      status: 'ACTIVE'
-    },
-    {
-      id: 'run-3',
-      name: 'Karam Chand',
-      phone: '+91 98162-33441',
-      town: 'dharamshala',
-      zone: 'McLeod Ganj Temple Trail',
-      coordinates: [32.2215, 76.3248],
-      elevation: 1470,
-      availability: 'OFFLINE',
-      rating: 4.95,
-      completedJobsToday: 5,
-      totalClimbMeters: 380,
-      walletBalance: 375,
-      status: 'ACTIVE'
-    }
-  ];
+  const MOCK_RUNNERS = [];
 
   window.PahadiMockDB = window.PahadiMockDB || {};
   window.PahadiMockDB.runners = MOCK_RUNNERS;
@@ -58,6 +12,10 @@
     const currentTown = document.getElementById('townSelect')?.value || 'solan';
     const list = (window.PahadiMockDB.runners || []).filter(r => currentTown === 'all' || r.town === currentTown);
 
+    if (list.length === 0) {
+      container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);">No walking runner partners registered yet. Clean launch state.</td></tr>';
+      return;
+    }
     container.innerHTML = list.map(r => `
       <tr>
         <td>

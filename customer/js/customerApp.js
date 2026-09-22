@@ -22,6 +22,10 @@
 
       // Listen to cross-portal status changes
       if (window.pahadiBus) {
+        window.pahadiBus.on('PRODUCT_ADDED', () => {
+          this.renderProducts();
+          this.updateCartUI();
+        });
         window.pahadiBus.on('ORDER_STATUS_CHANGED', ({ orderId, newStatus }) => {
           if (this.activeTrackingOrder && this.activeTrackingOrder.id === orderId) {
             this.activeTrackingOrder.status = newStatus;
@@ -68,11 +72,12 @@
       const catObj = window.PAHADICART_DATA.categories.find(c => c.id === this.selectedCategory);
       if (titleEl) titleEl.innerText = catObj ? catObj.name : 'Sabhi Pahadi Products';
 
+      const allProds = window.PAHADICART_DATA.products || [];
       const townMerchants = (window.PAHADICART_DATA.merchants || []).filter(m => m.town === this.currentTown);
       const merchantIds = new Set(townMerchants.map(m => m.id));
-      let items = (window.PAHADICART_DATA.products || []).filter(p => merchantIds.has(p.merchantId));
-      if (items.length === 0) {
-        items = (window.PAHADICART_DATA.products || []).slice(0, 6);
+      let items = allProds.filter(p => !p.town || p.town === this.currentTown || merchantIds.has(p.merchantId));
+      if (items.length === 0 && allProds.length > 0) {
+        items = allProds;
       }
       if (this.selectedCategory !== 'all') {
         items = items.filter(p => p.category === this.selectedCategory);
@@ -82,6 +87,19 @@
       }
 
       if (countEl) countEl.innerText = `Showing ${items.length} items`;
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 24px; background: rgba(15, 23, 42, 0.45); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 16px; margin: 20px 0;">
+            <div style="font-size: 50px; margin-bottom: 14px;">🛍️</div>
+            <h3 style="color: #ffffff; font-size: 18px; font-weight: 800; margin-bottom: 8px;">Abhi koi product available nahi hai</h3>
+            <p style="color: #94a3b8; font-size: 13.5px; max-width: 420px; margin: 0 auto; line-height: 1.6;">
+              Marketplace bilkul fresh state me hai. Local Vyapar Mandal ke dukaandar jaise hi apne fresh items add karenge, wo yahan live dikhenge.
+            </p>
+          </div>
+        `;
+        return;
+      }
 
       grid.innerHTML = items.map(p => {
         const qty = this.cart[p.id] || 0;
@@ -154,10 +172,17 @@
     loadCartFromStorage() {
       try {
         this.cart = JSON.parse(localStorage.getItem('pahadicart_cart_data')) || {};
-      } catch (e) {
-        this.cart = {};
-      }
-    }
+        const availableProds = window.PAHADICART_DATA?.products || [];
+        const validIds = new Set(availableProds.map(p => p.id));
+        let changed = false;
+        Object.keys(this.cart).forEach(id => {
+          if (!validIds.has(id)) {
+            delete this.cart[id];
+            changed = true;
+          }
+        });
+        if (changed) this.saveCartToStorage();
+      } catch (e) { this.cart = {}; } }
 
     toggleCart(open) {
       const drawer = document.getElementById('cartDrawer');
