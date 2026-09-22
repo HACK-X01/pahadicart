@@ -1,5 +1,10 @@
 ﻿{
-  "cleanUrls": true,
+  "version": 2,
+  "functions": {
+    "server.js": {
+      "includeFiles": "**"
+    }
+  },
   "headers": [
     {
       "source": "/(.*)\\.apk",
@@ -36,22 +41,10 @@
       ]
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/customer",
-      "destination": "/customer/index.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin/index.html"
-    },
-    {
-      "source": "/merchant",
-      "destination": "/merchant/index.html"
-    },
-    {
-      "source": "/rider",
-      "destination": "/rider/index.html"
+      "src": "/(.*)",
+      "dest": "/server.js"
     }
   ]
 }
