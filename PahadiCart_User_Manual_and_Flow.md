@@ -3,7 +3,7 @@
 > **Official Operations Guide & Technical Blueprint (Version 2.9 - September 2026)**  
 > **Target Market:** Himachal Pradesh (Solan, Shimla, Dharamshala / McLeod Ganj)  
 > **Live Production:** [https://pahadicart.vercel.app](https://pahadicart.vercel.app)  
-> **Local Server:** `http://localhost:3333/`  
+  
 > **GitHub Repository:** [https://github.com/HACK-X01/pahadicart](https://github.com/HACK-X01/pahadicart)
 
 ---
