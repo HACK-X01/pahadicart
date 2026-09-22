@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    // Immediate pre-render cache purge to ensure fresh styles and zero stale stats
+    if ('caches' in window && localStorage.getItem('pahadi_v10_purge') !== 'true') {
+      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+      localStorage.removeItem('pahadicart_cart_data');
+      localStorage.removeItem('pahadicart_orders_db');
+      localStorage.removeItem('pahadicart_products');
+      localStorage.setItem('pahadi_v10_purge', 'true');
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let reg of regs) reg.update();
+        });
+      }
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PahadiCart Merchant Terminal — Vyapar Mandal Himachal</title>
   <link rel="stylesheet" href="/shared/tokens.css">
-  <link rel="stylesheet" href="css/merchant.css?v=3.2.0">
+  <link rel="stylesheet" href="css/merchant.css?v=3.3.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -42,11 +58,11 @@
     <div class="shop-info-group">
       <div class="shop-avatar" id="shopAvatar">🍎</div>
       <div>
-        <h1 class="shop-name-title" id="shopTitle">Sharma Kirana & Fresh Produce</h1>
+        <h1 class="shop-name-title" id="shopTitle">Vyapar Mandal Store</h1>
         <div class="vyapar-cert-tag">
           <span>🛡️ Verified Vyapar Mandal Partner</span>
           <span style="color: var(--text-dim);">•</span>
-          <span id="shopVyaparId">Reg: VM-SOL-2024-089 (Mall Road Solan)</span>
+          <span id="shopVyaparId">Reg: HP-VM-2026-LIVE (Himachal Pradesh)</span>
         </div>
       </div>
     </div>
@@ -194,14 +210,14 @@
   </div>
 
   <!-- Shared Scripts -->
-  <script src="/shared/hillAudio.js?v=3.2.0"></script>
+  <script src="/shared/hillAudio.js?v=3.3.0"></script>
   <script src="/shared/pushNotifier.js"></script>
-  <script src="/shared/sharedData.js?v=3.2.0"></script>
-  <script src="/shared/eventBus.js?v=3.2.0"></script>
+  <script src="/shared/sharedData.js?v=3.3.0"></script>
+  <script src="/shared/eventBus.js?v=3.3.0"></script>
   <!-- Merchant Logic -->
-  <script src="js/thermalPrinter.js?v=3.2.0"></script>
-  <script src="js/barcodeScanner.js?v=3.2.0"></script>
-  <script src="js/merchantApp.js?v=3.2.0"></script>
+  <script src="js/thermalPrinter.js?v=3.3.0"></script>
+  <script src="js/barcodeScanner.js?v=3.3.0"></script>
+  <script src="js/merchantApp.js?v=3.3.0"></script>
 <script src="/shared/pwaInit.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>

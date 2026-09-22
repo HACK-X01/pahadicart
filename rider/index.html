@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    // Immediate pre-render cache purge to ensure fresh styles and zero stale stats
+    if ('caches' in window && localStorage.getItem('pahadi_v10_purge') !== 'true') {
+      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+      localStorage.removeItem('pahadicart_cart_data');
+      localStorage.removeItem('pahadicart_orders_db');
+      localStorage.removeItem('pahadicart_products');
+      localStorage.setItem('pahadi_v10_purge', 'true');
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let reg of regs) reg.update();
+        });
+      }
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>PahadiCart Rider Cockpit — Mountain Delivery Partner</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=3.2.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=3.3.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="/shared/tokens.css">
-  <link rel="stylesheet" href="css/rider.css?v=3.2.0">
+  <link rel="stylesheet" href="css/rider.css?v=3.3.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -43,8 +59,8 @@
     <div class="rider-info">
       <div class="rider-avatar">🛵</div>
       <div>
-        <div class="rider-name">Vikas Thakur</div>
-        <div class="rider-bike">Hero Splendor (HP-14-B-8821) • Solan</div>
+        <div class="rider-name">Rider Partner</div>
+        <div class="rider-bike">Duty Vehicle (Pilot HP-14) • Solan</div>
       </div>
     </div>
 
@@ -102,14 +118,14 @@
 
   <!-- Shared Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/shared/hillAudio.js?v=3.2.0"></script>
+  <script src="/shared/hillAudio.js?v=3.3.0"></script>
   <script src="/shared/pushNotifier.js"></script>
-  <script src="/shared/sharedData.js?v=3.2.0"></script>
-  <script src="/shared/eventBus.js?v=3.2.0"></script>
+  <script src="/shared/sharedData.js?v=3.3.0"></script>
+  <script src="/shared/eventBus.js?v=3.3.0"></script>
   <!-- Rider Controller -->
-  <script src="/shared/liveServices.js?v=3.2.0"></script>
-  <script src="/shared/batchingEngine.js?v=3.2.0"></script>
-  <script src="js/riderApp.js?v=3.2.0"></script>
+  <script src="/shared/liveServices.js?v=3.3.0"></script>
+  <script src="/shared/batchingEngine.js?v=3.3.0"></script>
+  <script src="js/riderApp.js?v=3.3.0"></script>
 <script src="/shared/pwaInit.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>

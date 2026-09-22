@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <script>
-    if ('caches' in window && localStorage.getItem('pahadi_v9_instant_purge') !== 'true') {
+    if ('caches' in window && localStorage.getItem('pahadi_v10_purge') !== 'true') {
       caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
       localStorage.removeItem('pahadicart_cart_data');
       localStorage.removeItem('pahadicart_orders_db');
       localStorage.removeItem('pahadicart_products');
-      localStorage.setItem('pahadi_v9_instant_purge', 'true');
+      localStorage.setItem('pahadi_v10_purge', 'true');
     }
   </script>
 

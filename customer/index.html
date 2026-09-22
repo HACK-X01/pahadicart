@@ -3,12 +3,12 @@
 <head>
   <script>
     // Immediate pre-render cache purge to ensure zero stale products
-    if ('caches' in window && localStorage.getItem('pahadi_v9_instant_purge') !== 'true') {
+    if ('caches' in window && localStorage.getItem('pahadi_v10_purge') !== 'true') {
       caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
       localStorage.removeItem('pahadicart_cart_data');
       localStorage.removeItem('pahadicart_orders_db');
       localStorage.removeItem('pahadicart_products');
-      localStorage.setItem('pahadi_v9_instant_purge', 'true');
+      localStorage.setItem('pahadi_v10_purge', 'true');
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(regs => {
           for (let reg of regs) reg.update();
@@ -23,10 +23,10 @@
   <meta name="description" content="Order authentic Himachal apples, fresh Siddu, local dham thali, mountain bakery cakes and medicines delivered to your staircase doorstep in Solan, Shimla, and Dharamshala.">
   
   <!-- Leaflet CSS for Hill Tracking Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=3.2.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=3.3.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <!-- Customer App CSS -->
   <link rel="stylesheet" href="/shared/tokens.css">
-  <link rel="stylesheet" href="css/customer.css?v=3.2.0">
+  <link rel="stylesheet" href="css/customer.css?v=3.3.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -372,21 +372,21 @@
 
   <!-- Shared Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/shared/hillAudio.js?v=3.2.0"></script>
+  <script src="/shared/hillAudio.js?v=3.3.0"></script>
   <script src="/shared/pushNotifier.js"></script>
-  <script src="/shared/sharedData.js?v=3.2.0"></script>
-  <script src="/shared/eventBus.js?v=3.2.0"></script>
-  <script src="/shared/dispatchEngine.js?v=3.2.0"></script>
-  <script src="/shared/simulationEngine.js?v=3.2.0"></script>
-  <script src="/shared/simulationModal.js?v=3.2.0"></script>
-  <script src="/shared/offlineQueue.js?v=3.2.0"></script>
-  <script src="/shared/whatsappBot.js?v=3.2.0"></script>
-  <script src="/shared/batchingEngine.js?v=3.2.0"></script>
+  <script src="/shared/sharedData.js?v=3.3.0"></script>
+  <script src="/shared/eventBus.js?v=3.3.0"></script>
+  <script src="/shared/dispatchEngine.js?v=3.3.0"></script>
+  <script src="/shared/simulationEngine.js?v=3.3.0"></script>
+  <script src="/shared/simulationModal.js?v=3.3.0"></script>
+  <script src="/shared/offlineQueue.js?v=3.3.0"></script>
+  <script src="/shared/whatsappBot.js?v=3.3.0"></script>
+  <script src="/shared/batchingEngine.js?v=3.3.0"></script>
   <!-- Customer App Logic -->
-  <script src="/shared/gpsTrackingEngine.js?v=3.2.0"></script>
-  <script src="js/voiceOrderEngine.js?v=3.2.0"></script>
-  <script src="/shared/liveServices.js?v=3.2.0"></script>
-  <script src="js/customerApp.js?v=3.2.0"></script>
+  <script src="/shared/gpsTrackingEngine.js?v=3.3.0"></script>
+  <script src="js/voiceOrderEngine.js?v=3.3.0"></script>
+  <script src="/shared/liveServices.js?v=3.3.0"></script>
+  <script src="js/customerApp.js?v=3.3.0"></script>
 <script src="/shared/pwaInit.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>

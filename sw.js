@@ -1,5 +1,5 @@
 // PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.0
-const CACHE_NAME = 'pahadicart-pwa-v9-live';
+const CACHE_NAME = 'pahadicart-pwa-v10-fresh';
 
 const STATIC_SHELL = [
   '/',
