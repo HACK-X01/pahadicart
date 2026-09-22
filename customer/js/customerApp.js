@@ -271,6 +271,10 @@
       }
     }
 
+    confirmPayment() {
+      this.confirmOrderPlacement();
+    }
+
     confirmOrderPlacement() {
       // Check if offline
       if (window.pahadiOffline && !window.pahadiOffline.isOnline()) {
@@ -291,6 +295,19 @@
         const deliveryFee = 25;
         const grandTotal = itemTotal + deliveryFee + 25;
         const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+      if (window.PahadiMockApi) {
+        window.PahadiMockApi.createOrder({
+          id: orderId,
+          town: this.currentTown,
+          customer: { name: 'Aarav Sharma', phone, colony, landmark, staircaseDetails: staircase, stairsTotal: 35, stairsCompleted: 0 },
+          merchant: { name: 'Sharma Sweets & Hill Dairy', address: 'Upper Mall Road' },
+          rider: { name: 'Karan Negi', vehicle: 'Hero Splendor (HP-14-A-4432)' },
+          items: orderItems,
+          pricing: { itemTotal, deliveryFee: 25, weatherBufferFee: 0, totalAmount: grandTotal },
+          payMode: this.selectedPayMode || 'UPI',
+          otp: secretOtp
+        });
+      }
         const secretOtp = String(Math.floor(1000 + Math.random() * 9000));
 
         const offlineOrder = {

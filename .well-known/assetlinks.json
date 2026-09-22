@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.pahadicart.himachal",
+      "sha256_cert_fingerprints": [
+        "14:6D:E9:7C:0F:86:02:AE:82:E6:E6:46:AC:1A:1D:FB:99:99:6B:76:8E:22:96:32:B4:F6:4F:92:2C:94:D6:9F"
+      ]
+    }
+  }
+]

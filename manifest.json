@@ -1,13 +1,13 @@
-﻿{
+{
   "name": "PahadiCart - Himachal Hyperlocal Delivery",
   "short_name": "PahadiCart",
   "description": "Himalayan hyperlocal marketplace, 2-hour weather surge delivery & mountain rider cockpit across Solan, Shimla, and Dharamshala.",
   "start_url": "/",
   "scope": "/",
-  "id": "com.pahadicart.app",
+  "id": "com.pahadicart.himachal",
   "display": "standalone",
-  "background_color": "#030712",
-  "theme_color": "#059669",
+  "background_color": "#F7F8F5",
+  "theme_color": "#123C35",
   "orientation": "portrait-primary",
   "categories": [
     "shopping",

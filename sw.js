@@ -1,5 +1,5 @@
-﻿// PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.0
-const CACHE_NAME = 'pahadicart-pwa-v5';
+// PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.0
+const CACHE_NAME = 'pahadicart-pwa-v6';
 
 const STATIC_SHELL = [
   '/',
@@ -28,6 +28,7 @@ const STATIC_SHELL = [
   '/admin/css/components.css',
   '/admin/css/responsive.css',
   '/shared/tokens.css',
+  '/shared/mockApi.js',
   '/shared/pwaInit.js',
   '/shared/profileSidebar.js',
   '/shared/hillAudio.js',

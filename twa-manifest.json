@@ -1,0 +1,59 @@
+{
+  "packageId": "com.pahadicart.himachal",
+  "host": "pahadicart.vercel.app",
+  "name": "PahadiCart",
+  "launcherName": "PahadiCart",
+  "display": "standalone",
+  "themeColor": "#123C35",
+  "themeColorDark": "#0D2924",
+  "navigationColor": "#0D2924",
+  "navigationColorDark": "#0D2924",
+  "navigationDividerColor": "#123C35",
+  "navigationDividerColorDark": "#123C35",
+  "backgroundColor": "#F7F8F5",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://pahadicart.vercel.app/icons/icon-512.png",
+  "maskableIconUrl": "https://pahadicart.vercel.app/icons/maskable-icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "pahadicart"
+  },
+  "appVersionName": "2.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [
+    {
+      "name": "Customer Store",
+      "shortName": "Store",
+      "url": "/customer/",
+      "icon": "https://pahadicart.vercel.app/icons/icon-192.png"
+    },
+    {
+      "name": "Rider Cockpit",
+      "shortName": "Rider",
+      "url": "/rider/",
+      "icon": "https://pahadicart.vercel.app/icons/icon-192.png"
+    },
+    {
+      "name": "Merchant Terminal",
+      "shortName": "Merchant",
+      "url": "/merchant/",
+      "icon": "https://pahadicart.vercel.app/icons/icon-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://pahadicart.vercel.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": true
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  }
+}
