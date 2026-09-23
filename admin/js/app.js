@@ -150,6 +150,10 @@ function switchTab(tabId) {
     if (window.RunnerService) window.RunnerService.init();
   } else if (tabId === "customers") {
     if (window.CustomerService) window.CustomerService.init();
+  } else if (tabId === "categories") {
+    if (window.CategoriesService) window.CategoriesService.init();
+  } else if (tabId === "cms") {
+    if (window.CmsService) window.CmsService.init();
   } else if (tabId === "inventory") {
     if (window.InventoryService) window.InventoryService.init();
   } else if (tabId === "terrain_eta") {

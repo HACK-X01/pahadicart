@@ -26,6 +26,17 @@
           this.renderProducts();
           this.updateCartUI();
         });
+        window.pahadiBus.on('CATEGORIES_UPDATED', (cats) => {
+          if (window.PAHADICART_DATA) window.PAHADICART_DATA.categories = cats;
+          this.renderCategories();
+          this.renderProducts();
+        });
+        window.pahadiBus.on('CMS_UPDATED', () => {
+          this.renderAnnouncementBar();
+        });
+        window.pahadiBus.on('BUSINESS_RULES_UPDATED', () => {
+          this.updateCartUI();
+        });
         window.pahadiBus.on('PRODUCT_ADDED', () => {
           this.renderProducts();
           this.updateCartUI();
@@ -76,7 +87,7 @@
       const catObj = window.PAHADICART_DATA.categories.find(c => c.id === this.selectedCategory);
       if (titleEl) titleEl.innerText = catObj ? catObj.name : 'Sabhi Pahadi Products';
 
-      const allProds = window.PAHADICART_DATA.products || [];
+      const allProds = (window.PAHADICART_DATA.products || []).filter(p => p.isLaunched !== false && p.active !== false);
       const townMerchants = (window.PAHADICART_DATA.merchants || []).filter(m => m.town === this.currentTown);
       const merchantIds = new Set(townMerchants.map(m => m.id));
       let items = allProds.filter(p => !p.town || p.town === this.currentTown || merchantIds.has(p.merchantId));
@@ -254,7 +265,7 @@
         `;
       }).join('');
 
-      const deliveryFee = itemTotal >= 499 ? 0 : 35;
+      const rules = (window.PAHADICART_DATA && window.PAHADICART_DATA.businessRules) || {}; const baseFee = rules.baseDeliveryFee !== undefined ? rules.baseDeliveryFee : 25; const deliveryFee = itemTotal >= 499 ? 0 : baseFee;
       const packagingFee = 5;
       const grandTotal = itemTotal + deliveryFee + packagingFee;
 

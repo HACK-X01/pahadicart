@@ -168,6 +168,7 @@ function renderOrdersFeed(filterStatus = "all") {
         '<div class="order-meta">' +
           '<div class="order-merchant"><span>🏪 ' + order.merchantName + '</span></div>' +
           '<div class="order-hill-route"><span>🏔️ ' + order.eta + '</span></div>' +
+        '<div style="font-size:11.5px; color:#38bdf8; margin-top:2px;">👤 <b>Customer:</b> ' + (order.customerName || 'Customer') + ' &bull; ' + (order.customerPhone || 'N/A') + '</div>' +
         '</div>' +
         '<div style="font-size:12px; color:var(--slate-300);">' +
           order.items.map(i => i.qty + 'x ' + i.name).join(', ') +
@@ -188,6 +189,9 @@ function renderOrdersFeed(filterStatus = "all") {
             (order.status === 'in_transit' ? '<button class="btn btn-sm btn-primary" onclick="advanceOrderStatus(\'' + order.id + '\', \'delivered\')">Verify OTP</button>' : '') +
             '<button class="btn btn-sm btn-secondary" onclick="window.PahadiLiveServices && window.PahadiLiveServices.openOrderInGoogleMaps(\'' + order.id + '\', \'' + (order.deliveryAddress || '').replace(/'/g, "") + '\')" style="background:rgba(56,189,248,0.15); border-color:#38bdf8; color:#38bdf8; font-weight:700;">🗺️ Google Maps</button>' +
             '<button class="btn btn-sm btn-secondary" onclick="window.showTriadAudit(\'' + order.id + '\')" style="background:rgba(16,185,129,0.15); border-color:#10b981; color:#10b981; font-weight:700;">🔍 Triad Audit</button>' +
+            '<button class="btn btn-sm btn-secondary" onclick="openReassignRiderModal(\'' + order.id + '\')" style="background:rgba(245,158,11,0.15); border-color:#f59e0b; color:#f59e0b; font-weight:700;" title="Rider Assign / Reassign">🛵 Reassign</button>' +
+            '<button class="btn btn-sm btn-secondary" onclick="openStatusOverrideModal(\'' + order.id + '\')" style="background:rgba(139,92,246,0.15); border-color:#8b5cf6; color:#a78bfa; font-weight:700;" title="Manual Status Change">⚡ Status</button>' +
+            (order.status !== 'cancelled' ? '<button class="btn btn-sm btn-secondary" onclick="cancelAndRefundOrder(\'' + order.id + '\')" style="background:rgba(239,68,68,0.15); border-color:#ef4444; color:#ef4444; font-weight:700;" title="Cancel & Process Refund">❌ Cancel & Refund</button>' : '') +
           '</div>' +
         '</div>' +
       '</div>'

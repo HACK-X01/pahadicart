@@ -92,6 +92,11 @@
         <span>Customer Directory</span>
       </div>
       <div class="nav-item" data-tab="inventory" onclick="switchTab('inventory')">
+        <div class="nav-item" data-tab="categories" onclick="switchTab('categories')">
+          <span class="nav-icon">🏷️</span>
+          <span class="nav-label">Categories Manager</span>
+        </div>
+        
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         <span>Product Inventory</span>
       </div>
@@ -134,7 +139,11 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
         <span>System Health & Ops</span>
       </div>
-      <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+      <div class="nav-item" data-tab="cms" onclick="switchTab('cms')">
+          <span class="nav-icon">🎨</span>
+          <span class="nav-label">Homepage & Banners</span>
+        </div>
+        <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         <span>Settings & PRD Choices</span>
       </div>
@@ -1186,10 +1195,19 @@
             <p>Multi-merchant stock visibility, pricing take rates & controlled stock overrides</p>
           </div>
           <div class="page-actions">
-            <span class="badge badge-success" id="inventoryCountBadge">Loading...</span>
+            <span class="badge badge-success" id="inventoryCountBadge" style="margin-right:10px;">Loading...</span>
+            <button class="btn btn-primary" onclick="window.InventoryService && window.InventoryService.openProductModal()" style="display:inline-flex; align-items:center; gap:6px; background:#10b981; border:none; padding:8px 16px; border-radius:6px; color:#fff; font-weight:700; cursor:pointer;">
+              <span>➕ Naya Product Add Karein</span>
+            </button>
           </div>
         </div>
         <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; margin-bottom:20px; display:flex; gap:12px; flex-wrap:wrap;">
+          <select id="inventoryTypeFilter" onchange="window.InventoryService && window.InventoryService.setProductTypeFilter(this.value)" style="background:#091220; border:1px solid rgba(255,255,255,0.15); color:#38bdf8; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:700;">
+            <option value="all">🌐 All Products</option>
+            <option value="local">🏪 Local Shops Only</option>
+            <option value="jeevanix">🌿 Jeevanix Health & Wellness</option>
+            <option value="pending_approval">⏳ Pending Approval</option>
+          </select>
           <input type="text" id="inventorySearchInput" placeholder="Search product name, SKU, or merchant..." style="flex:1; min-width:200px; background:#091220; border:1px solid rgba(255,255,255,0.15); color:#fff; padding:8px 12px; border-radius:6px; font-size:12px;">
           <select id="inventoryCatFilter" style="background:#091220; border:1px solid rgba(255,255,255,0.15); color:#fff; padding:8px 12px; border-radius:6px; font-size:12px;">
             <option value="all">All Categories</option>
@@ -1382,6 +1400,50 @@
       </section>
 
       <!-- TAB: SETTINGS & PRD CHOICES -->
+      <!-- Tab Categories Manager -->
+      <section id="tab-categories" class="tab-content" style="display:none;">
+        <div class="page-header">
+          <div class="page-title">
+            <h2>🏷️ Category & Taxonomy Control Desk</h2>
+            <p>Direct admin control to create, rename, order, and toggle category visibility on Customer App</p>
+          </div>
+          <div class="page-actions" style="display:flex; align-items:center; gap:12px;">
+            <span class="badge badge-success" id="categoriesCountBadge">Loading...</span>
+            <button class="btn btn-primary" onclick="window.CategoriesService && window.CategoriesService.openCategoryModal()" style="display:inline-flex; align-items:center; gap:6px; background:#10b981; border:none; padding:8px 16px; border-radius:6px; color:#fff; font-weight:700; cursor:pointer;">
+              <span>➕ Naya Category Banayein</span>
+            </button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:70px;">Order</th>
+                <th style="width:70px;">Icon</th>
+                <th>Category Name</th>
+                <th>Slug ID</th>
+                <th>Customer App Status</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTableBody">
+              <tr><td colspan="6" style="text-align:center; padding:24px; color:var(--slate-400);">Loading categories...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab Homepage CMS -->
+      <section id="tab-cms" class="tab-content" style="display:none;">
+        <div class="page-header">
+          <div class="page-title">
+            <h2>🎨 Homepage CMS, Banners & Weather Broadcast</h2>
+            <p>Customize hero banners, urgent hill weather tickers, and featured products & shops</p>
+          </div>
+        </div>
+        <div id="cmsContainer"></div>
+      </section>
+
       <section id="tab-settings" class="tab-content" style="display:none;">
         <div class="page-header">
           <div class="page-title">
@@ -1579,6 +1641,8 @@
 <script src="js/growth.js?v=3.2.0"></script>
 <script src="js/finance.js?v=3.2.0"></script>
 <script src="js/zones.js?v=3.2.0"></script>
+<script src="js/categories.js?v=4.0.0"></script>
+<script src="js/cms.js?v=4.0.0"></script>
 <script src="js/app.js?v=3.2.0"></script>
 
   <script src="../shared/simulationEngine.js?v=3.2.0"></script>

@@ -19,7 +19,7 @@
         'view:runners', 'manage:runners', 'view:dispatch', 'manage:dispatch',
         'view:zones', 'manage:zones', 'view:geofences', 'manage:geofences',
         'view:terrain', 'manage:terrain', 'view:weather', 'manage:weather',
-        'view:customers'
+        'view:customers', 'view:categories', 'manage:categories', 'view:cms', 'manage:cms', 'view:inventory', 'manage:inventory'
       ]
     },
     FINANCE_ADMIN: {

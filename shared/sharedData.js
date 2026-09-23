@@ -33,13 +33,23 @@ window.PAHADICART_DATA = {
     }
   ],
 
-  categories: [
-    { id: 'all', name: 'Sabhi Products', icon: '🏔️' },
-    { id: 'kirana', name: 'Pahadi Kirana & Fresh', icon: '🍎' },
-    { id: 'dhaba', name: 'Local Dhabas & Cafes', icon: '🍲' },
-    { id: 'bakery', name: 'Mountain Bakeries', icon: '🍰' },
-    { id: 'meds', name: '2-Hr Pahadi Meds', icon: '💊' }
-  ],
+  categories: (function() {
+    try {
+      const stored = localStorage.getItem('pahadicart_categories');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch(e) {}
+    return [
+    { id: 'all', name: 'Sabhi Products', icon: '🏔️', order: 1, hidden: false },
+    { id: 'kirana', name: 'Pahadi Kirana & Fresh', icon: '🍎', order: 2, hidden: false },
+    { id: 'dhaba', name: 'Local Dhabas & Cafes', icon: '🍲', order: 3, hidden: false },
+    { id: 'bakery', name: 'Mountain Bakeries', icon: '🍰', order: 4, hidden: false },
+    { id: 'meds', name: '2-Hr Pahadi Meds', icon: '💊', order: 5, hidden: false },
+    { id: 'wellness', name: 'Jeevanix Health & Wellness', icon: '🌿', order: 6, hidden: false }
+  ];
+  })(),
 
   merchants: [
     // --- SOLAN MERCHANTS ---
@@ -378,7 +388,7 @@ window.PAHADICART_DATA = {
     }
   ],
 
-  products: (function() {
+    products: (function() {
     try {
       const stored = localStorage.getItem('pahadicart_products');
       if (stored) {
@@ -389,5 +399,61 @@ window.PAHADICART_DATA = {
     return [];
   })(),
 
+  businessRules: (function() {
+    const defaults = {
+      defaultCommissionPercent: 8,
+      baseDeliveryFee: 25,
+      staircaseDeliveryFee: 25,
+      minOrderValue: 99,
+      deliveryPromiseText: 'Under 2 Hours Hyperlocal Delivery (Himachal Hills)',
+      serviceTowns: ['solan', 'shimla', 'dharamshala'],
+      codEnabled: true,
+      upiEnabled: true,
+      requireShopApproval: true,
+      requireProductApproval: false,
+      activeCoupons: [
+        { code: 'PAHADI50', discountPercent: 20, maxDiscount: 50, minOrder: 199, active: true },
+        { code: 'WELCOME10', discountPercent: 10, maxDiscount: 30, minOrder: 99, active: true }
+      ]
+    };
+    try {
+      const stored = localStorage.getItem('pahadicart_business_rules');
+      if (stored) {
+        return Object.assign({}, defaults, JSON.parse(stored));
+      }
+    } catch(e) {}
+    return defaults;
+  })(),
+
+  homepageCms: (function() {
+    const defaults = {
+      heroBanner: {
+        title: 'Fresh From Himachal Hills to Your Doorstep in 2 Hours',
+        subtitle: 'Pure Himalayan produce, local Vyapar Mandal stores & Jeevanix wellness remedies.',
+        badge: '🌲 100% Authentic Hill Sourced',
+        active: true
+      },
+      announcement: {
+        text: '🏔️ Weather Advisory: Hill runners active across stone staircases. 2-Hour Express Delivery live!',
+        type: 'info',
+        active: true
+      },
+      featuredProductIds: [],
+      featuredShopIds: [],
+      offers: [
+        { id: 'off-1', title: 'Solan Fresh Produce Deal', discount: 'Flat 15% OFF', code: 'HILLFRESH', active: true },
+        { id: 'off-2', title: 'Jeevanix Health Boost', discount: 'Pure Himalayan Shilajit & Chyawanprash', code: 'JEEVANIX', active: true }
+      ]
+    };
+    try {
+      const stored = localStorage.getItem('pahadicart_homepage_cms');
+      if (stored) {
+        return Object.assign({}, defaults, JSON.parse(stored));
+      }
+    } catch(e) {}
+    return defaults;
+  })(),
+
   initialOrders: []
 };
+
