@@ -40,6 +40,19 @@ window.CategoriesService = (function() {
     const badge = document.getElementById('categoriesCountBadge');
     if (badge) badge.innerText = `${sorted.length} Categories Active`;
 
+    if (sorted.length === 0) {
+      container.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:36px 16px; color:var(--slate-400);">
+            <div style="font-size:32px; margin-bottom:8px;">🏷️</div>
+            <div style="font-weight:700; color:#fff; font-size:14px;">No Categories Found</div>
+            <div style="font-size:12px; color:var(--slate-400); margin-top:4px;">Add a new category using "+ Add New Category" button.</div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
     const products = (window.PAHADICART_DATA && window.PAHADICART_DATA.products) || [];
 
     container.innerHTML = sorted.map((c, index) => {

@@ -8,7 +8,9 @@
       this.cache = new Map();
       this.listeners = new Map();
       this.auditHistory = [];
-      }
+    }
+
+    getAuditHistory() {
       return this.auditHistory;
     }
 

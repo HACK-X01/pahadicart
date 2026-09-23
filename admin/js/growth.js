@@ -51,7 +51,7 @@ function renderGrowthAnalytics() {
   // 3. Inactive Customer WhatsApp Re-engagement
   if (inactiveContainer) {
     if (!PahadiMockDB.inactiveCustomers || PahadiMockDB.inactiveCustomers.length === 0) {
-      inactiveContainer.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--slate-400);">No dormant customer records found. Clean launch state.</td></tr>';
+      inactiveContainer.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--slate-400);">No dormant customer records found. Clean launch state.</td></tr>';
     } else {
       inactiveContainer.innerHTML = PahadiMockDB.inactiveCustomers.map(u => `
         <tr>

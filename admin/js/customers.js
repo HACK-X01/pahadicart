@@ -146,11 +146,12 @@ window.CustomerService = (function() {
     });
 
     currentCustomers = getLiveCustomers();
-    if (filtered.length === 0) {
-      container.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:36px; color:var(--slate-400);"><div style="font-size:26px; margin-bottom:8px;">👥</div>No customer accounts registered yet. Profiles will automatically stream in when real orders are placed.</td></tr>';
+    if (currentCustomers.length === 0) {
+      container.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:36px; color:var(--slate-400);"><div style="font-size:26px; margin-bottom:8px;">👥</div>No customer accounts registered yet. Profiles will automatically stream in when real orders are placed.</td></tr>';
       return;
     }
-      container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);">No customers match current filter criteria.</td></tr>';
+    if (filtered.length === 0) {
+      container.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--slate-400);">No customers match current filter criteria.</td></tr>';
       return;
     }
 

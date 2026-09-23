@@ -6,7 +6,7 @@ function renderSupportDesk() {
 
   const tickets = PahadiMockDB.supportTickets || [];
   if (tickets.length === 0) {
-    container.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--slate-400);"><div style="font-size:24px; margin-bottom:8px;">✅</div>No active customer support tickets. All deliveries are running smoothly.</td></tr>';
+    container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);"><div style="font-size:24px; margin-bottom:8px;">✅</div>No active customer support tickets. All deliveries are running smoothly.</td></tr>';
     return;
   }
 

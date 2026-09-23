@@ -70,7 +70,18 @@ function renderFinancialLedger() {
 
   // 2. Transaction Audit Ledger Table
   if (container) {
-    container.innerHTML = townOrders.map(o => `
+    if (townOrders.length === 0) {
+      container.innerHTML = `
+        <tr>
+          <td colspan="9" style="text-align:center; padding:36px 16px; color:var(--slate-400);">
+            <div style="font-size:32px; margin-bottom:8px;">📊</div>
+            <div style="font-weight:700; color:#fff; font-size:14px;">No Transactions Recorded in this Town</div>
+            <div style="font-size:12px; color:var(--slate-400); margin-top:4px;">As live orders are completed, audit ledger entries and profit margins will appear here.</div>
+          </td>
+        </tr>
+      `;
+    } else {
+      container.innerHTML = townOrders.map(o => `
       <tr>
         <td>
           <div style="font-family:var(--font-mono); font-weight:700; color:var(--slate-100);">${o.id}</div>
@@ -105,6 +116,7 @@ function renderFinancialLedger() {
         </td>
       </tr>
     `).join('');
+    }
   }
 
   // 3. Town Comparison Container

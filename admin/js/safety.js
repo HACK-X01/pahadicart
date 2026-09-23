@@ -48,7 +48,18 @@ function renderSafetyAndCashDesk() {
 
   // 2. Rider COD Floating Cash Limit Table
   if (cashContainer) {
-    cashContainer.innerHTML = riders.map(r => {
+    if (riders.length === 0) {
+      cashContainer.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center; padding:36px 16px; color:var(--slate-400);">
+            <div style="font-size:32px; margin-bottom:8px;">🛵</div>
+            <div style="font-weight:700; color:#fff; font-size:14px;">No Active Riders in this Town</div>
+            <div style="font-size:12px; color:var(--slate-400); margin-top:4px;">No cash float or COD locks currently pending.</div>
+          </td>
+        </tr>
+      `;
+    } else {
+      cashContainer.innerHTML = riders.map(r => {
       const pct = Math.min(100, Math.round((r.cashInHand / r.maxCashLimit) * 100));
       const isLocked = r.isCashLocked || r.cashInHand >= r.maxCashLimit;
 
@@ -103,6 +114,7 @@ function renderSafetyAndCashDesk() {
         </tr>
       `;
     }).join('');
+    }
   }
 }
 

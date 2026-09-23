@@ -8,7 +8,7 @@
 
     const liveCodOrders = (window.pahadiBus ? window.pahadiBus.getOrders() : []).filter(o => o.paymentMode === 'COD');
     if (liveCodOrders.length === 0 && MOCK_COD_RECORDS.length === 0) {
-      container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);">No Cash On Delivery (COD) transactions yet. All fleet floats are clean.</td></tr>';
+      container.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--slate-400);">No Cash On Delivery (COD) transactions yet. All fleet floats are clean.</td></tr>';
       return;
     }
     const codList = liveCodOrders.length > 0 ? liveCodOrders.map(o => ({

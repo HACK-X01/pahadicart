@@ -13,7 +13,7 @@
     const list = (window.PahadiMockDB.runners || []).filter(r => currentTown === 'all' || r.town === currentTown);
 
     if (list.length === 0) {
-      container.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--slate-400);">No walking runner partners registered yet. Clean launch state.</td></tr>';
+      container.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--slate-400);">No walking runner partners registered yet. Clean launch state.</td></tr>';
       return;
     }
     container.innerHTML = list.map(r => `

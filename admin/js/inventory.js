@@ -83,7 +83,7 @@ window.InventoryService = (function() {
     if (filtered.length === 0) {
       container.innerHTML = `
         <tr>
-          <td colspan="8" style="text-align:center; padding:40px 20px; color:var(--slate-400);">
+          <td colspan="9" style="text-align:center; padding:40px 20px; color:var(--slate-400);">
             <div style="font-size:36px; margin-bottom:10px;">📦</div>
             <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:6px;">Koi product nahi mila</div>
             <p style="font-size:12px; margin-bottom:14px;">Aap "+ Naya Product Jodein" button se direct catalog me product add kar sakte hain.</p>

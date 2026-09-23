@@ -48,12 +48,13 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-item sim-nav-drawer-btn" onclick="window.openSimModal()" style="background: linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(5,150,105,0.28) 100%); border: 1px solid rgba(16,185,129,0.4); color: #34d399; font-weight: 700; margin-bottom: 12px; box-shadow: 0 0 14px rgba(16,185,129,0.2); cursor: pointer;">
-        <span style="font-size: 16px;">⚡</span>
+      <div class="nav-item sim-nav-drawer-btn" onclick="window.openSimModal()" style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #34d399; font-weight: 700; margin-bottom: 8px;">
+        <span style="font-size: 15px;">⚡</span>
         <span>1-Click Order Simulator</span>
       </div>
 
-      <div class="nav-section-title">Operations</div>
+      <!-- 1. Operations & Dispatch -->
+      <div class="nav-section-title">Operations & Dispatch</div>
       <div class="nav-item active" data-tab="overview" onclick="switchTab('overview')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
         <span>Command Tower</span>
@@ -73,38 +74,43 @@
         <span>Zones & Geofences</span>
       </div>
 
-      <div class="nav-section-title">Partners & Fleet</div>
+      <!-- 2. Commerce & Catalog -->
+      <div class="nav-section-title">Commerce & Catalog</div>
       <div class="nav-item" data-tab="merchants" onclick="switchTab('merchants')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
         <span>Vyapar Mandal (Shops)</span>
       </div>
+      <div class="nav-item" data-tab="inventory" onclick="switchTab('inventory')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <span>Product Inventory</span>
+      </div>
+      <div class="nav-item" data-tab="categories" onclick="switchTab('categories')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        <span>Categories Manager</span>
+      </div>
+      <div class="nav-item" data-tab="cms" onclick="switchTab('cms')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span>Homepage & Banners</span>
+      </div>
+      <div class="nav-item" data-tab="customers" onclick="switchTab('customers')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span>Customer Directory</span>
+      </div>
+
+      <!-- 3. Fleet & Terrain -->
+      <div class="nav-section-title">Fleet & Elevation</div>
       <div class="nav-item" data-tab="riders" onclick="switchTab('riders')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-        <span>Pahadi Riders Fleet</span>
+        <span>Pahadi Fleet</span>
       </div>
       <div class="nav-item" data-tab="runners" onclick="switchTab('runners')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6z"/></svg>
         <span>Mall Road Runners</span>
         <span class="nav-badge" style="background:var(--emerald-500); color:#fff;">Walking</span>
       </div>
-      <div class="nav-item" data-tab="customers" onclick="switchTab('customers')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        <span>Customer Directory</span>
-      </div>
-      <div class="nav-item" data-tab="inventory" onclick="switchTab('inventory')">
-        <div class="nav-item" data-tab="categories" onclick="switchTab('categories')">
-          <span class="nav-icon">🏷️</span>
-          <span class="nav-label">Categories Manager</span>
-        </div>
-        
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-        <span>Product Inventory</span>
-      </div>
-
-      <div class="nav-section-title">Terrain & ETA Engine</div>
       <div class="nav-item" data-tab="terrain_eta" onclick="switchTab('terrain_eta')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        <span>Terrain & ETA Debugger</span>
+        <span>Terrain & ETA Engine</span>
       </div>
       <div class="nav-item" data-tab="safety" onclick="switchTab('safety')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -112,7 +118,8 @@
         <span class="nav-badge" style="background:var(--rose-500); color:#fff;">Alert</span>
       </div>
 
-      <div class="nav-section-title">Finance & Settlements</div>
+      <!-- 4. Finance & Governance -->
+      <div class="nav-section-title">Finance & Platform</div>
       <div class="nav-item" data-tab="finance" onclick="switchTab('finance')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>P&L Profit & Ledger</span>
@@ -129,23 +136,17 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
         <span>Growth & Colony Heatmap</span>
       </div>
-
-      <div class="nav-section-title">Governance & Security</div>
       <div class="nav-item" data-tab="audit_logs" onclick="switchTab('audit_logs')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        <span>Immutable Audit Logs</span>
+        <span>Audit Logs</span>
       </div>
       <div class="nav-item" data-tab="system_health" onclick="switchTab('system_health')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
         <span>System Health & Ops</span>
       </div>
-      <div class="nav-item" data-tab="cms" onclick="switchTab('cms')">
-          <span class="nav-icon">🎨</span>
-          <span class="nav-label">Homepage & Banners</span>
-        </div>
-        <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+      <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        <span>Settings & PRD Choices</span>
+        <span>Settings & Preferences</span>
       </div>
     </nav>
 
@@ -166,11 +167,11 @@
     <header class="top-header">
       <div class="header-left">
         <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
 
         <div class="town-selector-wrapper">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           <select class="town-select" id="townSelect">
             <option value="solan">Solan (Mushroom City)</option>
             <option value="dharamshala">Dharamshala & McLeodGanj</option>
@@ -179,10 +180,34 @@
         </div>
       </div>
 
+      <div class="header-center">
+        <!-- Weather Indicator Pill -->
+        <div class="weather-mode-pill" id="weatherHeaderPill" title="Himachal Mountain SLA Mode">
+          ☀️ Weather: Clear • Standard SLA
+        </div>
+
+        <!-- System Health Pill -->
+        <div class="status-indicator-pill" id="systemHealthHeaderPill" onclick="switchTab('system_health')" title="Live Ops Health">
+          <span class="status-dot-pulse"></span>
+          <span>Health: 100%</span>
+        </div>
+
+        <!-- Pahadi Chime Audio Toggle Button -->
+        <button class="chime-btn active" id="chimeBtn" onclick="toggleChime()" title="Sound Notification Chime">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="chime-label">Ghanti: ON</span>
+        </button>
+      </div>
+
       <div class="header-right">
+        <!-- 1-Click Simulator Pill -->
+        <button id="headerSimBtn" onclick="window.openSimModal()" class="btn-simulator-pill" title="Open Quick Order Simulator">
+          <span>⚡</span>
+          <span>Simulator</span>
+        </button>
+
         <!-- RBAC Role Switcher -->
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span style="font-size:10px; font-weight:800; color:var(--slate-400); text-transform:uppercase;">RBAC:</span>
+        <div class="rbac-role-badge">
           <select id="roleSwitcherSelect" class="role-switcher-dropdown" onchange="window.RbacService && window.RbacService.switchRole(this.value)">
             <option value="SUPER_ADMIN" selected>👑 SUPER_ADMIN</option>
             <option value="OPERATIONS_ADMIN">🚀 OPERATIONS_ADMIN</option>
@@ -192,30 +217,10 @@
           </select>
         </div>
 
-        <!-- DEMO MODE Toggle Removed for Production -->
-
-        <!-- System Health Pill -->
-        <div id="systemHealthHeaderPill" onclick="switchTab('system_health')" style="background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#34d399; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-          <span style="width:6px; height:6px; border-radius:50%; background:#10b981; display:inline-block; box-shadow:0 0 6px #10b981;"></span>
-          <span>System Health: 100%</span>
-        </div>
-
-        <button onclick="window.pahadiLogout()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Logout from Admin">
+        <!-- Logout Button -->
+        <button onclick="window.pahadiLogout()" class="logout-btn" title="Logout from Admin">
           <span>🚪</span>
           <span>Logout</span>
-        </button>
-
-        <button id="headerSimBtn" onclick="window.openSimModal()" class="btn btn-primary desktop-sim-btn" style="padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #10b981 0%, #047857 100%); box-shadow:0 0 16px rgba(16,185,129,0.35); min-height:34px;">⚡ 1-Click Simulator</button>
-        
-        <!-- Weather Indicator Pill -->
-        <div class="weather-mode-pill" id="weatherHeaderPill">
-          ☀️ Weather: Clear • Standard SLA
-        </div>
-
-        <!-- Pahadi Chime Audio Toggle Button -->
-        <button class="chime-btn active" id="chimeBtn" onclick="toggleChime()">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-          <span class="chime-label">Ghanti: ON</span>
         </button>
       </div>
     </header>

@@ -48,7 +48,7 @@ function renderMerchantsTable() {
 
   if (merchants.length === 0) {
     tbody.innerHTML = '<tr>' +
-      '<td colspan="7" style="text-align:center; padding:40px 16px; color:var(--slate-400);">' +
+      '<td colspan="8" style="text-align:center; padding:40px 16px; color:var(--slate-400);">' +
         '<div style="font-size:32px; margin-bottom:8px;">🏪</div>' +
         '<div style="font-weight:700; color:#fff; font-size:14px;">Abhi koi dukan registered nahi hai</div>' +
         '<div style="font-size:12px; color:var(--slate-400); margin-top:4px;">Demo data band kar diya gaya hai. Upar "+ Add / Register New Shop" button se apni asli dukan jodein.</div>' +
