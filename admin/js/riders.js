@@ -1,24 +1,19 @@
 // Pahadi Riders Fleet Management & Hill Telemetry Controller (Admin Control Center Enhanced)
 
-// Hydrate riders from localStorage if available
+// Hydrate riders from localStorage if available (demo data purged)
 (function initRidersPersistence() {
   try {
     const saved = localStorage.getItem('pahadicart_riders');
     if (saved && window.PahadiMockDB) {
       const parsed = JSON.parse(saved);
-      // Clean out legacy demo numbers
-      parsed.forEach(function(r) {
-        if (r.cashInHand === 2150 || r.cashInHand === 1800 || r.cashInHand === 1100 || r.todayDeliveries > 0) {
-          r.todayDeliveries = 0;
-          r.todayDistanceKm = 0;
-          r.elevationClimbedMeters = 0;
-          r.earningsToday = 0;
-          r.customerTips = 0;
-          r.cashInHand = 0;
-        }
+      // Filter out legacy mock demo riders (r1..r5)
+      const realRiders = parsed.filter(function(r) {
+        return r.id && !['r1', 'r2', 'r3', 'r4', 'r5'].includes(r.id);
       });
-      window.PahadiMockDB.riders = parsed;
-      localStorage.setItem('pahadicart_riders', JSON.stringify(parsed));
+      window.PahadiMockDB.riders = realRiders;
+      localStorage.setItem('pahadicart_riders', JSON.stringify(realRiders));
+    } else if (window.PahadiMockDB) {
+      window.PahadiMockDB.riders = [];
     }
   } catch (e) {
     console.error('Error hydrating riders:', e);
@@ -86,6 +81,15 @@ function renderRidersView() {
         '<div class="metric-value" style="color:#10b981; font-size:16px;">₹30 base + 100% Tips</div>' +
         '<div class="metric-footer">+ ₹15 per 100m elevation climbed</div>' +
       '</div>';
+  }
+
+    if (riders.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:48px 16px; color:var(--slate-400); grid-column:1/-1; background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:12px;">' +
+      '<div style="font-size:32px; margin-bottom:8px;">🛵</div>' +
+      '<div style="font-weight:700; color:#fff; font-size:14px;">Abhi koi delivery partner registered nahi hai</div>' +
+      '<div style="font-size:12px; color:var(--slate-400); margin-top:4px;">Demo data band kar diya gaya hai. Upar "+ Add New Delivery Partner" button se naya rider jodein.</div>' +
+    '</div>';
+    return;
   }
 
   container.innerHTML = riders.map(function(r) {

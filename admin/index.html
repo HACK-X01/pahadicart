@@ -341,7 +341,7 @@
               <span class="metric-title">Today's Town GMV</span>
               <div class="metric-icon">💰</div>
             </div>
-            <div class="metric-value" id="metricGMV">₹24,850</div>
+            <div class="metric-value" id="metricGMV">₹0</div>
             <div class="metric-footer">
               <span class="trend-badge trend-up">↑ +18.4%</span>
               <span>vs yesterday</span>
@@ -353,7 +353,7 @@
               <span class="metric-title">Platform Net Commission</span>
               <div class="metric-icon">📊</div>
             </div>
-            <div class="metric-value" id="metricCommission" style="color:var(--primary-400);">₹2,840</div>
+            <div class="metric-value" id="metricCommission" style="color:var(--primary-400);">₹0</div>
             <div class="metric-footer">
               <span class="trend-badge trend-up">↑ 11.2%</span>
               <span>Average take rate</span>
@@ -519,20 +519,20 @@
           <div class="panel-card">
             <div class="panel-header">
               <div class="panel-title">Daily Merchant Payout Batches (T+1 Settlement)</div>
-              <span class="status-badge status-delivered">Auto-Payout Ready</span>
+              <span class="status-badge status-cancelled">No Pending Payouts</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Today's Net Payable to Shops:</span>
-                <span style="font-weight:800; color:var(--white); font-size:15px;">₹16,420.00</span>
+                <span style="font-weight:800; color:var(--white); font-size:15px;">₹0.00</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Platform Commission Deducted (10%):</span>
-                <span style="font-weight:800; color:var(--primary-400); font-size:15px;">-₹1,990.10</span>
+                <span style="font-weight:800; color:var(--primary-400); font-size:15px;">₹0.00</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Section 194-O Income Tax TCS (1%):</span>
-                <span style="font-weight:800; color:var(--amber-400); font-size:15px;">-₹199.01</span>
+                <span style="font-weight:800; color:var(--amber-400); font-size:15px;">₹0.00</span>
               </div>
               <button class="btn btn-primary" onclick="showToast('⚡ Initiating Bulk IMPS Settlement to Vyapar Mandal Shops...')" style="margin-top:4px;">
                 🚀 Release IMPS Batch Payout
@@ -1616,7 +1616,7 @@
 <script src="/shared/eventBus.js?v=3.2.0"></script>
 <script src="/shared/dispatchEngine.js?v=3.2.0"></script>
 <script src="/shared/liveServices.js?v=3.2.0"></script>
-<script src="js/mockData.js?v=4.0.0"></script>
+<script src="js/mockData.js?v=4.0.1"></script>
 
 <!-- Core Architecture & Advanced Enterprise Services -->
 <script src="js/adminApiService.js?v=3.0.0"></script>
@@ -1634,8 +1634,8 @@
 
 <script src="js/map.js?v=3.2.0"></script>
 <script src="js/orders.js?v=4.0.0"></script>
-<script src="js/merchants.js?v=4.0.0"></script>
-<script src="js/riders.js?v=4.0.0"></script>
+<script src="js/merchants.js?v=4.0.1"></script>
+<script src="js/riders.js?v=4.0.1"></script>
 <script src="js/safety.js?v=3.2.0"></script>
 <script src="js/support.js?v=3.2.0"></script>
 <script src="js/growth.js?v=3.2.0"></script>

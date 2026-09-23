@@ -1,23 +1,20 @@
 // Merchant Management & Vyapar Mandal Commission Desk (Admin Control Center Enhanced)
 let activeEditingMerchantId = null;
 
-// Hydrate merchants from localStorage if available
+// Hydrate merchants from localStorage if available (demo data purged)
 (function initMerchantPersistence() {
   try {
     const saved = localStorage.getItem('pahadicart_merchants');
     if (saved && window.PahadiMockDB) {
       const parsed = JSON.parse(saved);
-      // Clean out legacy demo numbers
-      parsed.forEach(function(m) {
-        if (m.todaySales === 6450 || m.todaySales === 11200 || m.todaySales === 4890 || m.todaySales === 8750 || m.todaySales === 9400) {
-          m.todaySales = 0;
-          m.todayOrders = 0;
-          m.pendingPayout = 0;
-          m.platformCutEarned = 0;
-        }
+      // Filter out legacy mock demo shops (m1..m5)
+      const realMerchants = parsed.filter(function(m) {
+        return m.id && !['m1', 'm2', 'm3', 'm4', 'm5'].includes(m.id);
       });
-      window.PahadiMockDB.merchants = parsed;
-      localStorage.setItem('pahadicart_merchants', JSON.stringify(parsed));
+      window.PahadiMockDB.merchants = realMerchants;
+      localStorage.setItem('pahadicart_merchants', JSON.stringify(realMerchants));
+    } else if (window.PahadiMockDB) {
+      window.PahadiMockDB.merchants = [];
     }
   } catch (e) {
     console.error('Error hydrating merchants:', e);
@@ -48,6 +45,17 @@ function renderMerchantsTable() {
 
   const countBadge = document.getElementById("merchantsCountBadge");
   if (countBadge) countBadge.textContent = merchants.length + " Registered";
+
+  if (merchants.length === 0) {
+    tbody.innerHTML = '<tr>' +
+      '<td colspan="7" style="text-align:center; padding:40px 16px; color:var(--slate-400);">' +
+        '<div style="font-size:32px; margin-bottom:8px;">🏪</div>' +
+        '<div style="font-weight:700; color:#fff; font-size:14px;">Abhi koi dukan registered nahi hai</div>' +
+        '<div style="font-size:12px; color:var(--slate-400); margin-top:4px;">Demo data band kar diya gaya hai. Upar "+ Add / Register New Shop" button se apni asli dukan jodein.</div>' +
+      '</td>' +
+    '</tr>';
+    return;
+  }
 
   tbody.innerHTML = merchants.map(function(m) {
     const isOpen = m.isOpen !== false;
