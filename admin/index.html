@@ -499,24 +499,13 @@
           <div class="panel-card">
             <div class="panel-header">
               <div class="panel-title">Vyapar Mandal Onboarding Applications</div>
-              <span class="status-badge status-placed">2 Pending KYC</span>
+              <span class="status-badge status-secondary" id="merchantOnboardingBadge">0 Pending KYC</span>
             </div>
-            <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--slate-900); border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
-                <div>
-                  <strong style="color:var(--slate-100);">Lakkar Bazaar Wooden Handicrafts</strong>
-                  <div style="font-size:11px; color:var(--slate-400);">Shimla Mall Road &bull; Owner: Rajesh Negi</div>
-                  <div style="font-size:10.5px; color:var(--primary-400);">✓ FSSAI &amp; GSTIN Verified</div>
-                </div>
-                <button class="btn btn-sm btn-primary" onclick="showToast('✓ Lakkar Bazaar approved as Merchant Partner!')">Approve Store</button>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--slate-900); border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
-                <div>
-                  <strong style="color:var(--slate-100);">Him Fresh Apple Orchards</strong>
-                  <div style="font-size:11px; color:var(--slate-400);">Kotkhai &bull; Owner: Vikram Chauhan</div>
-                  <div style="font-size:10.5px; color:var(--amber-400);">⏳ Farm License Under Review</div>
-                </div>
-                <button class="btn btn-sm btn-secondary" onclick="showToast('Reviewing Kotkhai Farm License...')">Inspect Docs</button>
+            <div id="merchantOnboardingList" style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+              <div style="text-align:center; padding:32px 16px; color:var(--slate-400); background:var(--slate-900); border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                <div style="font-size:26px; margin-bottom:6px;">📋</div>
+                <div style="font-weight:700; color:var(--slate-200); font-size:13.5px;">No Pending KYC Applications</div>
+                <div style="font-size:11.5px; color:var(--slate-400); margin-top:4px;">Nayi dukano ke onboarding verification aur KYC requests yaha dikhenge.</div>
               </div>
             </div>
           </div>
@@ -524,23 +513,23 @@
           <div class="panel-card">
             <div class="panel-header">
               <div class="panel-title">Daily Merchant Payout Batches (T+1 Settlement)</div>
-              <span class="status-badge status-cancelled">No Pending Payouts</span>
+              <span class="status-badge status-secondary" id="merchantPayoutBatchBadge">No Pending Payouts</span>
             </div>
             <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Today's Net Payable to Shops:</span>
-                <span style="font-weight:800; color:var(--white); font-size:15px;">₹0.00</span>
+                <span style="font-weight:800; color:var(--white); font-size:15px;" id="dailyNetPayable">₹0.00</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Platform Commission Deducted (10%):</span>
-                <span style="font-weight:800; color:var(--primary-400); font-size:15px;">₹0.00</span>
+                <span style="font-weight:800; color:var(--primary-400); font-size:15px;" id="dailyCommissionDeducted">₹0.00</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Section 194-O Income Tax TCS (1%):</span>
-                <span style="font-weight:800; color:var(--amber-400); font-size:15px;">₹0.00</span>
+                <span style="font-weight:800; color:var(--amber-400); font-size:15px;" id="dailyTcsDeducted">₹0.00</span>
               </div>
-              <button class="btn btn-primary" onclick="showToast('⚡ Initiating Bulk IMPS Settlement to Vyapar Mandal Shops...')" style="margin-top:4px;">
-                🚀 Release IMPS Batch Payout
+              <button class="btn btn-secondary" id="btnBatchPayout" onclick="showToast('Sabhi dukano ke payouts up-to-date hain. Koi pending batch payout nahi hai.')" style="margin-top:4px; opacity:0.65; cursor:not-allowed;" disabled>
+                No Pending Batch Payouts
               </button>
             </div>
           </div>
@@ -571,20 +560,13 @@
           <div class="panel-card">
             <div class="panel-header">
               <div class="panel-title">Hill Fleet Shift Roster &amp; Weather Gear</div>
-              <span class="status-badge status-delivered">All Checked</span>
+              <span class="status-badge status-secondary" id="fleetRosterBadge">0 Active Shifts</span>
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
-                <span>Vikas Thakur (Solan Center Ridge):</span>
-                <span class="status-badge status-delivered" style="font-size:10px;">Shift 08:00–16:00 &bull; Thermal Kit OK</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
-                <span>Rohit Verma (Barog Switchbacks):</span>
-                <span class="status-badge status-delivered" style="font-size:10px;">Shift 12:00–20:00 &bull; Anti-Skid Chains OK</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
-                <span>Amit Kumar (Walking Runner Relay):</span>
-                <span class="status-badge status-delivered" style="font-size:10px;">Shift 09:00–18:00 &bull; Staircase Backpack OK</span>
+            <div id="fleetRosterList" style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
+              <div style="text-align:center; padding:28px 16px; color:var(--slate-400); background:var(--slate-900); border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                <div style="font-size:24px; margin-bottom:4px;">🛵</div>
+                <div style="font-weight:700; color:var(--slate-200); font-size:13px;">No Active Rider Shifts Logged</div>
+                <div style="font-size:11px; color:var(--slate-400); margin-top:2px;">Rider attendance aur winter gear safety checks rider punch-in hone par yaha live aayenge.</div>
               </div>
             </div>
           </div>
@@ -597,14 +579,14 @@
             <div style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Solan Bypass HP Petrol Pump Hub:</span>
-                <span style="font-weight:700; color:var(--primary-400);">6 Charged Batteries Available</span>
+                <span style="font-weight:700; color:var(--primary-400);">Ready &bull; Fast Charging</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
                 <span>Shimla Lift Station EV Node:</span>
-                <span style="font-weight:700; color:var(--primary-400);">4 Charged Batteries Available</span>
+                <span style="font-weight:700; color:var(--primary-400);">Ready &bull; Grid Online</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--slate-900); border-radius:8px;">
-                <span>Average Battery Swap Duration:</span>
+                <span>Average Battery Swap SLA:</span>
                 <span style="font-weight:700; color:var(--sky-400);">&lt; 75 seconds</span>
               </div>
             </div>
@@ -761,15 +743,12 @@
             <p style="font-size:12.5px; color:var(--slate-300); line-height:1.5; margin-bottom:12px;">
               Every steep climb &amp; staircase order requires rider timestamped photo upload with geolocation metadata before COD/delivery completes.
             </p>
-            <div style="display:flex; gap:10px; align-items:center; padding:12px; background:var(--slate-900); border-radius:10px;">
+            <div style="display:flex; gap:10px; align-items:center; padding:14px; background:var(--slate-900); border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
               <div style="font-size:24px;">📸</div>
               <div>
-                <strong style="color:var(--slate-100); font-size:13px;">Recent POD: ORD-7821 (Aarav Sharma)</strong>
-                <div style="font-size:11px; color:var(--slate-400);">Verified: 24 Stairs Climbed &bull; Lat 30.9082, Lng 77.0998</div>
+                <strong style="color:var(--slate-200); font-size:13px;">No Recent Staircase POD Uploads</strong>
+                <div style="font-size:11px; color:var(--slate-400);">Delivery proof photos with GPS metadata live orders deliver hone par inspect ke liye yaha aayengi.</div>
               </div>
-              <button class="btn btn-sm btn-secondary" onclick="viewOrderPodPhoto('ORD-7821')" style="margin-left:auto;">
-                Inspect
-              </button>
             </div>
           </div>
         </div>

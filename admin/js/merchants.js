@@ -46,6 +46,77 @@ function renderMerchantsTable() {
   const countBadge = document.getElementById("merchantsCountBadge");
   if (countBadge) countBadge.textContent = merchants.length + " Registered";
 
+  // Update Onboarding Applications Queue
+  const pendingMerchants = merchants.filter(function(m) { return m.status === 'pending'; });
+  const onboardingBadge = document.getElementById("merchantOnboardingBadge");
+  const onboardingList = document.getElementById("merchantOnboardingList");
+
+  if (onboardingBadge) {
+    onboardingBadge.textContent = pendingMerchants.length + " Pending KYC";
+    onboardingBadge.className = pendingMerchants.length > 0 ? "status-badge status-placed" : "status-badge status-secondary";
+  }
+
+  if (onboardingList) {
+    if (pendingMerchants.length === 0) {
+      onboardingList.innerHTML = '<div style="text-align:center; padding:32px 16px; color:var(--slate-400); background:var(--slate-900); border-radius:10px; border:1px solid rgba(255,255,255,0.05);">' +
+        '<div style="font-size:26px; margin-bottom:6px;">📋</div>' +
+        '<div style="font-weight:700; color:var(--slate-200); font-size:13.5px;">No Pending KYC Applications</div>' +
+        '<div style="font-size:11.5px; color:var(--slate-400); margin-top:4px;">Nayi dukano ke onboarding verification aur KYC requests yaha dikhenge.</div>' +
+      '</div>';
+    } else {
+      onboardingList.innerHTML = pendingMerchants.map(function(m) {
+        return '<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--slate-900); border-radius:10px; border:1px solid rgba(255,255,255,0.05);">' +
+          '<div>' +
+            '<strong style="color:var(--slate-100);">' + m.name + '</strong>' +
+            '<div style="font-size:11px; color:var(--slate-400);">' + (m.town || 'Solan') + ' &bull; Owner: ' + (m.owner || 'Proprietor') + '</div>' +
+            '<div style="font-size:10.5px; color:var(--amber-400);">⏳ KYC Documents Under Review</div>' +
+          '</div>' +
+          '<button class="btn btn-sm btn-primary" onclick="setShopApprovalStatus(\'' + m.id + '\', \'approved\')">Approve Store</button>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
+  // Update Batch Settlement Desk
+  let totalNetPayable = 0;
+  let totalPlatformCut = 0;
+  merchants.forEach(function(m) {
+    totalNetPayable += (m.pendingPayout || 0);
+    totalPlatformCut += (m.platformCutEarned || 0);
+  });
+  const tcs1Pct = Math.round(totalNetPayable * 0.01);
+
+  const netPayableEl = document.getElementById("dailyNetPayable");
+  const commEl = document.getElementById("dailyCommissionDeducted");
+  const tcsEl = document.getElementById("dailyTcsDeducted");
+  const batchBtn = document.getElementById("btnBatchPayout");
+  const batchBadge = document.getElementById("merchantPayoutBatchBadge");
+
+  if (netPayableEl) netPayableEl.textContent = "₹" + totalNetPayable.toLocaleString('en-IN');
+  if (commEl) commEl.textContent = "₹" + totalPlatformCut.toLocaleString('en-IN');
+  if (tcsEl) tcsEl.textContent = "₹" + tcs1Pct.toLocaleString('en-IN');
+
+  if (batchBadge) {
+    batchBadge.textContent = totalNetPayable > 0 ? "Pending ₹" + totalNetPayable.toLocaleString('en-IN') : "No Pending Payouts";
+    batchBadge.className = totalNetPayable > 0 ? "status-badge status-placed" : "status-badge status-secondary";
+  }
+
+  if (batchBtn) {
+    if (totalNetPayable > 0) {
+      batchBtn.disabled = false;
+      batchBtn.style.opacity = "1";
+      batchBtn.style.cursor = "pointer";
+      batchBtn.className = "btn btn-primary";
+      batchBtn.textContent = "🚀 Release IMPS Batch Payout (₹" + totalNetPayable.toLocaleString('en-IN') + ")";
+    } else {
+      batchBtn.disabled = true;
+      batchBtn.style.opacity = "0.65";
+      batchBtn.style.cursor = "not-allowed";
+      batchBtn.className = "btn btn-secondary";
+      batchBtn.textContent = "No Pending Batch Payouts";
+    }
+  }
+
   if (merchants.length === 0) {
     tbody.innerHTML = '<tr>' +
       '<td colspan="8" style="text-align:center; padding:40px 16px; color:var(--slate-400);">' +
