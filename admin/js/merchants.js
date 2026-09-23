@@ -6,7 +6,18 @@ let activeEditingMerchantId = null;
   try {
     const saved = localStorage.getItem('pahadicart_merchants');
     if (saved && window.PahadiMockDB) {
-      window.PahadiMockDB.merchants = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Clean out legacy demo numbers
+      parsed.forEach(function(m) {
+        if (m.todaySales === 6450 || m.todaySales === 11200 || m.todaySales === 4890 || m.todaySales === 8750 || m.todaySales === 9400) {
+          m.todaySales = 0;
+          m.todayOrders = 0;
+          m.pendingPayout = 0;
+          m.platformCutEarned = 0;
+        }
+      });
+      window.PahadiMockDB.merchants = parsed;
+      localStorage.setItem('pahadicart_merchants', JSON.stringify(parsed));
     }
   } catch (e) {
     console.error('Error hydrating merchants:', e);

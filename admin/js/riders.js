@@ -5,7 +5,20 @@
   try {
     const saved = localStorage.getItem('pahadicart_riders');
     if (saved && window.PahadiMockDB) {
-      window.PahadiMockDB.riders = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Clean out legacy demo numbers
+      parsed.forEach(function(r) {
+        if (r.cashInHand === 2150 || r.cashInHand === 1800 || r.cashInHand === 1100 || r.todayDeliveries > 0) {
+          r.todayDeliveries = 0;
+          r.todayDistanceKm = 0;
+          r.elevationClimbedMeters = 0;
+          r.earningsToday = 0;
+          r.customerTips = 0;
+          r.cashInHand = 0;
+        }
+      });
+      window.PahadiMockDB.riders = parsed;
+      localStorage.setItem('pahadicart_riders', JSON.stringify(parsed));
     }
   } catch (e) {
     console.error('Error hydrating riders:', e);
