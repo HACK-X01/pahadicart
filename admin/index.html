@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    // Immediate pre-render purge of stale test inventory data from earlier button testing
+    if (localStorage.getItem('pahadi_clean_inventory_v1') !== 'true') {
+      localStorage.removeItem('pahadicart_products');
+      localStorage.setItem('pahadi_clean_inventory_v1', 'true');
+    }
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>PahadiCart &bull; Super Admin Command Center, Fraud Defense & Growth Intelligence</title>

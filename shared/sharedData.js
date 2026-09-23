@@ -389,6 +389,13 @@ window.PAHADICART_DATA = {
   ],
 
     products: (function() {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('pahadi_clean_inventory_v1') !== 'true') {
+      try {
+        localStorage.removeItem('pahadicart_products');
+        localStorage.setItem('pahadi_clean_inventory_v1', 'true');
+      } catch (e) {}
+      return [];
+    }
     try {
       const stored = localStorage.getItem('pahadicart_products');
       if (stored) {

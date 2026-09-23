@@ -10,6 +10,15 @@ window.InventoryService = (function() {
   let filterProductType = 'all'; // 'all' | 'local' | 'jeevanix' | 'pending_approval'
   let searchQuery = '';
 
+  // One-time purge of stale test inventory data so admin starts completely clean
+  if (localStorage.getItem('pahadi_clean_inventory_v1') !== 'true') {
+    localStorage.removeItem('pahadicart_products');
+    localStorage.setItem('pahadi_clean_inventory_v1', 'true');
+    if (window.PAHADICART_DATA) {
+      window.PAHADICART_DATA.products = [];
+    }
+  }
+
   function getProducts() {
     if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
     if (!window.PAHADICART_DATA.products) {
@@ -21,6 +30,14 @@ window.InventoryService = (function() {
       }
     }
     return window.PAHADICART_DATA.products;
+  }
+
+  function clearAllProducts() {
+    if (confirm('Kya aap saare products catalog se hatana chahte hain?')) {
+      saveProducts([]);
+      renderInventoryTable();
+      if (window.showToast) window.showToast('✅ Sabhi products catalog se clear ho gaye!');
+    }
   }
 
   function saveProducts(products) {
