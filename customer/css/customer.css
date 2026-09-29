@@ -84,29 +84,6 @@ body {
   }
 }
 
-/* iPhone Notch / Status Bar */
-.app-status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 24px 6px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--himora-text);
-  background: #FFFFFF;
-  z-index: 50;
-}
-.status-time {
-  font-family: var(--font-heading);
-  letter-spacing: -0.2px;
-}
-.status-icons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-}
-
 /* Screen Viewport & Transitions */
 .screens-viewport {
   flex: 1;
@@ -149,7 +126,7 @@ body {
 
 /* Generic Top Bar Header with Back Arrow */
 .sub-screen-header {
-  padding: 14px 20px;
+  padding: max(14px, env(safe-area-inset-top, 14px)) 20px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -265,7 +242,7 @@ body {
 /* SCREEN 1: HOME SCREEN                                    */
 /* ========================================================= */
 .home-top-header {
-  padding: 12px 20px 8px;
+  padding: max(14px, env(safe-area-inset-top, 14px)) 20px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1862,9 +1839,6 @@ body {
   }
 
   /* Hide mobile elements on desktop */
-  .app-status-bar {
-    display: none !important;
-  }
   .himora-bottom-nav,
   .bottom-nav-bar {
     display: none !important;
@@ -2340,12 +2314,6 @@ html[data-theme="dark"] .himora-app-shell {
   box-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
   border-left: 1px solid rgba(255, 255, 255, 0.05);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-html[data-theme="dark"] .app-status-bar {
-  background: #070D14 !important;
-  color: #94A3B8;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 html[data-theme="dark"] .himora-desktop-navbar {
