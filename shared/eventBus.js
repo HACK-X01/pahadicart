@@ -200,6 +200,10 @@
     }
 
     // Broadcast across tabs
+    emit(eventType, payload) {
+      this.broadcast(eventType, payload);
+    }
+
     broadcast(eventType, payload) {
       const msg = { type: eventType, payload, timestamp: Date.now() };
       localStorage.setItem(STORAGE_KEY_EVENT, JSON.stringify(msg));

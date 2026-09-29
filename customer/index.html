@@ -1,386 +1,959 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>
-    // Immediate pre-render cache purge to ensure zero stale products
-    if ('caches' in window && localStorage.getItem('pahadi_v10_purge') !== 'true') {
-      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
-      localStorage.removeItem('pahadicart_cart_data');
-      localStorage.removeItem('pahadicart_orders_db');
-      localStorage.removeItem('pahadicart_products');
-      localStorage.setItem('pahadi_v10_purge', 'true');
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-          for (let reg of regs) reg.update();
-        });
-      }
-    }
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PahadiCart — Himachal 2-Hour Hyperlocal Delivery</title>
-  <meta name="description" content="Order authentic Himachal apples, fresh Siddu, local dham thali, mountain bakery cakes and medicines delivered to your staircase doorstep in Solan, Shimla, and Dharamshala.">
-  
-  <!-- Leaflet CSS for Hill Tracking Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=3.3.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <!-- Customer App CSS -->
-  <link rel="stylesheet" href="/shared/tokens.css">
-  <link rel="stylesheet" href="css/customer.css?v=3.3.0">
+  <title>Himora — Local Shopping. Made for the Hills. (Powered by Jeevanix)</title>
+  <meta name="description" content="Himora: Himachal's premier hyperlocal shopping app. Fast 30-60 min delivery across Dharampur, Solan, Shimla, Mandi and hill towns. Fresh groceries, local produce, and Jeevanix wellness.">
+
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-
-  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="css/customer.css">
+  
   <!-- PWA Headers -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#059669">
+  <meta name="theme-color" content="#0D7C66">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="PahadiCart">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="icon" type="image/png" href="/icons/favicon.png">
 </head>
 <body>
 
-  <!-- Main Navbar -->
-  <nav class="navbar">
-    <a href="/customer/" class="brand-wrapper">
-      <span class="brand-logo">🏔️</span>
-      <div>
-        <span class="brand-title">PahadiCart</span>
-        <span class="brand-tagline">Aapka Apna Pahadi Bazaar</span>
+  <!-- Himora Native App Shell (Responsive Centered Device Frame) -->
+  <main class="himora-app-shell">
+    
+    <!-- Top System Status Bar -->
+    <header class="app-status-bar">
+      <span class="status-time" id="statusClock">9:41</span>
+      <div class="status-icons">
+        <span>📶</span>
+        <span>⚡ 5G</span>
+        <span>🔋 98%</span>
       </div>
-    </a>
+    </header>
 
-    <div class="nav-actions">
-      <!-- Town Selector -->
-      <select id="townSelect" class="town-select-btn" onchange="window.customerApp.changeTown(this.value)">
-        <option value="solan" selected>📍 Solan (1,502m)</option>
-        <option value="shimla">📍 Shimla Ridge (2,206m)</option>
-        <option value="dharamshala">📍 Dharamshala (1,457m)</option>
-      </select>
-
-      <!-- Cart Button -->
-      <button class="cart-btn" onclick="window.customerApp.toggleCart(true)">
-        <span>🛍️ Cart</span>
-        <span class="cart-badge" id="cartBadge">0</span>
-      </button>
-
-      <!-- Voice Order Button -->
-      <button id="voiceOrderBtn" onclick="window.pahadiVoice && window.pahadiVoice.openVoiceModal()" style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:7px 14px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
-        <span>🎤</span>
-        <span>बोलकर ऑर्डर करें</span>
-      </button>
-
-      <!-- Detect Live Location Button -->
-      <button id="detectCustomerGpsBtn" onclick="window.detectCustomerLiveLocation()" style="background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#38bdf8; padding:7px 12px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.2s;">
-        <span>📍</span>
-        <span id="custGpsBtnText">Detect My Location</span>
-      </button>
-
-      <!-- Live GPS Button -->
-      <button id="liveGpsBtn" onclick="window.pahadiGPS && window.pahadiGPS.showTrackingModal({ id: 'ORD-LIVE-7821' })" style="background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#10b981; padding:7px 12px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">
-        <span>🛵</span>
-        <span>Live Rider GPS</span>
-      </button>
-
-      <!-- Tunnel Mode Button -->
-      <button onclick="window.pahadiOffline.toggleSimulatedTunnel()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#fca5a5; padding:6px 12px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;"><span>🌲⛰️ Tunnel Mode</span></button>
-
-      <!-- Direct Header Logout Button -->
-      <button class="header-logout-btn" onclick="window.pahadiLogout()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 6px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;" title="Logout from Customer App">
-        <span>🚪</span>
-        <span>Logout</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Search Bar (Home Hierarchy Step 2) -->
-  <div class="search-container">
-    <div class="search-bar-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="customerSearchInput" class="search-input" placeholder="Search Kinnaur apples, Siddu, local sweets, groceries..." oninput="window.customerApp && window.customerApp.filterSearch(this.value)">
-    </div>
-  </div>
-
-  <!-- Mountain Delivery Component (Home Hierarchy Step 3) -->
-  <div class="mountain-delivery-widget">
-    <div class="mdw-title">
-      <span class="mdw-icon">🏔️</span>
-      <strong>Mountain Delivery</strong>
-    </div>
-    <div class="mdw-info">
-      <span class="mdw-item"><strong>ETA:</strong> 1h 18m</span>
-      <span class="mdw-dot">•</span>
-      <span class="mdw-item"><strong>Stairs:</strong> 42 stairs</span>
-      <span class="mdw-dot">•</span>
-      <span class="mdw-item"><strong>Distance:</strong> 2.3 km</span>
-      <span class="mdw-dot">•</span>
-      <span class="mdw-item mdw-buffer">🌧️ Rain buffer +15 min</span>
-    </div>
-  </div>
-
-
-  <!-- Hero Banner -->
-  <header class="hero-banner">
-    <div class="hero-badge">⚡ 2-Hour Hill Delivery Guaranteed</div>
-    <h1 class="hero-title">Shuddh Himachal Se Seedhe Aapke Dwar</h1>
-    <p class="hero-sub">Kinnaur apples, fresh Siddu dough, royal dham thali, and emergency mountain medicines delivered right to your staircase doorstep.</p>
-
-    <!-- Weather & Hill SLA Strip -->
-    <div class="weather-strip">
-      <div class="weather-tag">
-        <span>☀️</span>
-        <span id="weatherStatusText">Solan Weather: 18°C Clear Skies • Standard 45m SLA</span>
-      </div>
-      <div class="staircase-guarantee">
-        <span>🪜</span>
-        <span>Staircase Footpath Navigation Included</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Category Filter Pills -->
-  <div class="category-container">
-    <div class="category-scroll" id="categoryPills">
-      <!-- Injected by JS -->
-    </div>
-  </div>
-
-  <!-- Products Section -->
-  <main class="products-section">
-    <div class="section-header">
-      <h2 class="section-title" id="currentCatTitle">Sabhi Pahadi Products</h2>
-      <span class="item-count" id="productCount">Showing 12 items</span>
-    </div>
-
-    <!-- Product Grid -->
-    <div class="products-grid" id="productsGrid">
-      <!-- Dynamic cards rendered by JS -->
-    </div>
-  </main>
-
-  <!-- Cart Slide-in Drawer -->
-  <div class="cart-drawer-overlay" id="cartOverlay" onclick="window.customerApp.toggleCart(false)"></div>
-  <aside class="cart-drawer" id="cartDrawer">
-    <div class="drawer-header">
-      <h3 class="drawer-title">🛍️ Aapka Pahadi Jhola</h3>
-      <button class="close-drawer-btn" onclick="window.customerApp.toggleCart(false)">&times;</button>
-    </div>
-
-    <div class="drawer-body">
-      <!-- Cart Items -->
-      <div id="cartItemsList">
-        <!-- Rendered items or empty state -->
-      </div>
-
-      <!-- Himachal Staircase & Landmark Address Input -->
-      <div class="hill-address-box" id="addressBox" style="display: none;">
-        <div class="hill-address-title">
-          <span>🪜</span>
-          <span>Himachal Staircase & Landmark Details</span>
-        </div>
-        <input type="text" id="custColony" class="form-input" placeholder="Colony / Ward (e.g. Shamti Upper Pine Lane)" value="">
-        <input type="text" id="custLandmark" class="form-input" placeholder="Famous Hill Landmark (e.g. Near Durga Mandir Tank)" value="">
-        <textarea id="custStairs" class="form-input" rows="2" placeholder="Staircase/Footpath Guide (e.g. 35 stairs down from road, yellow gate)"></textarea>
-        <input type="tel" id="custPhone" class="form-input" placeholder="Contact Mobile (e.g. 98160-12890)" value="">
-      </div>
-
-      <!-- Bill Breakdown -->
-      <div class="bill-box" id="billBox" style="display: none;">
-        <div class="bill-row">
-          <span>Item Total</span>
-          <span id="billItemTotal">₹0</span>
-        </div>
-        <div class="bill-row">
-          <span>Pahadi Terrain Delivery</span>
-          <span id="billDeliveryFee">₹35</span>
-        </div>
-        <div class="bill-row">
-          <span>Spill-Proof Eco Packaging</span>
-          <span>₹5</span>
-        </div>
-        <div class="bill-row total">
-          <span>Grand Total to Pay</span>
-          <span id="billGrandTotal" style="color: #10b981;">₹0</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="drawer-footer" id="drawerFooter" style="display: none;">
-      <button class="checkout-btn" onclick="window.customerApp.openPaymentModal()">
-        <span>Aage Badhein (Proceed to Pay)</span>
-        <span>➔</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- Simulated Payment Modal -->
-  <div class="modal-overlay" id="paymentModal">
-    <div class="modal-content">
-      <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">💳 Payment Mode Chunein</h3>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Total Payable: <strong id="payModalAmount" style="color: #10b981;">₹485</strong></p>
-
-      <!-- Options -->
-      <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-        <button id="payModeUPI" class="add-btn" style="flex: 1; padding: 10px; background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #fff;" onclick="window.customerApp.selectPayMode('UPI')">📱 Instant UPI QR</button>
-        <button id="payModeCOD" class="add-btn" style="flex: 1; padding: 10px; background: var(--bg-card); color: var(--text-muted);" onclick="window.customerApp.selectPayMode('COD')">💵 Cash on Delivery</button>
-      </div>
-
-      <!-- UPI QR View -->
-      <div id="upiQrContainer">
-        <div class="qr-placeholder">
-          <!-- Standalone SVG QR Code Representation -->
-          <svg class="qr-svg" viewBox="0 0 100 100">
-            <rect width="100" height="100" fill="#ffffff"/>
-            <!-- Position Detection Patterns -->
-            <rect x="10" y="10" width="25" height="25" fill="#064e3b" rx="4"/>
-            <rect x="14" y="14" width="17" height="17" fill="#ffffff" rx="2"/>
-            <rect x="18" y="18" width="9" height="9" fill="#064e3b"/>
-
-            <rect x="65" y="10" width="25" height="25" fill="#064e3b" rx="4"/>
-            <rect x="69" y="14" width="17" height="17" fill="#ffffff" rx="2"/>
-            <rect x="73" y="18" width="9" height="9" fill="#064e3b"/>
-
-            <rect x="10" y="65" width="25" height="25" fill="#064e3b" rx="4"/>
-            <rect x="14" y="69" width="17" height="17" fill="#ffffff" rx="2"/>
-            <rect x="18" y="73" width="9" height="9" fill="#064e3b"/>
-
-            <!-- Data Bits -->
-            <rect x="40" y="15" width="6" height="6" fill="#064e3b"/>
-            <rect x="50" y="20" width="6" height="6" fill="#064e3b"/>
-            <rect x="42" y="32" width="18" height="6" fill="#064e3b"/>
-            <rect x="40" y="44" width="20" height="14" fill="#064e3b"/>
-            <rect x="15" y="42" width="12" height="6" fill="#064e3b"/>
-            <rect x="70" y="45" width="15" height="6" fill="#064e3b"/>
-            <rect x="40" y="65" width="8" height="8" fill="#064e3b"/>
-            <rect x="52" y="75" width="14" height="6" fill="#064e3b"/>
-            <rect x="75" y="65" width="15" height="18" fill="#064e3b"/>
-            <circle cx="50" cy="50" r="5" fill="#10b981"/>
+    <!-- Top Desktop Responsive Header (Visible on screens >= 768px) -->
+    <header class="himora-desktop-navbar">
+      <div class="desktop-nav-left">
+        <div class="brand-logo-lockup" onclick="window.customerApp.navigateTo('home')">
+          <svg class="brand-logo-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 38L18 16L27 28L34 18L44 38H6Z" fill="#0D7C66"/>
+            <path d="M18 16L24 26L31 16L44 38H32L24 26L18 38H6L18 16Z" fill="#10B981"/>
+            <path d="M12 38C18 32 28 32 36 38" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
           </svg>
+          <div>
+            <div class="brand-name">Himora</div>
+            <div class="brand-tagline">Local Shopping. Made for the Hills.</div>
+          </div>
         </div>
-        <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 12px;">Scan with GPay, PhonePe, Paytm, or BHIM</p>
+
+        <div class="desktop-town-pill" onclick="window.customerApp.openTownPicker()" title="Change Delivery Town">
+          <span>📍</span>
+          <span id="desktopTownLabel">Dharampur ▾</span>
+          <span class="desktop-sla-tag">⚡ 30-45m SLA</span>
+        </div>
       </div>
 
-      <div id="codNoticeContainer" style="display: none; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; margin-bottom: 16px;">
-        <p style="font-size: 13px; color: var(--accent-light); font-weight: 600;">💵 Pay Cash to Rider upon Delivery</p>
-        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Please keep exact change ready to assist rider on mountain trails.</p>
+      <div class="desktop-nav-center">
+        <div class="desktop-search-box">
+          <span>🔍</span>
+          <input type="text" id="desktopSearchInput" placeholder="Search for fresh atta, oil, tea, honey, local produce..." oninput="window.customerApp.handleSearch(this.value)">
+          <button onclick="window.customerApp.triggerVoiceSearch()" title="Hill Voice Assistant">🎤</button>
+        </div>
       </div>
 
-      <div style="display: flex; gap: 10px;">
-        <button class="add-btn" style="flex: 1; padding: 12px; background: var(--bg-card); color: var(--text-muted);" onclick="window.customerApp.closePaymentModal()">Cancel</button>
-        <button class="checkout-btn" style="flex: 2; padding: 12px;" onclick="window.customerApp.confirmOrderPlacement()">
-          <span>Simulate Payment & Place Order</span>
+      <div class="desktop-nav-right">
+        <!-- Desktop Theme Toggle -->
+        <button class="theme-toggle-btn desktop-theme-toggle" id="themeToggleBtnDesktop" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
+          <span class="theme-toggle-icon"></span>
+          <span class="theme-toggle-label">Dark</span>
+        </button>
+        <button class="desktop-nav-link active" id="desktopNavHome" onclick="window.customerApp.navigateTo('home')">
+          <span>🏠</span> Home
+        </button>
+        <button class="desktop-nav-link" id="desktopNavCategories" onclick="window.customerApp.navigateTo('categories')">
+          <span>🔲</span> Categories
+        </button>
+        <button class="desktop-nav-link" id="desktopNavOffers" onclick="window.customerApp.navigateTo('offers')">
+          <span>🏷️</span> Offers <span class="desktop-badge-discount">50%</span>
+        </button>
+        <button class="desktop-nav-link" id="desktopNavJeevanix" onclick="window.customerApp.navigateTo('jeevanix')">
+          <span>🌿</span> Jeevanix
+        </button>
+        <button class="desktop-nav-link" id="desktopNavOrders" onclick="window.customerApp.navigateTo('orders')">
+          <span>📋</span> My Orders
+        </button>
+        <button class="desktop-nav-link" id="desktopNavAccount" onclick="window.customerApp.navigateTo('profile')">
+          <span>👤</span> Account
+        </button>
+        <button class="desktop-cart-btn" onclick="window.customerApp.navigateTo('cart')">
+          <span>🛒</span>
+          <span id="desktopCartBtnLabel">Cart</span>
+          <span class="desktop-cart-badge" id="desktopCartBadge">3</span>
         </button>
       </div>
-    </div>
-  </div>
+    </header>
 
-  <!-- Live Hill Order Tracking Screen (Modal) -->
-  <div class="track-screen-modal" id="trackModal">
-    <div class="track-header">
-      <div>
-        <span style="font-size: 11px; color: #10b981; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Live Hill Radar</span>
-        <h2 style="font-size: 18px; font-weight: 800; margin-top: 2px;" id="trackOrderId">Order #ORD-7821</h2>
-      </div>
-      <button class="add-btn" onclick="window.customerApp.closeTrackingModal()">✕ Close Tracking</button>
-    </div>
+    <!-- Multi-Screen Viewport -->
+    <div class="screens-viewport">
 
-    <div class="track-body">
-      <!-- Leaflet Map Canvas -->
-      <div id="trackMap"></div>
-
-      <!-- Live Order Stepper & Telemetry -->
-      <div class="track-sidebar">
-        <!-- OTP Card -->
-        <div class="otp-card">
-          <span style="font-size: 11px; color: var(--text-dim); font-weight: 700;">CONFIDENTIAL DELIVERY OTP</span>
-          <div class="otp-code" id="trackOtpCode">4829</div>
-          <span style="font-size: 11px; color: var(--text-muted);">Share this OTP with rider only when order is in your hand</span>
+      <!-- ======================================================== -->
+      <!-- SCREEN 1: HOME SCREEN                                    -->
+      <!-- ======================================================== -->
+      <section id="screen-home" class="himora-screen active">
+        <!-- Top Brand Header -->
+        <div class="home-top-header">
+          <div class="brand-logo-lockup" onclick="window.customerApp.navigateTo('home')">
+            <svg class="brand-logo-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 38L18 16L27 28L34 18L44 38H6Z" fill="#0D7C66"/>
+              <path d="M18 16L24 26L31 16L44 38H32L24 26L18 38H6L18 16Z" fill="#10B981"/>
+              <path d="M12 38C18 32 28 32 36 38" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <div class="brand-name">Himora</div>
+              <div class="brand-tagline">Local Shopping. Made for the Hills.</div>
+            </div>
+          </div>
+          <button class="theme-toggle-btn mobile-theme-toggle" id="themeToggleBtnMobile" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode" style="margin-right: 8px;">
+            <span class="theme-toggle-icon"></span>
+          </button>
+          <button class="bell-notice-btn" onclick="window.customerApp.navigateTo('offers')" title="Notifications & Offers">
+            <span>🔔</span>
+            <span class="bell-dot"></span>
+          </button>
         </div>
 
-        <!-- Rider Profile Card -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 26px;">🛵</div>
+        <!-- Delivering to Selector -->
+        <div class="delivering-to-bar">
+          <div class="delivering-label">
+            <span>📍 Delivering to</span>
+            <span class="delivering-town" id="homeTownLabel" onclick="window.customerApp.openTownPicker()">Dharampur, Himachal Pradesh ▾</span>
+          </div>
+          <span style="font-size: 11.5px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 3px 8px; border-radius: 12px;">⚡ 30-45m SLA</span>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+          <div class="search-pill-box">
+            <span style="font-size: 15px; color: #64748B;">🔍</span>
+            <input type="text" id="homeSearchInput" class="search-input-field" placeholder="Search for products, shops..." oninput="window.customerApp.handleSearch(this.value)">
+            <button onclick="window.customerApp.triggerVoiceSearch()" style="background:none; border:none; cursor:pointer; font-size:15px; color:#0D7C66;" title="Voice Order">🎤</button>
+          </div>
+        </div>
+
+        <!-- Hero Banner Card -->
+        <div class="hero-banner-wrap">
+          <div class="hero-banner-card">
+            <div class="hero-headline">Apna Bazaar. Apne Log. Ghar Tak.</div>
+            <div class="hero-trust-chips">
+              <span class="trust-chip">🏪 Local Shops</span>
+              <span class="trust-chip">⚡ Fast Delivery (Within 2 Hours)</span>
+              <span class="trust-chip">🛡️ Verified & Safe</span>
+            </div>
+            <button class="hero-cta-btn" onclick="window.customerApp.navigateTo('offers')">
+              <span>Shop Now</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Grid (8 Quick Icons) -->
+        <div class="category-section">
+          <div class="category-grid-8" id="homeCategoryGrid">
+            <!-- Injected by customerApp.js -->
+          </div>
+        </div>
+
+        <!-- Section: Popular Near You -->
+        <div class="home-section-header">
+          <h2 class="section-title">Popular Near You</h2>
+          <span class="section-see-all" onclick="window.customerApp.navigateTo('listing', { category: 'all' })">See All →</span>
+        </div>
+
+        <!-- Horizontal Product Cards Scroll -->
+        <div class="popular-scroll-wrap" id="homePopularList">
+          <!-- Injected by customerApp.js -->
+        </div>
+
+        <!-- Section: Local Shops Spotlight -->
+        <div class="home-section-header" style="margin-top: 6px;">
+          <h2 class="section-title">Featured Local Shops</h2>
+          <span class="section-see-all" onclick="window.customerApp.navigateTo('shop', { shopId: 'shop-sharma' })">Visit Shop →</span>
+        </div>
+        <div style="padding: 0 20px 24px;">
+          <div class="sold-by-store-card" onclick="window.customerApp.navigateTo('shop', { shopId: 'shop-sharma' })" style="margin-bottom: 0;">
+            <div class="store-card-left">
+              <div class="store-avatar-box">🏪</div>
               <div>
-                <h4 style="font-size: 14px; font-weight: 700;" id="trackRiderName">Vikas Thakur</h4>
-                <span style="font-size: 11px; color: var(--text-muted);" id="trackRiderVehicle">Hero Splendor (HP-14-B-8821)</span>
+                <div class="store-title-text">Sharma General Store</div>
+                <div style="font-size: 11.5px; color: #64748B;">⭐ 4.5 (320 reviews) • 📍 1.2 km away</div>
               </div>
             </div>
-            <span style="font-size: 12px; font-weight: 700; color: #fbbf24;">⭐ 4.9</span>
+            <span class="delivery-sla-badge">Open • 30-60 min</span>
           </div>
-          <div style="font-size: 11px; color: #38bdf8; display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px;">
-            <span>⛰️ Elevation Climbed Today: <strong>420 m</strong></span>
-            <span>📱 +91 98161-12345</span>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 2: CATEGORIES SCREEN                              -->
+      <!-- ======================================================== -->
+      <section id="screen-categories" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Categories</div>
+          <button class="header-action-btn" onclick="window.customerApp.focusSearch()">🔍</button>
+        </div>
+
+        <div class="categories-full-grid" id="fullCategoriesGrid">
+          <!-- Injected by customerApp.js -->
+        </div>
+
+        <!-- Scenic Mountain Promo Strip -->
+        <div class="local-support-strip" onclick="window.customerApp.navigateTo('listing', { category: 'local-products' })" style="cursor: pointer;">
+          <h4>Local Products. Support Local People.</h4>
+          <p>Taaza himachali dharohar seedha aapke ghar tak.</p>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 3: PRODUCT LISTING SCREEN                         -->
+      <!-- ======================================================== -->
+      <section id="screen-listing" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title" id="listingCategoryTitle">Grocery</div>
+          <button class="header-action-btn" onclick="window.customerApp.focusSearch()">🔍</button>
+        </div>
+
+        <!-- Subcategory Horizontal Filter Pills -->
+        <div class="subcat-filter-scroll" id="subcatFilterPills">
+          <span class="subcat-pill active" onclick="window.customerApp.filterSubcategory('all', this)">All</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterSubcategory('Atta & Flour', this)">Atta & Flour</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterSubcategory('Oil & Masala', this)">Oil & Masala</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterSubcategory('Rice & Grains', this)">Rice & Grains</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterSubcategory('Snacks', this)">Snacks</span>
+        </div>
+
+        <!-- Filter & Sort Strip -->
+        <div class="filter-sort-bar">
+          <button class="filter-btn-pill" onclick="window.customerApp.toggleSort('price')">Sort: Price ▾</button>
+          <button class="filter-btn-pill" onclick="window.customerApp.toggleSort('rating')">Rating: 4★+ ▾</button>
+          <button class="filter-btn-pill" onclick="window.customerApp.toggleSort('fast')">⚡ Under 45m</button>
+        </div>
+
+        <!-- Vertical Product Card List -->
+        <div class="product-list-vertical" id="listingProductContainer">
+          <!-- Injected by customerApp.js -->
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 4: PRODUCT DETAIL SCREEN                          -->
+      <!-- ======================================================== -->
+      <section id="screen-product-detail" class="himora-screen no-bottom-nav">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Product Details</div>
+          <div style="display: flex; gap: 8px;">
+            <button class="header-action-btn" onclick="window.customerApp.shareCurrentProduct()">🔗</button>
+            <button class="header-action-btn" id="btnWishlistHeart" onclick="window.customerApp.toggleWishlist()">🤍</button>
           </div>
         </div>
 
-        <!-- Google Maps Turn-by-Turn Navigation Deep Link -->
-        <a id="customerGmapsDirBtn" href="https://www.google.com/maps/dir/?api=1&destination=30.9110,77.1040" target="_blank" rel="noopener" style="background:rgba(56,189,248,0.18); border:1px solid #38bdf8; color:#38bdf8; text-decoration:none; padding:10px 14px; border-radius:10px; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; gap:7px; margin: 12px 0; transition:all 0.2s;">
-          <span>🗺️</span>
-          <span>Open Rider Route in Google Maps App</span>
-        </a>
-
-        <!-- Staircase Notice -->
-        <div style="background: rgba(6, 95, 70, 0.2); border-left: 3px solid #10b981; padding: 10px 12px; border-radius: 4px; font-size: 12px;">
-          <span style="font-weight: 700; color: #34d399;">Rider Staircase Note:</span>
-          <p id="trackStairNote" style="color: var(--text-muted); margin-top: 2px;">Descend 35 stone steps from road level, 2nd green gate on left</p>
+        <div class="prod-detail-gallery">
+          <div class="prod-detail-img" id="detailProdAvatar">🌾</div>
+          <span class="gallery-counter-pill" id="detailGalleryCounter">1/5</span>
         </div>
 
-        <!-- Milestones Stepper -->
-        <div>
-          <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-muted);">DELIVERY MILESTONES</h4>
-          <div class="stepper" id="trackStepper">
-            <div class="step-item done" id="stepPlaced">
-              <div class="step-dot"></div>
-              <div class="step-title">Order Received & Confirmed</div>
-              <div class="step-sub">Forwarded to Vyapar Mandal Merchant</div>
+        <div class="prod-detail-body">
+          <h1 class="prod-detail-title" id="detailProdName">Aashirvaad Atta 5kg</h1>
+          <div class="prod-detail-rating-row">
+            <span style="color: #D97706; font-weight: 800;" id="detailProdRating">⭐ 4.5</span>
+            <span style="color: #94A3B8;">(120 reviews)</span>
+          </div>
+
+          <div class="prod-detail-price-row">
+            <span class="prod-detail-price" id="detailProdPrice">₹280</span>
+            <span class="mrp-strikethrough" style="font-size: 15px;" id="detailProdMrp">₹310</span>
+            <span class="discount-chip" style="font-size: 11px;" id="detailProdDiscount">10% OFF</span>
+          </div>
+
+          <div class="in-stock-tag" id="detailStockStatus">
+            <span>●</span>
+            <span>In Stock (Doorstep Hill Delivery)</span>
+          </div>
+
+          <div class="prod-detail-desc" id="detailProdDesc">
+            Premium quality whole wheat atta, rich in dietary fiber and essential mountain grains. Specially stone-ground for soft, healthy rotis that stay fresh longer.
+          </div>
+
+          <!-- Weight/Variant Chips -->
+          <div style="font-size: 12px; font-weight: 800; color: #0F172A; margin-bottom: 8px;">SELECT WEIGHT PACK:</div>
+          <div class="variant-chips-row">
+            <button class="variant-chip active" onclick="window.customerApp.selectPackVariant('5kg', this)">5 kg</button>
+            <button class="variant-chip" onclick="window.customerApp.selectPackVariant('10kg', this)">10 kg</button>
+            <button class="variant-chip" onclick="window.customerApp.selectPackVariant('1kg', this)">1 kg</button>
+          </div>
+
+          <!-- Merchant Sold By Card -->
+          <div class="sold-by-store-card" onclick="window.customerApp.navigateTo('shop', { shopId: 'shop-sharma' })">
+            <div class="store-card-left">
+              <div class="store-avatar-box">🏪</div>
+              <div>
+                <div class="store-title-text" id="detailStoreName">Sold by: Sharma General Store</div>
+                <div style="font-size: 11px; color: #64748B;">🛡️ Verified Vyapar Mandal Shop • Dharampur</div>
+              </div>
             </div>
-            <div class="step-item done" id="stepPrep">
-              <div class="step-dot"></div>
-              <div class="step-title">Merchant Packing Order</div>
-              <div class="step-sub">100% spill-proof seal applied</div>
-            </div>
-            <div class="step-item active" id="stepTransit">
-              <div class="step-dot"></div>
-              <div class="step-title">Rider Climbing Mountain Trail</div>
-              <div class="step-sub">En route via Mall Road / Shamti link road</div>
-            </div>
-            <div class="step-item" id="stepDelivered">
-              <div class="step-dot"></div>
-              <div class="step-title">Delivered at Doorstep</div>
-              <div class="step-sub">OTP verified & confirmed</div>
+            <span class="delivery-sla-badge">Delivery in 30-60 min</span>
+          </div>
+        </div>
+
+        <!-- Sticky Bottom Bar -->
+        <div class="detail-bottom-bar">
+          <div class="detail-qty-box">
+            <button class="stepper-btn" onclick="window.customerApp.detailChangeQty(-1)">-</button>
+            <span class="stepper-qty" id="detailQtyVal">1</span>
+            <button class="stepper-btn" onclick="window.customerApp.detailChangeQty(1)">+</button>
+          </div>
+          <button class="btn-primary-green" onclick="window.customerApp.detailAddToCart()">
+            <span>🛒 Add to Cart</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 5: SHOP PAGE                                      -->
+      <!-- ======================================================== -->
+      <section id="screen-shop" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Shop Details</div>
+          <button class="header-action-btn" onclick="window.customerApp.shareCurrentShop()">🔗</button>
+        </div>
+
+        <div class="shop-hero-banner">
+          <div class="shop-store-profile">
+            <div class="shop-big-avatar" id="shopPageAvatar">🏪</div>
+            <div>
+              <h1 class="shop-name-headline" id="shopPageTitle">Sharma General Store</h1>
+              <div class="shop-meta-line">
+                <span>⭐ 4.5 (320)</span>
+                <span>•</span>
+                <span>📍 1.2 km away</span>
+              </div>
+              <div class="shop-status-line" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px;">
+                <span>🟢 Open • Closes 10:00 PM</span>
+                <span style="background: rgba(255,255,255,0.22); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;">⚡ Delivery in 30-60 min</span>
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- Shop Internal Category Filter -->
+        <div class="subcat-filter-scroll">
+          <span class="subcat-pill active" onclick="window.customerApp.filterShopProducts('all', this)">All Products</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterShopProducts('grocery', this)">Grocery</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterShopProducts('snacks', this)">Snacks</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterShopProducts('household', this)">Household</span>
+          <span class="subcat-pill" onclick="window.customerApp.filterShopProducts('dairy', this)">Dairy</span>
+        </div>
+
+        <!-- Shop Products Grid -->
+        <div class="shop-products-grid" id="shopProductsGrid">
+          <!-- Injected by customerApp.js -->
+        </div>
+
+        <div class="local-support-strip" style="margin: 16px 20px 24px; background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+          <h4>Local Shop. Local Support. Better Tomorrow.</h4>
+          <p>Apne ilaqe ki dukano se kharidari karein aur vikas badhayein.</p>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 6: CART SCREEN ("YOUR CART")                      -->
+      <!-- ======================================================== -->
+      <section id="screen-cart" class="himora-screen no-bottom-nav">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Your Cart</div>
+          <button class="header-action-btn" onclick="window.customerApp.clearCart()" style="font-size: 13px; font-weight: 700; color: #EF4444;">Clear All</button>
+        </div>
+
+        <div id="cartContentWrapper" class="cart-desktop-split">
+          <div class="cart-items-container" id="cartItemsContainer">
+            <!-- Injected by customerApp.js -->
+          </div>
+
+          <div class="cart-bill-desktop-card">
+            <!-- Bill Summary Card -->
+            <div class="bill-breakdown-card" id="cartBillCard" style="margin: 0 0 16px;">
+              <div class="bill-line-row">
+                <span>Subtotal</span>
+                <span id="cartSubtotal" style="font-weight: 700; color: #0F172A;">₹0</span>
+              </div>
+              <div class="bill-line-row">
+                <span>Delivery Fee</span>
+                <span id="cartDeliveryFee" style="font-weight: 700; color: #0F172A;">₹30</span>
+              </div>
+              <div class="bill-line-row">
+                <span>Discount</span>
+                <span id="cartDiscount" style="font-weight: 700; color: #059669;">-₹20</span>
+              </div>
+              <div class="bill-line-row total-line">
+                <span>Total</span>
+                <span id="cartGrandTotal" style="color: #0D7C66; font-size: 19px;">₹0</span>
+              </div>
+            </div>
+
+            <div class="cart-sticky-footer">
+              <button class="btn-primary-green" onclick="window.customerApp.navigateTo('checkout')">
+                <span>Proceed to Checkout</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="emptyCartMessage" style="display: none; text-align: center; padding: 60px 24px;">
+          <div style="font-size: 54px; margin-bottom: 12px;">🛒</div>
+          <h2 style="font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: #0F172A;">Your Cart is Empty</h2>
+          <p style="font-size: 13px; color: #64748B; margin: 6px 0 20px;">Add fresh hill produce, pantry staples, and Jeevanix items.</p>
+          <button class="btn-primary-green" onclick="window.customerApp.navigateTo('home')" style="max-width: 220px; margin: 0 auto;">Start Shopping</button>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 7: CHECKOUT SCREEN                                -->
+      <!-- ======================================================== -->
+      <section id="screen-checkout" class="himora-screen no-bottom-nav">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Checkout</div>
+          <div></div>
+        </div>
+
+        <div class="checkout-desktop-split">
+          <!-- Left Column: Address & Payment -->
+          <div class="checkout-left-col">
+            <!-- Delivery Address Card -->
+            <div class="checkout-section-card">
+              <div class="checkout-card-header">
+                <div class="checkout-card-title">
+                  <span>📍 Delivery Address</span>
+                </div>
+                <span class="checkout-change-link" onclick="window.customerApp.openAddressModal()">Change</span>
+              </div>
+              <div class="address-body-box">
+                <div style="font-weight: 800; margin-bottom: 2px;">🏠 Home</div>
+                <div id="checkoutAddressText">Near Himora Store, Dharampur, Himachal Pradesh - 176215</div>
+                <div style="margin-top: 6px; font-size: 11.5px; color: #0D7C66; font-weight: 700;">🪜 Staircase Guide: <span id="checkoutStairsText">35 steps down from road level, green gate</span></div>
+                <div style="margin-top: 2px; font-size: 11.5px; color: #64748B;">📱 <span id="checkoutPhoneText">Contact: 98160-12890</span></div>
+              </div>
+            </div>
+
+            <!-- Payment Method Card -->
+            <div class="checkout-section-card">
+              <div class="checkout-card-title" style="margin-bottom: 12px;">
+                <span>💳 Payment Method</span>
+              </div>
+              <label class="pay-option-row">
+                <input type="radio" name="checkoutPayMethod" value="UPI" checked class="pay-radio" onchange="window.customerApp.setPayMode('UPI')">
+                <div>
+                  <div>UPI (Google Pay, PhonePe, Paytm, BHIM)</div>
+                  <div style="font-size: 11px; color: #059669; font-weight: 600;">Fast 1-click hill confirmation</div>
+                </div>
+              </label>
+              <label class="pay-option-row">
+                <input type="radio" name="checkoutPayMethod" value="COD" class="pay-radio" onchange="window.customerApp.setPayMode('COD')">
+                <div>
+                  <div>Cash on Delivery</div>
+                  <div style="font-size: 11px; color: #64748B;">Pay cash to rider upon delivery</div>
+                </div>
+              </label>
+              <label class="pay-option-row">
+                <input type="radio" name="checkoutPayMethod" value="WALLET" class="pay-radio" onchange="window.customerApp.setPayMode('WALLET')">
+                <div>
+                  <div>Paytm / Himora Wallet</div>
+                  <div style="font-size: 11px; color: #64748B;">Balance: ₹250 available</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Right Column: Order Summary & Place Order -->
+          <div class="checkout-right-col" style="position: sticky; top: 90px;">
+            <div class="checkout-section-card" style="margin-bottom: 16px;">
+              <div class="checkout-card-title" style="margin-bottom: 10px;">
+                <span>📋 Order Summary</span>
+              </div>
+              <div class="bill-line-row">
+                <span>Items (<span id="checkoutItemCount">3</span>)</span>
+                <span id="checkoutSubtotal">₹364</span>
+              </div>
+              <div class="bill-line-row">
+                <span>Delivery Fee</span>
+                <span id="checkoutDeliveryFee">₹30</span>
+              </div>
+              <div class="bill-line-row">
+                <span>Discount</span>
+                <span style="color: #059669; font-weight: 700;">-₹20</span>
+              </div>
+              <div class="bill-line-row total-line">
+                <span>Total</span>
+                <span id="checkoutTotal" style="color: #0D7C66; font-size: 18px;">₹374</span>
+              </div>
+            </div>
+
+            <div class="cart-sticky-footer">
+              <button class="btn-primary-green" onclick="window.customerApp.placeFinalOrder()">
+                <span>Place Order</span>
+                <span>✓</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 8: ORDER TRACKING SCREEN                          -->
+      <!-- ======================================================== -->
+      <section id="screen-tracking" class="himora-screen no-bottom-nav">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.navigateTo('home')">‹</button>
+          <div class="sub-screen-title">Track Order</div>
+          <button class="header-action-btn" onclick="window.customerApp.navigateTo('home')" style="font-size: 13px; font-weight: 700; color: #0D7C66;">Home</button>
+        </div>
+
+        <div class="tracking-desktop-card">
+          <div class="track-order-summary-strip">
+            <div>
+              <div class="track-order-num" id="trackOrderCode">#HM1024</div>
+              <div class="track-timestamp" id="trackOrderTime">Placed on Today, 10:24 AM</div>
+            </div>
+            <span style="background: #DEF7EC; color: #03543F; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px;" id="trackStatusBadge">On The Way</span>
+          </div>
+
+          <!-- Vertical Timeline Stepper -->
+          <div class="tracking-stepper-box">
+            <div class="track-step-row completed">
+              <div class="step-circle">✓</div>
+              <div>
+                <div class="step-text-title">Order Confirmed</div>
+                <div class="step-text-time">10:24 AM • Verified with merchant</div>
+              </div>
+            </div>
+
+            <div class="track-step-row completed">
+              <div class="step-circle">✓</div>
+              <div>
+                <div class="step-text-title">Shop Preparing</div>
+                <div class="step-text-time">10:40 AM • Spill-proof packing sealed</div>
+              </div>
+            </div>
+
+            <div class="track-step-row completed">
+              <div class="step-circle">✓</div>
+              <div>
+                <div class="step-text-title">Ready for Pickup</div>
+                <div class="step-text-time">11:05 AM • Handover counter ready</div>
+              </div>
+            </div>
+
+            <div class="track-step-row active">
+              <div class="step-circle">🔄</div>
+              <div>
+                <div class="step-text-title">Rider Picked Up</div>
+                <div class="step-text-time">11:20 AM • Climbing mountain route to Dharampur</div>
+              </div>
+            </div>
+
+            <div class="track-step-row">
+              <div class="step-circle">○</div>
+              <div>
+                <div class="step-text-title">Out for Delivery</div>
+                <div class="step-text-time">11:40 AM • Near destination ridge</div>
+              </div>
+            </div>
+
+            <div class="track-step-row">
+              <div class="step-circle">○</div>
+              <div>
+                <div class="step-text-title">Delivered</div>
+                <div class="step-text-time">Estimated 12:15 PM</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confidential Delivery OTP Card -->
+          <div style="margin: 0 0 16px; background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 16px; padding: 14px; text-align: center;">
+            <div style="font-size: 10.5px; font-weight: 800; color: #065F46; letter-spacing: 0.5px; text-transform: uppercase;">CONFIDENTIAL DELIVERY OTP</div>
+            <div style="font-family: var(--font-heading); font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #0D7C66; margin: 4px 0;" id="trackOtpDisplay">5570</div>
+            <div style="font-size: 11px; color: #047857;">Share with rider only when order is delivered to your hands</div>
+          </div>
+
+          <!-- Delivery Partner Contact Card -->
+          <div class="delivery-partner-card" style="margin: 0 0 20px;">
+            <div class="rider-profile-details">
+              <div class="rider-avatar-circle">🛵</div>
+              <div>
+                <div style="font-family: var(--font-heading); font-size: 14px; font-weight: 800; color: #0F172A;" id="trackRiderName">Rohit Kumar</div>
+                <div style="font-size: 11.5px; color: #64748B;">Delivery Partner (HP-14)</div>
+              </div>
+            </div>
+            <div class="partner-actions-box">
+              <button class="partner-icon-btn" onclick="alert('Calling Rohit Kumar (+91 98161-12345)...')" title="Call Rider">📞</button>
+              <button class="partner-icon-btn" onclick="alert('Opening WhatsApp chat with Rohit Kumar...')" title="Chat with Rider">💬</button>
+            </div>
+          </div>
+
+          <div style="padding: 0;">
+            <button class="btn-primary-green" onclick="window.customerApp.navigateTo('home')" style="background: #F1F5F9; color: #0F172A; border: 1px solid #E2E8F0; box-shadow: none;">Back to Home</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 9: MY ORDERS SCREEN                               -->
+      <!-- ======================================================== -->
+      <section id="screen-orders" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">My Orders</div>
+          <button class="header-action-btn" onclick="window.customerApp.focusSearch()">🔍</button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="order-tab-pills">
+          <button class="order-tab-btn active" id="tabCurrentOrders" onclick="window.customerApp.switchOrderTab('current', this)">Current Orders</button>
+          <button class="order-tab-btn" id="tabPastOrders" onclick="window.customerApp.switchOrderTab('past', this)">Past Orders</button>
+        </div>
+
+        <!-- Orders Cards Feed -->
+        <div class="orders-list-box" id="ordersListFeed">
+          <!-- Injected by customerApp.js -->
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 10: PROFILE / ACCOUNT SCREEN                      -->
+      <!-- ======================================================== -->
+      <section id="screen-profile" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">My Account</div>
+          <button class="header-action-btn" onclick="alert('Settings')">⚙️</button>
+        </div>
+
+        <!-- User Info Card -->
+        <div class="account-user-card">
+          <div class="account-avatar">👤</div>
+          <div style="flex: 1;">
+            <div class="account-name-headline" id="profileUserName">Amar Thakur</div>
+            <div class="account-contact-sub">amar@example.com • 98160-12890</div>
+          </div>
+          <button onclick="alert('Profile editor')" style="background:none; border:none; font-size:16px; cursor:pointer;">✏️</button>
+        </div>
+
+        <!-- Action Menu Items List -->
+        <div class="account-menu-list">
+          <div class="account-menu-item" onclick="window.customerApp.navigateTo('orders')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">📦</span>
+              <span>My Orders</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="alert('Saved Addresses: Dharampur, Solan')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">📍</span>
+              <span>Saved Addresses</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="alert('Your Wishlist (3 items saved)')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🤍</span>
+              <span>Wishlist</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="window.customerApp.navigateTo('offers')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🎟️</span>
+              <span>Coupons & Offers</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="alert('Himora Wallet Balance: ₹250.00')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">💳</span>
+              <span>Wallet & Credits</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="alert('Your Store & Product Reviews (4.8 rating avg)')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">⭐</span>
+              <span>My Reviews</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="window.customerApp.openHelpSupport()">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">❓</span>
+              <span>Help & Support</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" id="accountCheckUpdateRow" onclick="window.PahadiUpdateManager && window.PahadiUpdateManager.checkForUpdates(true)">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🚀</span>
+              <div>
+                <div style="font-weight: 700; color: inherit;">App Updates & Version</div>
+                <div id="accountAppVersionLabel" style="font-size: 11px; color: var(--himora-text-muted);">Himora v4.3.0 • Tap to check for updates</div>
+              </div>
+            </div>
+            <span id="accountUpdateBadge" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 9999px; margin-right: 6px;">Check</span>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item account-logout-item" onclick="window.customerApp.handleLogout()">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🚪</span>
+              <span>Logout</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 11: OFFERS & DEALS SCREEN                         -->
+      <!-- ======================================================== -->
+      <section id="screen-offers" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Offers & Deals</div>
+          <button class="header-action-btn" onclick="window.customerApp.focusSearch()">🔍</button>
+        </div>
+
+        <div class="offers-tab-pills">
+          <span class="subcat-pill active">All Offers</span>
+          <span class="subcat-pill">Top Deals</span>
+          <span class="subcat-pill">Coupons</span>
+        </div>
+
+        <div class="offer-hero-card">
+          <div style="font-family: var(--font-heading); font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #A7F3D0;">MEGA SAVINGS</div>
+          <h2 style="font-family: var(--font-heading); font-size: 26px; font-weight: 900; margin: 4px 0 2px;">UP TO 50% OFF</h2>
+          <p style="font-size: 13px; opacity: 0.9; margin-bottom: 16px;">Local Shops & Produce across Himachal Hills</p>
+          <button class="hero-cta-btn" onclick="window.customerApp.navigateTo('listing', { category: 'all' })">
+            <span>Shop Now</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <div class="offer-category-list">
+          <div class="offer-category-row" onclick="window.customerApp.navigateTo('listing', { category: 'fruits-veg' })">
+            <div class="offer-row-left">
+              <div class="offer-row-avatar">🍎</div>
+              <div>
+                <div class="offer-row-title">Fresh Fruits & Vegetables</div>
+                <div style="font-size: 11.5px; color: #64748B;">Direct from Kinnaur & Solan orchards</div>
+              </div>
+            </div>
+            <span class="offer-discount-badge">Up to 20% OFF</span>
+          </div>
+
+          <div class="offer-category-row" onclick="window.customerApp.navigateTo('listing', { category: 'dairy' })">
+            <div class="offer-row-left">
+              <div class="offer-row-avatar">🥛</div>
+              <div>
+                <div class="offer-row-title">Dairy Products</div>
+                <div style="font-size: 11.5px; color: #64748B;">Taaza milk, paneer, and desi ghee</div>
+              </div>
+            </div>
+            <span class="offer-discount-badge">Flat 15% OFF</span>
+          </div>
+
+          <div class="offer-category-row" onclick="window.customerApp.navigateTo('listing', { category: 'bakery' })">
+            <div class="offer-row-left">
+              <div class="offer-row-avatar">🥐</div>
+              <div>
+                <div class="offer-row-title">Bakery & Snacks</div>
+                <div style="font-size: 11.5px; color: #64748B;">Mountain bread, buns & rusks</div>
+              </div>
+            </div>
+            <span class="offer-discount-badge">Buy 2 Get 1 Free</span>
+          </div>
+
+          <div class="offer-category-row" onclick="window.customerApp.navigateTo('jeevanix')">
+            <div class="offer-row-left">
+              <div class="offer-row-avatar">🌿</div>
+              <div>
+                <div class="offer-row-title">Health & Wellness</div>
+                <div style="font-size: 11.5px; color: #64748B;">Jeevanix organic teas & pure supplements</div>
+              </div>
+            </div>
+            <span class="offer-discount-badge">Up to 25% OFF</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SCREEN 12: JEEVANIX PRODUCTS SCREEN                      -->
+      <!-- ======================================================== -->
+      <section id="screen-jeevanix" class="himora-screen">
+        <div class="sub-screen-header">
+          <button class="back-btn" onclick="window.customerApp.goBack()">‹</button>
+          <div class="sub-screen-title">Jeevanix Products</div>
+          <button class="header-action-btn" onclick="window.customerApp.focusSearch()">🔍</button>
+        </div>
+
+        <div class="jeevanix-hero-banner">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
+            <svg style="width: 28px; height: 28px;" viewBox="0 0 48 48" fill="none">
+              <path d="M6 38L18 16L27 28L34 18L44 38H6Z" fill="#10B981"/>
+              <path d="M12 38C18 32 28 32 36 38" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <span style="font-family: var(--font-heading); font-size: 20px; font-weight: 900; letter-spacing: -0.3px;">Himora</span>
+          </div>
+          <div style="font-size: 12px; font-weight: 700; color: #A7F3D0; text-transform: uppercase; letter-spacing: 0.5px;">Powered by Jeevanix</div>
+          <div style="font-size: 12.5px; opacity: 0.9; margin-top: 4px;">Pure  |  Natural  |  Healthy</div>
+        </div>
+
+        <!-- 2-Column Product Grid -->
+        <div class="jeevanix-grid-2" id="jeevanixProductGrid">
+          <!-- Injected by customerApp.js -->
+        </div>
+
+        <div class="nature-badge-footer">
+          <span>Goodness from Nature</span>
+          <span>✔️</span>
+        </div>
+      </section>
+
+    </div><!-- /screens-viewport -->
+
+    <!-- Persistent Bottom Navigation Bar (Screens 1, 2, 9, 10, 11, 12) -->
+    <nav class="bottom-nav-bar" id="appBottomNav">
+      <button class="nav-tab-btn active" id="tabNavHome" onclick="window.customerApp.navigateTo('home')">
+        <span class="nav-tab-icon">🏠</span>
+        <span class="nav-tab-label">Home</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavCategories" onclick="window.customerApp.navigateTo('categories')">
+        <span class="nav-tab-icon">🔲</span>
+        <span class="nav-tab-label">Categories</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavOrders" onclick="window.customerApp.navigateTo('orders')">
+        <span class="nav-tab-icon">📋</span>
+        <span class="nav-tab-label">Orders</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavCart" onclick="window.customerApp.navigateTo('cart')">
+        <span class="nav-tab-icon">🛒</span>
+        <span class="nav-tab-label">Cart</span>
+        <span class="cart-nav-badge" id="cartNavBadge" style="display: none;">0</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavAccount" onclick="window.customerApp.navigateTo('profile')">
+        <span class="nav-tab-icon">👤</span>
+        <span class="nav-tab-label">Account</span>
+      </button>
+    </nav>
+
+
+    <!-- Interactive Town Picker Modal -->
+    <div class="himora-modal-overlay" id="townPickerModal" style="display: none;" onclick="if(event.target===this) window.customerApp.closeTownPicker()">
+      <div class="himora-modal-card">
+        <div class="modal-header-row">
+          <h3>📍 Select Hill Town</h3>
+          <button class="modal-close-btn" onclick="window.customerApp.closeTownPicker()">✕</button>
+        </div>
+        <p style="font-size: 13px; color: #64748B; margin-bottom: 14px;">Hyperlocal mountain delivery network active across Himachal:</p>
+        <div class="town-list-grid">
+          <button class="town-choice-btn active" id="btnTownDharampur" onclick="window.customerApp.selectTown('Dharampur', 'Dharampur, Himachal Pradesh')">
+            <div class="town-btn-title">🏔️ Dharampur</div>
+            <div class="town-btn-sub">Mandi District • 30-45m SLA</div>
+          </button>
+          <button class="town-choice-btn" id="btnTownKotli" onclick="window.customerApp.selectTown('Kotli', 'Kotli Valley, Himachal Pradesh')">
+            <div class="town-btn-title">🌲 Kotli</div>
+            <div class="town-btn-sub">Ridge Hub • 35-50m SLA</div>
+          </button>
+          <button class="town-choice-btn" id="btnTownSarkaghat" onclick="window.customerApp.selectTown('Sarkaghat', 'Sarkaghat, Himachal Pradesh')">
+            <div class="town-btn-title">🏡 Sarkaghat</div>
+            <div class="town-btn-sub">Bazaar Center • 40-55m SLA</div>
+          </button>
+          <button class="town-choice-btn" id="btnTownMandi" onclick="window.customerApp.selectTown('Mandi', 'Mandi Town, Himachal Pradesh')">
+            <div class="town-btn-title">🏙️ Mandi</div>
+            <div class="town-btn-sub">Vyas Valley • 30-45m SLA</div>
+          </button>
+          <button class="town-choice-btn" id="btnTownJogindernagar" onclick="window.customerApp.selectTown('Jogindernagar', 'Jogindernagar, Himachal Pradesh')">
+            <div class="town-btn-title">🚂 Jogindernagar</div>
+            <div class="town-btn-sub">Shanan Area • 45-60m SLA</div>
+          </button>
+          <button class="town-choice-btn" id="btnTownSolan" onclick="window.customerApp.selectTown('Solan', 'Solan, Himachal Pradesh')">
+            <div class="town-btn-title">🍄 Solan</div>
+            <div class="town-btn-sub">Mall Road Hub • 25-40m SLA</div>
+          </button>
+          <button class="town-choice-btn" id="btnTownShimla" onclick="window.customerApp.selectTown('Shimla', 'The Ridge, Shimla, Himachal Pradesh')">
+            <div class="town-btn-title">❄️ Shimla</div>
+            <div class="town-btn-sub">The Ridge & Sanjauli • 30-50m SLA</div>
+          </button>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Shared Scripts -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/shared/hillAudio.js?v=3.3.0"></script>
+    <!-- Interactive Address Editor Modal -->
+    <div class="himora-modal-overlay" id="addressEditModal" style="display: none;" onclick="if(event.target===this) window.customerApp.closeAddressModal()">
+      <div class="himora-modal-card">
+        <div class="modal-header-row">
+          <h3>📍 Edit Delivery Address</h3>
+          <button class="modal-close-btn" onclick="window.customerApp.closeAddressModal()">✕</button>
+        </div>
+        <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Street / Building Address</label>
+            <input type="text" id="editInputAddress" style="width: 100%; padding: 10px 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-size: 14px; outline: none;" value="Near Himora Store, Dharampur, Himachal Pradesh - 176215">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Hill Staircase / Trail Guide</label>
+            <input type="text" id="editInputStairs" style="width: 100%; padding: 10px 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-size: 14px; outline: none;" value="35 steps down from road level, green gate">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Recipient Phone Number</label>
+            <input type="tel" id="editInputPhone" style="width: 100%; padding: 10px 14px; border: 1.5px solid #CBD5E1; border-radius: 12px; font-size: 14px; outline: none;" value="98160-12890">
+          </div>
+          <button class="btn-primary-green" onclick="window.customerApp.saveCustomAddress()" style="margin-top: 8px;">
+            <span>Save Address</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Shared Service Layer -->
+  <script src="/shared/pwaInit.js"></script>
+  <script src="/shared/updateEngine.js"></script>
+  <script src="/shared/themeController.js"></script>
+  <script src="/shared/hillAudio.js"></script>
   <script src="/shared/pushNotifier.js"></script>
-  <script src="/shared/sharedData.js?v=3.3.0"></script>
-  <script src="/shared/eventBus.js?v=3.3.0"></script>
-  <script src="/shared/dispatchEngine.js?v=3.3.0"></script>
-  <script src="/shared/simulationEngine.js?v=3.3.0"></script>
-  <script src="/shared/simulationModal.js?v=3.3.0"></script>
-  <script src="/shared/offlineQueue.js?v=3.3.0"></script>
-  <script src="/shared/whatsappBot.js?v=3.3.0"></script>
-  <script src="/shared/batchingEngine.js?v=3.3.0"></script>
-  <!-- Customer App Logic -->
-  <script src="/shared/gpsTrackingEngine.js?v=3.3.0"></script>
-  <script src="js/voiceOrderEngine.js?v=3.3.0"></script>
-  <script src="/shared/liveServices.js?v=3.3.0"></script>
-  <script src="js/customerApp.js?v=4.0.0"></script>
-<script src="/shared/pwaInit.js"></script>
-  <script src="/shared/mockApi.js"></script>
-  <script src="/shared/profileSidebar.js"></script>
+  <script src="/shared/sharedData.js"></script>
+  <script src="/shared/eventBus.js"></script>
+  <!-- Himora App Logic -->
+  <script src="js/customerApp.js"></script>
 </body>
 </html>

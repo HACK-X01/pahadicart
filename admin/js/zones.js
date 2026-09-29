@@ -1,6 +1,6 @@
 // Hill Dynamic Pricing & Weather Emergency Protocol Engine
 
-function setWeatherMode(mode) {
+function setWeatherMode(mode, isUserAction = false) {
   const currentTownId = document.getElementById("townSelect")?.value || "solan";
   const town = PahadiMockDB.towns.find(t => t.id === currentTownId);
   if (!town) return;
@@ -27,7 +27,7 @@ function setWeatherMode(mode) {
     if (weatherStatusDesc) {
       weatherStatusDesc.textContent = "Roads clear. Standard 45–60 min delivery active across all hill corridors.";
     }
-    showToast("☀️ Weather Mode: Clear. Standard hill SLA active.");
+    if (isUserAction) showToast("☀️ Weather Mode: Clear. Standard hill SLA active.");
   } else if (mode === 'rain') {
     town.weatherSurgeFee = 15;
     town.weatherBufferMins = 20;

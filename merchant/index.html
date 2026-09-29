@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="css/merchant.css?v=3.4.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   
 
@@ -54,6 +54,11 @@
     </div>
 
     <div class="header-controls">
+      <!-- Theme Switcher Toggle -->
+      <button class="theme-toggle-btn" id="merchantThemeToggleBtn" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
+        <span class="theme-toggle-icon"></span>
+        <span class="theme-toggle-label">Dark</span>
+      </button>
       <button class="chime-btn" onclick="window.pahadiScanner && window.pahadiScanner.openScannerModal()" style="background:rgba(56,189,248,0.15); border:1px solid #38bdf8; color:#38bdf8; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
         <span>📷 Barcode Scanner</span>
       </button>
@@ -204,6 +209,7 @@
   </div>
 
   <!-- Shared Scripts -->
+  <script src="/shared/themeController.js"></script>
   <script src="/shared/hillAudio.js?v=3.4.0"></script>
   <script src="/shared/pushNotifier.js"></script>
   <script src="/shared/sharedData.js?v=3.4.0"></script>
@@ -213,6 +219,7 @@
   <script src="js/barcodeScanner.js?v=3.4.0"></script>
   <script src="js/merchantApp.js?v=3.5.0"></script>
 <script src="/shared/pwaInit.js"></script>
+  <script src="/shared/updateEngine.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>
 </body>

@@ -1,158 +1,1128 @@
-// PahadiCart Customer App Controller
+// Himora Customer-Facing App Controller — Powered by Jeevanix
+// Compliant with 12-Screen Blueprint (Local Shopping. Made for the Hills.)
+
 (function() {
-  class PahadiCustomerApp {
+  // Master Catalog Data aligned with PDF Blueprint
+  const HIMORA_CATALOG = {
+    products: [
+      {
+        id: 'PROD-ATTA-01',
+        name: 'Aashirvaad Atta 5kg',
+        hindi: 'आशीर्वाद आटा 5 किग्रा',
+        desc: 'Premium quality whole wheat atta, rich in dietary fiber and essential mountain grains. Stone-ground for soft, healthy rotis that stay fresh longer.',
+        price: 280,
+        mrp: 310,
+        discount: '10% OFF',
+        rating: 4.5,
+        reviewsCount: 120,
+        unit: '5 kg',
+        category: 'grocery',
+        subcategory: 'Atta & Flour',
+        icon: '🌾',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-OIL-01',
+        name: 'Fortune Sunflower Oil 1L',
+        hindi: 'फॉर्च्यून सनफ्लावर तेल 1 लीटर',
+        desc: 'Refined sunflower oil enriched with Vitamins A & D. Light and healthy for everyday hill cooking.',
+        price: 145,
+        mrp: 160,
+        discount: '9% OFF',
+        rating: 4.2,
+        reviewsCount: 98,
+        unit: '1 L',
+        category: 'grocery',
+        subcategory: 'Oil & Masala',
+        icon: '🌻',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-SALT-01',
+        name: 'Tata Salt 1kg',
+        hindi: 'टाटा नमक 1 किग्रा',
+        desc: 'Vacuum evaporated iodized salt for pure taste and balanced iodine nutrition.',
+        price: 25,
+        mrp: 28,
+        discount: '11% OFF',
+        rating: 4.3,
+        reviewsCount: 150,
+        unit: '1 kg',
+        category: 'grocery',
+        subcategory: 'Sugar & Salt',
+        icon: '🧂',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-MAGGI-01',
+        name: 'Maggi Noodles 280g',
+        hindi: 'मैगी 2-मिनट नूडल्स',
+        desc: 'Classic masala instant noodles with authentic roasted mountain spices.',
+        price: 32,
+        mrp: 40,
+        discount: '20% OFF',
+        rating: 4.4,
+        reviewsCount: 210,
+        unit: '280g',
+        category: 'grocery',
+        subcategory: 'Snacks',
+        icon: '🍜',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-MILK-01',
+        name: 'Amul Taza Milk 1L',
+        hindi: 'अमूल ताजा दूध 1 लीटर',
+        desc: 'Fresh homogenized toned milk, pasteurized and sealed for door-to-door purity.',
+        price: 52,
+        mrp: 54,
+        discount: '4% OFF',
+        rating: 4.6,
+        reviewsCount: 85,
+        unit: '1 L',
+        category: 'dairy',
+        subcategory: 'Milk & Curd',
+        icon: '🥛',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-PARLE-01',
+        name: 'Parle-G Biscuits Pack',
+        hindi: 'पारले-जी बिस्कुट',
+        desc: 'Iconic glucose biscuits, crisp and golden, beloved across Himachal homes.',
+        price: 10,
+        mrp: 10,
+        discount: 'BESTSELLER',
+        rating: 4.5,
+        reviewsCount: 130,
+        unit: 'Pack of 2',
+        category: 'bakery',
+        subcategory: 'Biscuits & Snacks',
+        icon: '🍪',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-TOMATO-01',
+        name: 'Fresh Red Tomatoes 1kg',
+        hindi: 'ताज़ा लाल टमाटर 1 किग्रा',
+        desc: 'Plump, ripe Solan valley tomatoes directly hand-picked from hillside farmers.',
+        price: 35,
+        mrp: 45,
+        discount: '22% OFF',
+        rating: 4.7,
+        reviewsCount: 65,
+        unit: '1 kg',
+        category: 'fruits-veg',
+        subcategory: 'Fresh Vegetables',
+        icon: '🍅',
+        merchantId: 'shop-sharma',
+        merchantName: 'Sharma General Store',
+        inStock: true,
+        popular: true
+      },
+      {
+        id: 'PROD-APPLE-01',
+        name: 'Kinnaur Royal Delicious Apples',
+        hindi: 'किन्नौर रॉयल सेब 1 किग्रा',
+        desc: 'Crisp, sweet, ruby-red high altitude Kinnaur harvest. 100% natural, wax-free.',
+        price: 140,
+        mrp: 180,
+        discount: '22% OFF',
+        rating: 4.9,
+        reviewsCount: 180,
+        unit: '1 kg',
+        category: 'fruits-veg',
+        subcategory: 'Fresh Fruits',
+        icon: '🍎',
+        merchantId: 'shop-organic',
+        merchantName: 'Himora Organic Farm',
+        inStock: true,
+        popular: true
+      },
+      // Jeevanix Wellness Products (Screen 12)
+      {
+        id: 'PROD-HONEY-01',
+        name: 'Himalayan Honey 500g',
+        hindi: 'जीवनिक्स शुद्ध हिमालयन शहद',
+        desc: 'Unfiltered raw multi-flora forest honey collected by hill tribal apiaries. Powered by Jeevanix.',
+        price: 250,
+        mrp: 290,
+        discount: '14% OFF',
+        rating: 4.6,
+        reviewsCount: 95,
+        unit: '500g jar',
+        category: 'jeevanix-products',
+        subcategory: 'Pure Honey',
+        icon: '🍯',
+        merchantId: 'shop-jeevanix',
+        merchantName: 'Jeevanix Health & Wellness',
+        inStock: true,
+        popular: false
+      },
+      {
+        id: 'PROD-TEA-01',
+        name: 'Herbal Mountain Tea',
+        hindi: 'जीवनिक्स प्राकृतिक हर्बल चाय',
+        desc: 'Antioxidant-rich infusion of wild rhododendron petals, hill tulsi, and cinnamon.',
+        price: 250,
+        mrp: 280,
+        discount: '11% OFF',
+        rating: 4.4,
+        reviewsCount: 70,
+        unit: '100g pack',
+        category: 'jeevanix-products',
+        subcategory: 'Herbal Tea',
+        icon: '🍵',
+        merchantId: 'shop-jeevanix',
+        merchantName: 'Jeevanix Health & Wellness',
+        inStock: true,
+        popular: false
+      },
+      {
+        id: 'PROD-VITAMIN-01',
+        name: 'Jeevanix Multivitamin Daily',
+        hindi: 'जीवनिक्स मल्टीविटामिन कैप्सूल',
+        desc: 'Daily vitality balance with mountain herbs, zinc, and bio-available vitamins. 60 Veg Capsules.',
+        price: 499,
+        mrp: 599,
+        discount: '17% OFF',
+        rating: 4.6,
+        reviewsCount: 110,
+        unit: '60 capsules',
+        category: 'jeevanix-products',
+        subcategory: 'Supplements',
+        icon: '💊',
+        merchantId: 'shop-jeevanix',
+        merchantName: 'Jeevanix Health & Wellness',
+        inStock: true,
+        popular: false
+      },
+      {
+        id: 'PROD-SPICES-01',
+        name: 'Organic Pahadi Spices Box',
+        hindi: 'जीवनिक्स ऑर्गेनिक पहाड़ी मसाले',
+        desc: 'Stone-pounded mountain turmeric, wild coriander, and hill cumin. Aromatic & medicinal.',
+        price: 180,
+        mrp: 210,
+        discount: '14% OFF',
+        rating: 4.3,
+        reviewsCount: 50,
+        unit: '400g assortment',
+        category: 'jeevanix-products',
+        subcategory: 'Organic Spices',
+        icon: '🌿',
+        merchantId: 'shop-jeevanix',
+        merchantName: 'Jeevanix Health & Wellness',
+        inStock: true,
+        popular: false
+      }
+    ],
+
+    categories: [
+      { id: 'grocery', name: 'Grocery', icon: '🧺', subcategories: ['Atta & Flour', 'Oil & Masala', 'Rice & Grains', 'Sugar & Salt', 'Snacks'] },
+      { id: 'fruits-veg', name: 'Fruits & Vegetables', icon: '🍎', subcategories: ['Fresh Fruits', 'Fresh Vegetables', 'Hill Herbs'] },
+      { id: 'bakery', name: 'Bakery', icon: '🥐', subcategories: ['Breads', 'Biscuits & Snacks', 'Cakes'] },
+      { id: 'dairy', name: 'Dairy', icon: '🥛', subcategories: ['Milk & Curd', 'Paneer', 'Desi Ghee'] },
+      { id: 'personal-care', name: 'Personal Care', icon: '🧴', subcategories: ['Soaps', 'Hair Care', 'Oral Care'] },
+      { id: 'health-wellness', name: 'Health & Wellness', icon: '🌿', subcategories: ['Ayurveda', 'Supplements', 'Teas'] },
+      { id: 'home-essentials', name: 'Home Essentials', icon: '🧹', subcategories: ['Cleaners', 'Detergents', 'Puja'] },
+      { id: 'more', name: 'More', icon: '⋯', subcategories: ['All Categories'] },
+      { id: 'local-products', name: 'Local Products', icon: '🏔️', subcategories: ['Pahadi Specialties', 'Handicrafts', 'Apples'] },
+      { id: 'jeevanix-products', name: 'Jeevanix Products', icon: '✨', subcategories: ['Pure Honey', 'Herbal Tea', 'Supplements', 'Spices'] }
+    ],
+
+    shops: [
+      {
+        id: 'shop-sharma',
+        name: 'Sharma General Store',
+        avatar: '🏪',
+        rating: 4.5,
+        reviews: 320,
+        distance: '1.2 km away',
+        town: 'Dharampur',
+        status: 'Open • Closes 10:00 PM',
+        sla: 'Delivery in 30-60 min',
+        categories: ['grocery', 'snacks', 'household', 'dairy']
+      },
+      {
+        id: 'shop-organic',
+        name: 'Himora Organic Farm',
+        avatar: '🍏',
+        rating: 4.8,
+        reviews: 140,
+        distance: '2.5 km away',
+        town: 'Dharampur',
+        status: 'Open • Closes 8:00 PM',
+        sla: 'Delivery in 45-60 min',
+        categories: ['fruits-veg', 'local-products']
+      },
+      {
+        id: 'shop-jeevanix',
+        name: 'Jeevanix Health & Wellness',
+        avatar: '🌿',
+        rating: 4.9,
+        reviews: 420,
+        distance: 'Direct Hub',
+        town: 'Himachal',
+        status: 'Always Open',
+        sla: 'Express 30-45 min Delivery',
+        categories: ['jeevanix-products', 'health-wellness']
+      }
+    ]
+  };
+
+  class HimoraApp {
     constructor() {
-      this.currentTown = 'solan';
-      this.selectedCategory = 'all';
-      this.cart = {}; // { productId: qty }
+      this.currentScreen = 'home';
+      this.navigationHistory = ['home'];
+      this.cart = {}; // { [prodId]: qty }
+      this.currentTown = localStorage.getItem('himora_selected_town') || 'Dharampur, Himachal Pradesh';
+      this.currentTownId = 'dharampur';
+      this.currentAddress = 'Near Himora Store, Dharampur, Himachal Pradesh - 176215';
+      this.currentStairs = '35 steps down from road level, green gate';
+      this.currentPhone = '98160-12890';
+      this.activeProductDetail = null;
+      this.activeShop = null;
+      this.activeListingCategory = 'grocery';
+      this.activeListingSubcat = 'all';
       this.selectedPayMode = 'UPI';
-      this.activeTrackingOrder = null;
-      this.map = null;
-      this.riderMarker = null;
-      this.animInterval = null;
+      this.activeOrder = null;
+      this.wishlist = new Set(['PROD-ATTA-01']);
 
       this.init();
     }
 
     init() {
       this.loadCartFromStorage();
-      this.renderCategories();
-      this.renderProducts();
-      this.updateCartUI();
+      this.syncMasterProductsToDataLayer();
+      this.renderHomeScreen();
+      this.renderCategoriesScreen();
+      this.renderJeevanixScreen();
+      this.renderOrdersScreen('current');
+      this.updateCartBadges();
+      this.updateTownDisplays();
 
-      // Listen to cross-portal status changes
+      // Cross-portal real-time event listeners
       if (window.pahadiBus) {
-        window.pahadiBus.on('PRODUCT_STOCK_CHANGED', () => {
-          this.renderProducts();
-          this.updateCartUI();
-        });
-        window.pahadiBus.on('CATEGORIES_UPDATED', (cats) => {
-          if (window.PAHADICART_DATA) window.PAHADICART_DATA.categories = cats;
-          this.renderCategories();
-          this.renderProducts();
-        });
-        window.pahadiBus.on('CMS_UPDATED', () => {
-          this.renderAnnouncementBar();
-        });
-        window.pahadiBus.on('BUSINESS_RULES_UPDATED', () => {
-          this.updateCartUI();
-        });
-        window.pahadiBus.on('PRODUCT_ADDED', () => {
-          this.renderProducts();
-          this.updateCartUI();
-        });
-        window.pahadiBus.on('ORDER_STATUS_CHANGED', ({ orderId, newStatus }) => {
-          if (this.activeTrackingOrder && this.activeTrackingOrder.id === orderId) {
-            this.activeTrackingOrder.status = newStatus;
-            this.updateTrackingUI();
+        window.pahadiBus.on('ORDER_STATUS_CHANGED', ({ orderId, newStatus, order }) => {
+          if (this.activeOrder && (this.activeOrder.id === orderId || !this.activeOrder.id)) {
+            this.activeOrder.status = newStatus;
+            if (order) Object.assign(this.activeOrder, order);
+            this.renderTrackingScreen(this.activeOrder);
           }
+          this.renderOrdersScreen('current');
+        });
+
+        window.pahadiBus.on('PRODUCT_ADDED', () => {
+          this.reloadProductsFromStorage();
+        });
+
+        window.pahadiBus.on('PRODUCT_STOCK_CHANGED', () => {
+          this.reloadProductsFromStorage();
+        });
+
+        window.pahadiBus.on('CATEGORIES_UPDATED', () => {
+          this.renderCategoriesScreen();
+          this.renderHomeScreen();
         });
       }
     }
 
-    changeTown(townId) {
-      this.currentTown = townId;
-      this.renderProducts();
+    reloadProductsFromStorage() {
+      try {
+        const stored = localStorage.getItem('pahadicart_products');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            HIMORA_CATALOG.products = parsed;
+            this.renderHomeScreen();
+            if (this.currentScreen === 'listing') {
+              this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
+            }
+          }
+        }
+      } catch(e) {}
     }
 
-    filterSearch(query) {
-      this.searchQuery = (query || '').toLowerCase().trim();
-      this.renderProducts();
-    }
-
-    selectCategory(catId) {
-      this.selectedCategory = catId;
-      this.renderCategories();
-      this.renderProducts();
-    }
-
-    renderCategories() {
-      const container = document.getElementById('categoryPills');
-      if (!container || !window.PAHADICART_DATA) return;
-
-      container.innerHTML = window.PAHADICART_DATA.categories.map(c => `
-        <button class="cat-pill ${this.selectedCategory === c.id ? 'active' : ''}" onclick="window.customerApp.selectCategory('${c.id}')">
-          <span>${c.icon}</span>
-          <span>${c.name}</span>
-        </button>
-      `).join('');
-    }
-
-    renderProducts() {
-      const grid = document.getElementById('productsGrid');
-      const titleEl = document.getElementById('currentCatTitle');
-      const countEl = document.getElementById('productCount');
-      if (!grid || !window.PAHADICART_DATA) return;
-
-      const catObj = window.PAHADICART_DATA.categories.find(c => c.id === this.selectedCategory);
-      if (titleEl) titleEl.innerText = catObj ? catObj.name : 'Sabhi Pahadi Products';
-
-      const allProds = (window.PAHADICART_DATA.products || []).filter(p => p.isLaunched !== false && p.active !== false);
-      const townMerchants = (window.PAHADICART_DATA.merchants || []).filter(m => m.town === this.currentTown);
-      const merchantIds = new Set(townMerchants.map(m => m.id));
-      let items = allProds.filter(p => !p.town || p.town === this.currentTown || merchantIds.has(p.merchantId));
-      if (items.length === 0 && allProds.length > 0) {
-        items = allProds;
+    // Sync mock catalog to window.PAHADICART_DATA so Admin & Merchant portals also see it
+    syncMasterProductsToDataLayer() {
+      if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+      if (!window.PAHADICART_DATA.products || window.PAHADICART_DATA.products.length === 0) {
+        window.PAHADICART_DATA.products = HIMORA_CATALOG.products;
+        try {
+          localStorage.setItem('pahadicart_products', JSON.stringify(HIMORA_CATALOG.products));
+        } catch(e) {}
       }
-      if (this.selectedCategory !== 'all') {
-        items = items.filter(p => p.category === this.selectedCategory);
-      }
-      if (this.searchQuery) {
-        items = items.filter(p => (p.name && p.name.toLowerCase().includes(this.searchQuery)) || (p.desc && p.desc.toLowerCase().includes(this.searchQuery)));
+    }
+
+    // ========================================================
+    // SPA ROUTER & SCREEN TRANSITIONS
+    // ========================================================
+    navigateTo(screenId, params = {}) {
+      const targetScreen = document.getElementById('screen-' + screenId);
+      if (!targetScreen) {
+        console.warn('Screen not found:', screenId);
+        return;
       }
 
-      if (countEl) countEl.innerText = `Showing ${items.length} items`;
+      // Handle screen-specific parameters before switching
+      if (screenId === 'listing') {
+        const cat = params.category || 'grocery';
+        this.activeListingCategory = cat;
+        this.activeListingSubcat = params.subcat || 'all';
+        this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
+      } else if (screenId === 'product-detail') {
+        const prodId = params.productId || 'PROD-ATTA-01';
+        this.renderProductDetailScreen(prodId);
+      } else if (screenId === 'shop') {
+        const shopId = params.shopId || 'shop-sharma';
+        this.renderShopScreen(shopId);
+      } else if (screenId === 'cart') {
+        this.renderCartScreen();
+      } else if (screenId === 'checkout') {
+        this.renderCheckoutScreen();
+      } else if (screenId === 'tracking') {
+        this.renderTrackingScreen(params.order || this.activeOrder);
+      } else if (screenId === 'orders') {
+        this.renderOrdersScreen(params.tab || 'current');
+      } else if (screenId === 'offers') {
+        // static offer deals
+      } else if (screenId === 'jeevanix') {
+        this.renderJeevanixScreen();
+      }
 
-      if (items.length === 0) {
-        grid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 24px; background: rgba(15, 23, 42, 0.45); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 16px; margin: 20px 0;">
-            <div style="font-size: 50px; margin-bottom: 14px;">🛍️</div>
-            <h3 style="color: #ffffff; font-size: 18px; font-weight: 800; margin-bottom: 8px;">Abhi koi product available nahi hai</h3>
-            <p style="color: #94a3b8; font-size: 13.5px; max-width: 420px; margin: 0 auto; line-height: 1.6;">
-              Marketplace bilkul fresh state me hai. Local Vyapar Mandal ke dukaandar jaise hi apne fresh items add karenge, wo yahan live dikhenge.
-            </p>
+      // Switch active class
+      document.querySelectorAll('.himora-screen').forEach(el => el.classList.remove('active'));
+      targetScreen.classList.add('active');
+      targetScreen.scrollTop = 0;
+
+      // Update Navigation History
+      if (this.currentScreen !== screenId) {
+        this.navigationHistory.push(screenId);
+      }
+      this.currentScreen = screenId;
+
+      // Manage Bottom Navigation Visibility & Active Tabs
+      const bottomNav = document.getElementById('appBottomNav');
+      const noBottomNavScreens = ['product-detail', 'cart', 'checkout', 'tracking'];
+      if (noBottomNavScreens.includes(screenId)) {
+        if (bottomNav) bottomNav.style.display = 'none';
+      } else {
+        if (bottomNav) bottomNav.style.display = 'flex';
+      }
+
+      // Highlight active tab (Mobile)
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (screenId === 'home') document.getElementById('tabNavHome')?.classList.add('active');
+      else if (screenId === 'categories') document.getElementById('tabNavCategories')?.classList.add('active');
+      else if (screenId === 'orders') document.getElementById('tabNavOrders')?.classList.add('active');
+      else if (screenId === 'cart') document.getElementById('tabNavCart')?.classList.add('active');
+      else if (screenId === 'profile') document.getElementById('tabNavAccount')?.classList.add('active');
+
+      // Highlight active link (Desktop)
+      document.querySelectorAll('.desktop-nav-link').forEach(btn => btn.classList.remove('active'));
+      if (screenId === 'home') document.getElementById('desktopNavHome')?.classList.add('active');
+      else if (screenId === 'categories') document.getElementById('desktopNavCategories')?.classList.add('active');
+      else if (screenId === 'offers') document.getElementById('desktopNavOffers')?.classList.add('active');
+      else if (screenId === 'jeevanix') document.getElementById('desktopNavJeevanix')?.classList.add('active');
+      else if (screenId === 'orders') document.getElementById('desktopNavOrders')?.classList.add('active');
+      else if (screenId === 'profile') document.getElementById('desktopNavAccount')?.classList.add('active');
+    }
+
+    goBack() {
+      if (this.navigationHistory.length > 1) {
+        this.navigationHistory.pop(); // Remove current
+        const previousScreen = this.navigationHistory.pop(); // Get previous
+        this.navigateTo(previousScreen || 'home');
+      } else {
+        this.navigateTo('home');
+      }
+    }
+
+    // ========================================================
+    // SCREEN 1: HOME SCREEN RENDERING
+    // ========================================================
+    renderHomeScreen() {
+      // 8 Category Tiles
+      const catGrid = document.getElementById('homeCategoryGrid');
+      if (catGrid) {
+        const top8 = HIMORA_CATALOG.categories.slice(0, 8);
+        catGrid.innerHTML = top8.map(c => `
+          <button class="category-tile-btn" onclick="window.customerApp.onCategoryTileClick('${c.id}')">
+            <div class="category-icon-box">${c.icon}</div>
+            <span class="category-tile-name">${c.name}</span>
+          </button>
+        `).join('');
+      }
+
+      // Popular Near You Products Scroll
+      const popularList = document.getElementById('homePopularList');
+      if (popularList) {
+        const popularProds = HIMORA_CATALOG.products.filter(p => p.popular);
+        popularList.innerHTML = popularProds.map(p => {
+          const qty = this.cart[p.id] || 0;
+          return `
+            <div class="product-card-compact" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+              <div class="prod-img-box">
+                <span>${p.icon}</span>
+                <span class="discount-chip">${p.discount}</span>
+              </div>
+              <div class="prod-name">${p.name}</div>
+              <div class="prod-unit">${p.unit} • ⭐ ${p.rating}</div>
+              <div class="prod-price-row">
+                <span class="current-price">₹${p.price}</span>
+                <span class="mrp-strikethrough">₹${p.mrp}</span>
+              </div>
+              <div onclick="event.stopPropagation();">
+                ${qty > 0 ? `
+                  <div class="item-qty-stepper">
+                    <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
+                    <span class="stepper-qty">${qty}</span>
+                    <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
+                  </div>
+                ` : `
+                  <button class="add-btn-green" onclick="window.customerApp.addToCart('${p.id}')">
+                    <span>+ Add</span>
+                  </button>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    onCategoryTileClick(catId) {
+      if (catId === 'more') {
+        this.navigateTo('categories');
+      } else if (catId === 'jeevanix-products') {
+        this.navigateTo('jeevanix');
+      } else {
+        this.navigateTo('listing', { category: catId });
+      }
+    }
+
+    // ========================================================
+    // SCREEN 2: CATEGORIES SCREEN RENDERING
+    // ========================================================
+    renderCategoriesScreen() {
+      const fullGrid = document.getElementById('fullCategoriesGrid');
+      if (fullGrid) {
+        const cats = HIMORA_CATALOG.categories.filter(c => c.id !== 'more');
+        fullGrid.innerHTML = cats.map(c => `
+          <div class="category-card-tile" onclick="window.customerApp.onCategoryTileClick('${c.id}')">
+            <div class="cat-tile-avatar">${c.icon}</div>
+            <div class="cat-tile-title">${c.name}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // ========================================================
+    // SCREEN 3: PRODUCT LISTING SCREEN RENDERING
+    // ========================================================
+    renderListingScreen(catId = 'grocery', subcat = 'all') {
+      const titleEl = document.getElementById('listingCategoryTitle');
+      const catObj = HIMORA_CATALOG.categories.find(c => c.id === catId);
+      if (titleEl) {
+        titleEl.innerText = catObj ? catObj.name : 'Products';
+      }
+
+      // Render Subcategory Filter Pills
+      const subcatScroll = document.getElementById('subcatFilterPills');
+      if (subcatScroll && catObj && catObj.subcategories) {
+        const subcats = ['All', ...catObj.subcategories];
+        subcatScroll.innerHTML = subcats.map(s => {
+          const val = s === 'All' ? 'all' : s;
+          const isActive = (val.toLowerCase() === subcat.toLowerCase()) ? 'active' : '';
+          return `
+            <span class="subcat-pill ${isActive}" onclick="window.customerApp.filterSubcategory('${val}', this)">
+              ${s}
+            </span>
+          `;
+        }).join('');
+      }
+
+      // Filter Products
+      const container = document.getElementById('listingProductContainer');
+      if (!container) return;
+
+      let prods = HIMORA_CATALOG.products;
+      if (catId !== 'all') {
+        prods = prods.filter(p => p.category === catId || (catId === 'local-products' && p.popular));
+      }
+      if (subcat && subcat !== 'all') {
+        prods = prods.filter(p => p.subcategory && p.subcategory.toLowerCase() === subcat.toLowerCase());
+      }
+
+      if (prods.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px 20px; color: var(--himora-text-muted);">
+            <div style="font-size: 38px; margin-bottom: 8px;">📦</div>
+            <p style="font-weight: 700;">No items found in this section</p>
+            <p style="font-size: 12px; margin-top: 4px;">Check other categories or reset filters.</p>
           </div>
         `;
         return;
       }
 
-      grid.innerHTML = items.map(p => {
+      container.innerHTML = prods.map(p => {
         const qty = this.cart[p.id] || 0;
-        const merchant = window.PAHADICART_DATA.merchants.find(m => m.id === p.merchantId);
-        const merchantName = merchant ? merchant.name : 'Vyapar Mandal Store';
-
         return `
-          <div class="product-card" id="card-${p.id}">
-            <div>
-              <div class="card-top">
-                <span class="product-tag">${p.badge || p.tag || "Himachal Special"}</span>
-                <span class="vyapar-badge">🛡️ Verified Vyapar Mandal</span>
+          <div class="listing-product-card" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+            <div class="listing-img-box">
+              <span>${p.icon}</span>
+              <span class="discount-chip">${p.discount}</span>
+            </div>
+            <div class="listing-info">
+              <div class="listing-title">${p.name}</div>
+              <div class="listing-meta">
+                <span>${p.unit}</span>
+                <span>•</span>
+                <span class="listing-rating">⭐ ${p.rating} (${p.reviewsCount})</span>
               </div>
-              <div class="card-body">
-                <h3 class="product-title">${p.name}</h3>
-                ${p.hindi ? `<p class="product-hindi">${p.hindi}</p>` : ""}
-                <p class="product-desc">${p.desc}</p>
-                <div class="product-merchant">
-                  <span>🏪</span>
-                  <span>${merchantName}</span>
-                </div>
+              <div class="listing-price-box">
+                <span class="listing-price">₹${p.price}</span>
+                <span class="mrp-strikethrough">₹${p.mrp}</span>
               </div>
             </div>
+            <div class="listing-action-wrap" onclick="event.stopPropagation();">
+              ${qty > 0 ? `
+                <div class="item-qty-stepper">
+                  <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
+                  <span class="stepper-qty">${qty}</span>
+                  <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
+                </div>
+              ` : `
+                <button class="add-btn-green" onclick="window.customerApp.addToCart('${p.id}')">
+                  <span>+ Add</span>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-            <div class="card-footer">
-              <div class="price-box">
-                <span class="price-current">₹${p.price}</span>
-                ${p.mrp ? `<span class="price-mrp">₹${p.mrp} (${p.unit})</span>` : ""}
+    filterSubcategory(subcat, el) {
+      document.querySelectorAll('#subcatFilterPills .subcat-pill').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+      this.activeListingSubcat = subcat;
+      this.renderListingScreen(this.activeListingCategory, subcat);
+    }
+
+    toggleSort(type) {
+      if (type === 'price') {
+        HIMORA_CATALOG.products.sort((a, b) => a.price - b.price);
+      } else if (type === 'rating') {
+        HIMORA_CATALOG.products.sort((a, b) => b.rating - a.rating);
+      }
+      this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
+    }
+
+    // ========================================================
+    // SCREEN 4: PRODUCT DETAIL SCREEN RENDERING
+    // ========================================================
+    renderProductDetailScreen(prodId) {
+      const prod = HIMORA_CATALOG.products.find(p => p.id === prodId) || HIMORA_CATALOG.products[0];
+      this.activeProductDetail = prod;
+
+      document.getElementById('detailProdAvatar').innerText = prod.icon;
+      document.getElementById('detailProdName').innerText = prod.name;
+      document.getElementById('detailProdRating').innerText = `⭐ ${prod.rating}`;
+      document.getElementById('detailProdPrice').innerText = `₹${prod.price}`;
+      document.getElementById('detailProdMrp').innerText = `₹${prod.mrp}`;
+      document.getElementById('detailProdDiscount').innerText = prod.discount;
+      document.getElementById('detailProdDesc').innerText = prod.desc;
+      document.getElementById('detailStoreName').innerText = `Sold by: ${prod.merchantName || 'Sharma General Store'}`;
+      
+      const qty = this.cart[prod.id] || 1;
+      document.getElementById('detailQtyVal').innerText = qty;
+
+      const heart = document.getElementById('btnWishlistHeart');
+      if (heart) {
+        heart.innerText = this.wishlist.has(prod.id) ? '❤️' : '🤍';
+      }
+    }
+
+    detailChangeQty(delta) {
+      let qty = parseInt(document.getElementById('detailQtyVal').innerText, 10) || 1;
+      qty = Math.max(1, qty + delta);
+      document.getElementById('detailQtyVal').innerText = qty;
+    }
+
+    detailAddToCart() {
+      if (!this.activeProductDetail) return;
+      const qty = parseInt(document.getElementById('detailQtyVal').innerText, 10) || 1;
+      this.addToCart(this.activeProductDetail.id, qty);
+      this.navigateTo('cart');
+    }
+
+    selectPackVariant(variant, el) {
+      document.querySelectorAll('.variant-chip').forEach(c => c.classList.remove('active'));
+      if (el) el.classList.add('active');
+    }
+
+    toggleWishlist() {
+      if (!this.activeProductDetail) return;
+      const id = this.activeProductDetail.id;
+      if (this.wishlist.has(id)) {
+        this.wishlist.delete(id);
+      } else {
+        this.wishlist.add(id);
+      }
+      const heart = document.getElementById('btnWishlistHeart');
+      if (heart) heart.innerText = this.wishlist.has(id) ? '❤️' : '🤍';
+    }
+
+    // ========================================================
+    // SCREEN 5: SHOP PAGE RENDERING
+    // ========================================================
+    renderShopScreen(shopId = 'shop-sharma') {
+      const shop = HIMORA_CATALOG.shops.find(s => s.id === shopId) || HIMORA_CATALOG.shops[0];
+      this.activeShop = shop;
+
+      document.getElementById('shopPageAvatar').innerText = shop.avatar;
+      document.getElementById('shopPageTitle').innerText = shop.name;
+
+      this.filterShopProducts('all');
+    }
+
+    filterShopProducts(catFilter, el) {
+      if (el) {
+        document.querySelectorAll('#screen-shop .subcat-pill').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+      }
+
+      const grid = document.getElementById('shopProductsGrid');
+      if (!grid) return;
+
+      const shopProds = HIMORA_CATALOG.products.filter(p => {
+        if (p.merchantId !== (this.activeShop ? this.activeShop.id : 'shop-sharma')) return false;
+        if (catFilter && catFilter !== 'all') return p.category.includes(catFilter) || p.subcategory.toLowerCase().includes(catFilter);
+        return true;
+      });
+
+      grid.innerHTML = shopProds.map(p => {
+        const qty = this.cart[p.id] || 0;
+        return `
+          <div class="product-card-compact" style="width: 100%;" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+            <div class="prod-img-box">
+              <span>${p.icon}</span>
+              <span class="discount-chip">${p.discount}</span>
+            </div>
+            <div class="prod-name">${p.name}</div>
+            <div class="prod-unit">${p.unit}</div>
+            <div class="prod-price-row">
+              <span class="current-price">₹${p.price}</span>
+              <span class="mrp-strikethrough">₹${p.mrp}</span>
+            </div>
+            <div onclick="event.stopPropagation();">
+              ${qty > 0 ? `
+                <div class="item-qty-stepper">
+                  <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
+                  <span class="stepper-qty">${qty}</span>
+                  <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
+                </div>
+              ` : `
+                <button class="add-btn-green" onclick="window.customerApp.addToCart('${p.id}')">
+                  <span>+ Add</span>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========================================================
+    // SCREEN 6: CART SCREEN ("YOUR CART")
+    // ========================================================
+    renderCartScreen() {
+      const container = document.getElementById('cartItemsContainer');
+      const wrapper = document.getElementById('cartContentWrapper');
+      const emptyMsg = document.getElementById('emptyCartMessage');
+      if (!container) return;
+
+      const productIds = Object.keys(this.cart).filter(id => this.cart[id] > 0);
+
+      if (productIds.length === 0) {
+        if (wrapper) wrapper.style.display = 'none';
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        return;
+      }
+
+      if (wrapper) wrapper.style.display = 'flex';
+      if (emptyMsg) emptyMsg.style.display = 'none';
+
+      let subtotal = 0;
+      container.innerHTML = productIds.map(id => {
+        const prod = HIMORA_CATALOG.products.find(p => p.id === id);
+        if (!prod) return '';
+        const qty = this.cart[id];
+        const lineTotal = prod.price * qty;
+        subtotal += lineTotal;
+
+        return `
+          <div class="cart-item-card">
+            <div class="cart-item-avatar">${prod.icon}</div>
+            <div class="cart-item-details">
+              <div class="cart-item-title">${prod.name}</div>
+              <div class="cart-item-rate">₹${prod.price} × ${qty} = <strong>₹${lineTotal}</strong></div>
+            </div>
+            <div class="item-qty-stepper" style="width: 82px;">
+              <button class="stepper-btn" onclick="window.customerApp.changeQty('${prod.id}', -1)">-</button>
+              <span class="stepper-qty">${qty}</span>
+              <button class="stepper-btn" onclick="window.customerApp.changeQty('${prod.id}', 1)">+</button>
+            </div>
+            <button class="cart-trash-btn" onclick="window.customerApp.removeFromCart('${prod.id}')" title="Remove Item">🗑️</button>
+          </div>
+        `;
+      }).join('');
+
+      const deliveryFee = 30;
+      const discount = 20;
+      const total = Math.max(0, subtotal + deliveryFee - discount);
+
+      document.getElementById('cartSubtotal').innerText = `₹${subtotal}`;
+      document.getElementById('cartDeliveryFee').innerText = `₹${deliveryFee}`;
+      document.getElementById('cartDiscount').innerText = `-₹${discount}`;
+      document.getElementById('cartGrandTotal').innerText = `₹${total}`;
+    }
+
+    // ========================================================
+    // SCREEN 7: CHECKOUT SCREEN
+    // ========================================================
+    renderCheckoutScreen() {
+      const productIds = Object.keys(this.cart).filter(id => this.cart[id] > 0);
+      let subtotal = 0;
+      let count = 0;
+
+      productIds.forEach(id => {
+        const prod = HIMORA_CATALOG.products.find(p => p.id === id);
+        if (prod) {
+          const qty = this.cart[id];
+          subtotal += prod.price * qty;
+          count += qty;
+        }
+      });
+
+      const deliveryFee = 30;
+      const discount = 20;
+      const total = Math.max(0, subtotal + deliveryFee - discount);
+
+      document.getElementById('checkoutItemCount').innerText = count;
+      document.getElementById('checkoutSubtotal').innerText = `₹${subtotal}`;
+      document.getElementById('checkoutDeliveryFee').innerText = `₹${deliveryFee}`;
+      document.getElementById('checkoutTotal').innerText = `₹${total}`;
+    }
+
+    setPayMode(mode) {
+      this.selectedPayMode = mode;
+    }
+
+    placeFinalOrder() {
+      const productIds = Object.keys(this.cart).filter(id => this.cart[id] > 0);
+      if (productIds.length === 0) {
+        alert('Aapka jhola khali hai.');
+        return;
+      }
+
+      const items = productIds.map(id => {
+        const prod = HIMORA_CATALOG.products.find(p => p.id === id);
+        return {
+          id: prod ? prod.id : id,
+          name: prod ? prod.name : 'Pahadi Product',
+          qty: this.cart[id],
+          price: prod ? prod.price : 100
+        };
+      });
+
+      let subtotal = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const deliveryFee = 30;
+      const discount = 20;
+      const grandTotal = Math.max(0, subtotal + deliveryFee - discount);
+
+      // Generate random 4-digit ID matching PDF (e.g. HM1024)
+      const orderNum = 'HM' + (1000 + Math.floor(Math.random() * 9000));
+      const order = {
+        id: orderNum,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+        town: this.currentTownId || 'solan',
+        townName: this.currentTown,
+        customer: 'Amar Thakur',
+        customerName: 'Amar Thakur',
+        customerPhone: this.currentPhone,
+        colony: this.currentTown,
+        address: this.currentAddress,
+        landmark: 'Near Himora Store',
+        staircaseNotes: this.currentStairs,
+        merchantId: 'm-101',
+        merchantName: 'Sharma General Store',
+        riderId: 'r-1',
+        riderName: 'Rohit Kumar',
+        riderPhone: '98161-12345',
+        items: items,
+        grandTotal: grandTotal,
+        amount: grandTotal,
+        paymentMode: this.selectedPayMode,
+        status: 'Placed',
+        rawStatus: 'Placed',
+        otp: '5570',
+        createdAt: new Date().toISOString()
+      };
+
+      this.activeOrder = order;
+
+      // Save and broadcast across Super Admin, Merchant Terminal, and Rider Cockpit!
+      if (window.pahadiBus) {
+        window.pahadiBus.placeOrder(order);
+      }
+
+      // Audio Chime
+      if (window.pahadiAudio) {
+        window.pahadiAudio.playSuccessTune();
+      }
+
+      // Clear Cart
+      this.cart = {};
+      this.saveCartToStorage();
+      this.updateCartBadges();
+
+      // Navigate to Screen 8 (Order Tracking)
+      this.navigateTo('tracking', { order: order });
+    }
+
+    // ========================================================
+    // SCREEN 8: ORDER TRACKING SCREEN
+    // ========================================================
+    renderTrackingScreen(order) {
+      if (!order) {
+        order = this.activeOrder || {
+          id: 'HM1024',
+          date: 'Today',
+          time: '10:24 AM',
+          otp: '5570',
+          riderName: 'Rohit Kumar',
+          status: 'Confirmed'
+        };
+      }
+
+      const rawStatus = (order.status || 'placed').toLowerCase();
+      let activeStep = 1; // 1 to 6
+      let statusLabel = 'Order Confirmed';
+
+      if (rawStatus.includes('deliv')) {
+        activeStep = 6;
+        statusLabel = 'Delivered';
+      } else if (rawStatus.includes('out') || rawStatus.includes('route')) {
+        activeStep = 5;
+        statusLabel = 'Out for Delivery';
+      } else if (rawStatus.includes('pick') || rawStatus.includes('transit') || rawStatus.includes('climb')) {
+        activeStep = 4;
+        statusLabel = 'Rider Picked Up';
+      } else if (rawStatus.includes('ready')) {
+        activeStep = 3;
+        statusLabel = 'Ready for Pickup';
+      } else if (rawStatus.includes('prep') || rawStatus.includes('pack')) {
+        activeStep = 2;
+        statusLabel = 'Shop Preparing';
+      } else {
+        activeStep = 1;
+        statusLabel = 'Order Confirmed';
+      }
+
+      document.getElementById('trackOrderCode').innerText = `#${order.id}`;
+      document.getElementById('trackOrderTime').innerText = `Placed on ${order.date || 'Today'}, ${order.time || '10:24 AM'}`;
+      document.getElementById('trackOtpDisplay').innerText = order.otp || '5570';
+      document.getElementById('trackRiderName').innerText = order.riderName || 'Rohit Kumar';
+      
+      const badge = document.getElementById('trackStatusBadge');
+      if (badge) {
+        badge.innerText = statusLabel;
+        if (activeStep === 6) {
+          badge.style.background = '#DEF7EC';
+          badge.style.color = '#03543F';
+        } else {
+          badge.style.background = '#ECFDF5';
+          badge.style.color = '#0D7C66';
+        }
+      }
+
+      // Render 6-Stage Timeline
+      const stepperContainer = document.querySelector('.tracking-stepper-box');
+      if (stepperContainer) {
+        const steps = [
+          { title: 'Order Confirmed', time: order.time || '10:24 AM', note: 'Verified with merchant' },
+          { title: 'Shop Preparing', time: 'In Progress', note: 'Spill-proof packing sealed' },
+          { title: 'Ready for Pickup', time: 'Counter Ready', note: 'Handover bag packed' },
+          { title: 'Rider Picked Up', time: 'En-route', note: 'Climbing mountain trail to destination' },
+          { title: 'Out for Delivery', time: 'Near destination ridge', note: 'Approaching recipient doorstep' },
+          { title: 'Delivered', time: activeStep === 6 ? 'Delivered' : 'Estimated 30-45 min', note: 'Handover complete' }
+        ];
+
+        stepperContainer.innerHTML = steps.map((s, idx) => {
+          const stepNum = idx + 1;
+          let stateClass = '';
+          let circleIcon = '○';
+
+          if (stepNum < activeStep) {
+            stateClass = 'completed';
+            circleIcon = '✓';
+          } else if (stepNum === activeStep) {
+            stateClass = activeStep === 6 ? 'completed' : 'active';
+            circleIcon = activeStep === 6 ? '✓' : '🔄';
+          }
+
+          return `
+            <div class="track-step-row ${stateClass}">
+              <div class="step-circle">${circleIcon}</div>
+              <div>
+                <div class="step-text-title">${s.title}</div>
+                <div class="step-text-time">${s.time} • ${s.note}</div>
               </div>
-              <div class="qty-control" id="qtyBox-${p.id}">
-                ${qty === 0 ? `
-                  <button class="add-btn" onclick="window.customerApp.addToCart('${p.id}')">+ Add to Cart</button>
-                ` : `
-                  <div class="qty-counter">
-                    <button class="qty-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
-                    <span class="qty-num">${qty}</span>
-                    <button class="qty-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // ========================================================
+    // SCREEN 9: MY ORDERS SCREEN
+    // ========================================================
+    renderOrdersScreen(tab = 'current') {
+      const container = document.getElementById('ordersListFeed');
+      if (!container) return;
+
+      const samplePastOrders = [
+        {
+          id: 'HM1024',
+          date: '12 Apr, 10:24 AM',
+          status: 'Delivered',
+          statusType: 'delivered',
+          thumbs: ['🌾', '🌻', '🍜'],
+          total: 374
+        },
+        {
+          id: 'HM1018',
+          date: '10 Apr, 05:27 PM',
+          status: 'Delivered',
+          statusType: 'delivered',
+          thumbs: ['🥛', '🍪'],
+          total: 62
+        },
+        {
+          id: 'HM1005',
+          date: '06 Apr, 11:45 AM',
+          status: 'Delivered',
+          statusType: 'delivered',
+          thumbs: ['🍎', '🍅', '🧂'],
+          total: 200
+        }
+      ];
+
+      let displayOrders = samplePastOrders;
+      if (this.activeOrder) {
+        displayOrders = [{
+          id: this.activeOrder.id,
+          date: 'Today, ' + this.activeOrder.time,
+          status: 'On The Way',
+          statusType: 'transit',
+          thumbs: this.activeOrder.items.map(i => {
+            const p = HIMORA_CATALOG.products.find(pr => pr.name === i.name);
+            return p ? p.icon : '📦';
+          }),
+          total: this.activeOrder.grandTotal
+        }, ...samplePastOrders];
+      }
+
+      if (tab === 'current') {
+        displayOrders = displayOrders.filter(o => o.statusType === 'transit' || o.id === (this.activeOrder ? this.activeOrder.id : 'HM1024'));
+      }
+
+      container.innerHTML = displayOrders.map(o => `
+        <div class="order-history-card">
+          <div class="order-card-top-row">
+            <div>
+              <div style="font-family: var(--font-heading); font-size: 15px; font-weight: 800; color: #0F172A;">#${o.id}</div>
+              <div style="font-size: 11.5px; color: #64748B;">${o.date}</div>
+            </div>
+            <span class="order-pill-status ${o.statusType}">${o.status}</span>
+          </div>
+
+          <div class="order-thumbs-row">
+            ${o.thumbs.map(t => `<div class="order-thumb-icon">${t}</div>`).join('')}
+          </div>
+
+          <div class="order-actions-row">
+            <button class="btn-order-view" onclick="window.customerApp.navigateTo('tracking', { order: { id: '${o.id}', date: '${o.date}' } })">View Details</button>
+            <button class="btn-order-reorder" onclick="window.customerApp.reorderPastItems('${o.id}')">Reorder</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    switchOrderTab(tab, el) {
+      document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+      this.renderOrdersScreen(tab);
+    }
+
+    reorderPastItems(orderId) {
+      this.addToCart('PROD-ATTA-01', 1);
+      this.addToCart('PROD-OIL-01', 1);
+      this.navigateTo('cart');
+    }
+
+    // ========================================================
+    // SCREEN 12: JEEVANIX PRODUCTS SCREEN
+    // ========================================================
+    renderJeevanixScreen() {
+      const grid = document.getElementById('jeevanixProductGrid');
+      if (!grid) return;
+
+      const jeevanixProds = HIMORA_CATALOG.products.filter(p => p.category === 'jeevanix-products');
+      grid.innerHTML = jeevanixProds.map(p => {
+        const qty = this.cart[p.id] || 0;
+        return `
+          <div class="jeevanix-prod-card" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+            <div class="jeevanix-img-box">
+              <span>${p.icon}</span>
+            </div>
+            <div style="font-family: var(--font-heading); font-size: 14px; font-weight: 800; color: #0F172A; margin-bottom: 2px;">${p.name}</div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700; margin-bottom: 8px;">⭐ ${p.rating} (${p.reviewsCount})</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--himora-border-light); padding-top: 8px;">
+              <span style="font-family: var(--font-heading); font-size: 16px; font-weight: 900; color: #0F172A;">₹${p.price}</span>
+              <div onclick="event.stopPropagation();">
+                ${qty > 0 ? `
+                  <div class="item-qty-stepper" style="width: 72px; height: 30px;">
+                    <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
+                    <span class="stepper-qty">${qty}</span>
+                    <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
                   </div>
+                ` : `
+                  <button class="add-btn-green" style="width: 32px; height: 32px; border-radius: 50%; padding: 0;" onclick="window.customerApp.addToCart('${p.id}')">
+                    <span>+</span>
+                  </button>
                 `}
               </div>
             </div>
@@ -161,489 +1131,333 @@
       }).join('');
     }
 
-    addToCart(productId) {
-      this.cart[productId] = (this.cart[productId] || 0) + 1;
+    // ========================================================
+    // CART OPERATIONS
+    // ========================================================
+    addToCart(prodId, count = 1) {
+      this.cart[prodId] = (this.cart[prodId] || 0) + count;
       this.saveCartToStorage();
-      this.renderProducts();
-      this.updateCartUI();
-      if (window.pahadiAudio) window.pahadiAudio.playSuccessTune();
+      this.updateCartBadges();
+      this.refreshCurrentScreenComponents();
     }
 
-    changeQty(productId, delta) {
-      if (!this.cart[productId]) return;
-      this.cart[productId] += delta;
-      if (this.cart[productId] <= 0) {
-        delete this.cart[productId];
+    changeQty(prodId, delta) {
+      if (!this.cart[prodId]) return;
+      this.cart[prodId] += delta;
+      if (this.cart[prodId] <= 0) {
+        delete this.cart[prodId];
       }
       this.saveCartToStorage();
-      this.renderProducts();
-      this.updateCartUI();
+      this.updateCartBadges();
+      this.refreshCurrentScreenComponents();
     }
 
-    saveCartToStorage() {
-      localStorage.setItem('pahadicart_cart_data', JSON.stringify(this.cart));
+    removeFromCart(prodId) {
+      delete this.cart[prodId];
+      this.saveCartToStorage();
+      this.updateCartBadges();
+      this.refreshCurrentScreenComponents();
+    }
+
+    clearCart() {
+      this.cart = {};
+      this.saveCartToStorage();
+      this.updateCartBadges();
+      this.renderCartScreen();
+      this.refreshCurrentScreenComponents();
+    }
+
+    updateCartBadges() {
+      const badge = document.getElementById('cartNavBadge');
+      if (!badge) return;
+      const count = Object.values(this.cart).reduce((sum, q) => sum + q, 0);
+      if (count > 0) {
+        badge.innerText = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    refreshCurrentScreenComponents() {
+      if (this.currentScreen === 'home') this.renderHomeScreen();
+      else if (this.currentScreen === 'listing') this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
+      else if (this.currentScreen === 'shop') this.renderShopScreen(this.activeShop ? this.activeShop.id : 'shop-sharma');
+      else if (this.currentScreen === 'cart') this.renderCartScreen();
+      else if (this.currentScreen === 'jeevanix') this.renderJeevanixScreen();
     }
 
     loadCartFromStorage() {
       try {
-        this.cart = JSON.parse(localStorage.getItem('pahadicart_cart_data')) || {};
-        const availableProds = window.PAHADICART_DATA?.products || [];
-        const validIds = new Set(availableProds.map(p => p.id));
-        let changed = false;
-        Object.keys(this.cart).forEach(id => {
-          if (!validIds.has(id)) {
-            delete this.cart[id];
-            changed = true;
-          }
-        });
-        if (changed) this.saveCartToStorage();
-      } catch (e) { this.cart = {}; } }
-
-    toggleCart(open) {
-      const drawer = document.getElementById('cartDrawer');
-      const overlay = document.getElementById('cartOverlay');
-      if (open) {
-        this.updateCartUI();
-        drawer.classList.add('active');
-        overlay.classList.add('active');
-      } else {
-        drawer.classList.remove('active');
-        overlay.classList.remove('active');
-      }
-    }
-
-    updateCartUI() {
-      const badge = document.getElementById('cartBadge');
-      const list = document.getElementById('cartItemsList');
-      const addressBox = document.getElementById('addressBox');
-      const billBox = document.getElementById('billBox');
-      const footer = document.getElementById('drawerFooter');
-      if (!badge || !list) return;
-
-      const productIds = Object.keys(this.cart);
-      const totalCount = productIds.reduce((sum, id) => sum + this.cart[id], 0);
-      badge.innerText = totalCount;
-
-      if (productIds.length === 0) {
-        list.innerHTML = `
-          <div class="empty-cart-view">
-            <div class="empty-cart-icon">🛒</div>
-            <h4>Aapka Jhola Khali Hai</h4>
-            <p style="font-size: 12px; margin-top: 4px;">Pahadi se taaza apples, thali ya meds add karein.</p>
-          </div>
-        `;
-        if (addressBox) addressBox.style.display = 'none';
-        if (billBox) billBox.style.display = 'none';
-        if (footer) footer.style.display = 'none';
-        return;
-      }
-
-      if (addressBox) addressBox.style.display = 'block';
-      if (billBox) billBox.style.display = 'block';
-      if (footer) footer.style.display = 'block';
-
-      let itemTotal = 0;
-      list.innerHTML = productIds.map(id => {
-        const p = window.PAHADICART_DATA.products.find(item => item.id === id);
-        if (!p) return '';
-        const qty = this.cart[id];
-        const lineTotal = p.price * qty;
-        itemTotal += lineTotal;
-
-        return `
-          <div class="cart-item-row">
-            <div class="item-info">
-              <div class="item-name">${p.name}</div>
-              <div class="item-price">₹${p.price} × ${qty} = <strong>₹${lineTotal}</strong></div>
-            </div>
-            <div class="qty-counter">
-              <button class="qty-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
-              <span class="qty-num">${qty}</span>
-              <button class="qty-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const rules = (window.PAHADICART_DATA && window.PAHADICART_DATA.businessRules) || {}; const baseFee = rules.baseDeliveryFee !== undefined ? rules.baseDeliveryFee : 25; const deliveryFee = itemTotal >= 499 ? 0 : baseFee;
-      const packagingFee = 5;
-      const grandTotal = itemTotal + deliveryFee + packagingFee;
-
-      document.getElementById('billItemTotal').innerText = '₹' + itemTotal;
-      document.getElementById('billDeliveryFee').innerText = deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee;
-      document.getElementById('billGrandTotal').innerText = '₹' + grandTotal;
-      document.getElementById('payModalAmount').innerText = '₹' + grandTotal;
-    }
-
-    openPaymentModal() {
-      const modal = document.getElementById('paymentModal');
-      modal.classList.add('active');
-    }
-
-    closePaymentModal() {
-      const modal = document.getElementById('paymentModal');
-      modal.classList.remove('active');
-    }
-
-    selectPayMode(mode) {
-      this.selectedPayMode = mode;
-      const btnUPI = document.getElementById('payModeUPI');
-      const btnCOD = document.getElementById('payModeCOD');
-      const upiBox = document.getElementById('upiQrContainer');
-      const codBox = document.getElementById('codNoticeContainer');
-
-      if (mode === 'UPI') {
-        btnUPI.style.background = 'rgba(16, 185, 129, 0.2)';
-        btnUPI.style.borderColor = '#10b981';
-        btnUPI.style.color = '#fff';
-        btnCOD.style.background = 'var(--bg-card)';
-        btnCOD.style.color = 'var(--text-muted)';
-        upiBox.style.display = 'block';
-        codBox.style.display = 'none';
-      } else {
-        btnCOD.style.background = 'rgba(245, 158, 11, 0.2)';
-        btnCOD.style.borderColor = '#f59e0b';
-        btnCOD.style.color = '#fff';
-        btnUPI.style.background = 'var(--bg-card)';
-        btnUPI.style.color = 'var(--text-muted)';
-        upiBox.style.display = 'none';
-        codBox.style.display = 'block';
-      }
-    }
-
-    confirmPayment() {
-      this.confirmOrderPlacement();
-    }
-
-    confirmOrderPlacement() {
-      // Check if offline
-      if (window.pahadiOffline && !window.pahadiOffline.isOnline()) {
-        const colony = document.getElementById('custColony')?.value || 'The Mall Road';
-        const landmark = document.getElementById('custLandmark')?.value || 'Near Heritage Post Office';
-        const staircase = document.getElementById('custStairs')?.value || 'Descend 35 stone steps from road level';
-        const phone = document.getElementById('custPhone')?.value || '98160-12890';
-
-        const productIds = Object.keys(this.cart);
-        let itemTotal = 0;
-        const orderItems = productIds.map(id => {
-          const p = window.PAHADICART_DATA.products.find(item => item.id === id);
-          const qty = this.cart[id];
-          itemTotal += (p ? p.price : 100) * qty;
-          return { name: p ? p.name : 'Mountain Item', qty: qty, price: p ? p.price : 100 };
-        });
-
-        const deliveryFee = 25;
-        const grandTotal = itemTotal + deliveryFee + 25;
-        const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
-      if (window.PahadiMockApi) {
-        window.PahadiMockApi.createOrder({
-          id: orderId,
-          town: this.currentTown,
-          customer: { name: 'Aarav Sharma', phone, colony, landmark, staircaseDetails: staircase, stairsTotal: 35, stairsCompleted: 0 },
-          merchant: { name: 'Sharma Sweets & Hill Dairy', address: 'Upper Mall Road' },
-          rider: { name: 'Karan Negi', vehicle: 'Hero Splendor (HP-14-A-4432)' },
-          items: orderItems,
-          pricing: { itemTotal, deliveryFee: 25, weatherBufferFee: 0, totalAmount: grandTotal },
-          payMode: this.selectedPayMode || 'UPI',
-          otp: secretOtp
-        });
-      }
-        const secretOtp = String(Math.floor(1000 + Math.random() * 9000));
-
-        const offlineOrder = {
-          id: orderId,
-          town: this.currentTown,
-          customer: { name: 'Aarav Sharma', phone, colony, landmark, staircaseDetails: staircase, hasStairs: true },
-          merchant: { name: 'Nearest Vyapar Mandal Store', distanceMeters: 800 },
-          rider: { name: 'Local Hill Fleet Partner', bike: 'Pahadi Fleet' },
-          items: orderItems,
-          pricing: { itemTotal, deliveryFee, totalAmount: grandTotal },
-          status: 'queued_offline',
-          otp: secretOtp
-        };
-
-        window.pahadiOffline.enqueueOrder(offlineOrder);
-        this.cart = {};
-        this.saveCartToStorage();
-        this.updateCartUI();
-        this.closePaymentModal();
-        return;
-      }
-      const colony = document.getElementById('custColony').value || 'Shamti, Upper Pine Lane';
-      const landmark = document.getElementById('custLandmark').value || 'Near Durga Mandir Tank';
-      const staircase = document.getElementById('custStairs').value || 'Descend 35 stone steps from road level, 2nd green gate on left';
-      const phone = document.getElementById('custPhone').value || '98160-12890';
-
-      const productIds = Object.keys(this.cart);
-      let itemTotal = 0;
-      const orderItems = productIds.map(id => {
-        const p = window.PAHADICART_DATA.products.find(item => item.id === id);
-        const qty = this.cart[id];
-        itemTotal += p.price * qty;
-        return { name: p.name, qty: qty, price: p.price };
-      });
-
-      const deliveryFee = itemTotal >= 499 ? 0 : 35;
-      const grandTotal = itemTotal + deliveryFee + 5;
-      const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
-      const secretOtp = Math.floor(1000 + Math.random() * 9000).toString();
-
-      // Run Automated Hill Proximity Dispatch Algorithm
-      let routing = null;
-      if (window.pahadiDispatch) {
-        routing = window.pahadiDispatch.autoRouteOrder(orderItems, {
-          name: 'Aarav Sharma',
-          phone: phone,
-          colony: colony,
-          landmark: landmark,
-          staircaseNotes: staircase
-        }, this.currentTown);
-      }
-
-      const assignedMerchant = routing ? routing.selectedMerchant : {
-        merchantId: 'm-101',
-        name: 'Sharma Kirana & Fresh Produce',
-        distanceMeters: 850
-      };
-
-      const assignedRider = routing ? routing.selectedRider : {
-        riderId: 'r-1',
-        name: 'Vikas Thakur',
-        phone: '98161-12345',
-        vehicle: 'Hero Splendor (HP-14-B-8821)',
-        distanceMeters: 620
-      };
-
-      const nowTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      const newOrder = {
-        id: orderId,
-        customerName: 'Aarav Sharma',
-        customerPhone: phone,
-        town: this.currentTown,
-        colony: colony,
-        landmark: landmark,
-        staircaseNotes: staircase,
-        merchantId: assignedMerchant.merchantId,
-        merchantName: assignedMerchant.name,
-        merchantDistanceMeters: assignedMerchant.distanceMeters,
-        items: orderItems,
-        itemTotal: itemTotal,
-        deliveryFee: deliveryFee,
-        weatherSurge: 0,
-        grandTotal: grandTotal,
-        paymentMode: this.selectedPayMode === 'UPI' ? 'UPI_ONLINE' : 'COD',
-        paymentStatus: this.selectedPayMode === 'UPI' ? 'Paid (Simulated UPI)' : 'Pending Cash Collection',
-        status: 'Placed',
-        otp: secretOtp,
-        riderId: assignedRider.riderId,
-        riderName: assignedRider.name,
-        riderPhone: assignedRider.phone,
-        riderVehicle: assignedRider.vehicle,
-        riderDistanceMeters: assignedRider.distanceMeters,
-        time: nowTimeStr,
-        createdTimestamp: Date.now(),
-        // Full Triad Lifecycle Timestamps & SLA Tracking
-        timestamps: {
-          placed: nowTimeStr,
-          accepted: null,
-          picked: null,
-          delivered: null
-        },
-        // Complete Algorithmic Audit Details for Admin
-        triadAudit: routing ? routing.auditTrail : null
-      };
-
-      // Broadcast through EventBus to Merchant, Rider, and Admin tabs!
-      if (window.pahadiBus) {
-        window.pahadiBus.placeOrder(newOrder);
-      }
-
-      // Reset Cart
-      this.cart = {};
-      this.saveCartToStorage();
-      this.renderProducts();
-      this.updateCartUI();
-      this.closePaymentModal();
-      this.toggleCart(false);
-
-      if (window.pahadiAudio) {
-        window.pahadiAudio.playSuccessTune();
-      }
-
-      // Open Live Tracking Radar
-      this.openTrackingModal(newOrder);
-    }
-
-    openTrackingModal(order) {
-      this.activeTrackingOrder = order;
-      const modal = document.getElementById('trackModal');
-      document.getElementById('trackOrderId').innerText = 'Order #' + order.id;
-      document.getElementById('trackOtpCode').innerText = order.otp;
-      document.getElementById('trackStairNote').innerText = order.staircaseNotes;
-      document.getElementById('trackRiderName').innerText = order.riderName;
-      modal.classList.add('active');
-
-      this.updateTrackingUI();
-      this.initTrackingMap();
-    }
-
-    closeTrackingModal() {
-      const modal = document.getElementById('trackModal');
-      modal.classList.remove('active');
-      if (this.animInterval) clearInterval(this.animInterval);
-    }
-
-    updateTrackingUI() {
-      if (!this.activeTrackingOrder) return;
-      const status = this.activeTrackingOrder.status;
-
-      const stepPlaced = document.getElementById('stepPlaced');
-      const stepPrep = document.getElementById('stepPrep');
-      const stepTransit = document.getElementById('stepTransit');
-      const stepDelivered = document.getElementById('stepDelivered');
-
-      [stepPlaced, stepPrep, stepTransit, stepDelivered].forEach(el => {
-        el.classList.remove('active', 'done');
-      });
-
-      if (status === 'Placed') {
-        stepPlaced.classList.add('active');
-      } else if (status === 'Preparing') {
-        stepPlaced.classList.add('done');
-        stepPrep.classList.add('active');
-      } else if (status === 'Rider Picked' || status === 'Out for Delivery') {
-        stepPlaced.classList.add('done');
-        stepPrep.classList.add('done');
-        stepTransit.classList.add('active');
-      } else if (status === 'Delivered') {
-        stepPlaced.classList.add('done');
-        stepPrep.classList.add('done');
-        stepTransit.classList.add('done');
-        stepDelivered.classList.add('active');
-      }
-    }
-
-    initTrackingMap() {
-      setTimeout(() => {
-        if (!this.map) {
-          this.map = L.map('trackMap').setView([30.9084, 77.0999], 15);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-          }).addTo(this.map);
+        const stored = localStorage.getItem('pahadicart_cart_data');
+        if (stored) {
+          this.cart = JSON.parse(stored);
         } else {
-          this.map.invalidateSize();
+          // Default to blueprint demo cart matching PDF Page 6
+          this.cart = {
+            'PROD-ATTA-01': 1,
+            'PROD-MILK-01': 1,
+            'PROD-MAGGI-01': 1
+          };
+          this.saveCartToStorage();
         }
-
-        // Shop Pin (Sharma Kirana)
-        const shopIcon = L.divIcon({
-          className: 'shop-pin',
-          html: '<div style="background:#065f46; color:#fff; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:2px solid #34d399; font-size:18px; box-shadow:0 4px 10px rgba(0,0,0,0.5);">🏪</div>',
-          iconSize: [34, 34]
-        });
-        L.marker([30.9070, 77.0980], { icon: shopIcon }).addTo(this.map).bindPopup('Sharma Kirana & Fresh Produce (Mall Road)');
-
-        // Customer Staircase Pin
-        const custIcon = L.divIcon({
-          className: 'cust-pin',
-          html: '<div style="background:#dc2626; color:#fff; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:2px solid #fff; font-size:18px; box-shadow:0 4px 10px rgba(0,0,0,0.5);">🏡</div>',
-          iconSize: [34, 34]
-        });
-        L.marker([30.9110, 77.1040], { icon: custIcon }).addTo(this.map).bindPopup('Aapka Ghar (35 Stairs down, Shamti Pine Lane)');
-
-        // Connecting hill trail line
-        const hillTrail = [
-          [30.9070, 77.0980],
-          [30.9080, 77.0995],
-          [30.9095, 77.1015],
-          [30.9102, 77.1028],
-          [30.9110, 77.1040]
-        ];
-        L.polyline(hillTrail, { color: '#10b981', weight: 4, dashArray: '6, 8' }).addTo(this.map);
-
-        // Animated Rider Marker
-        const riderIcon = L.divIcon({
-          className: 'rider-anim-pin',
-          html: '<div style="background:#f59e0b; color:#000; border-radius:50%; width:38px; height:38px; display:flex; align-items:center; justify-content:center; border:2px solid #fff; font-size:20px; box-shadow:0 0 15px #f59e0b;">🛵</div>',
-          iconSize: [38, 38]
-        });
-
-        if (this.riderMarker) this.map.removeLayer(this.riderMarker);
-        this.riderMarker = L.marker([30.9070, 77.0980], { icon: riderIcon }).addTo(this.map);
-
-        // Animate rider climbing hill
-        let step = 0;
-        if (this.animInterval) clearInterval(this.animInterval);
-        this.animInterval = setInterval(() => {
-          step = (step + 1) % hillTrail.length;
-          const pt = hillTrail[step];
-          this.riderMarker.setLatLng(pt);
-        }, 2500);
-
-      }, 200);
-    }
-  }
-
-  window.customerApp = new PahadiCustomerApp();
-})();
-
-
-// HTML5 Live GPS Location Auto-Detection & Live Weather Sync for Customer App
-window.detectCustomerLiveLocation = async function(preResolvedLoc, silent = false) {
-  const btnText = document.getElementById('custGpsBtnText');
-  if (btnText) btnText.textContent = 'Detecting GPS...';
-
-  if (!window.PahadiLiveServices) {
-    alert('Live services initializing, please tap again in a second.');
-    if (btnText) btnText.textContent = 'Detect My Location';
-    return;
-  }
-
-  try {
-    let loc = preResolvedLoc || await window.PahadiLiveServices.detectUserLocation();
-    if (!loc || typeof loc.lat !== 'number' || !Number.isFinite(loc.lat) || typeof loc.lng !== 'number' || !Number.isFinite(loc.lng)) {
-      loc = { lat: 30.9084, lng: 77.0999, altitude: 1502, accuracy: 15, nearestTown: { name: 'Solan (Mushroom City)', id: 'solan', altitude: 1502 }, distanceKm: 0 };
-    }
-    const townName = (loc.nearestTown && loc.nearestTown.name) ? loc.nearestTown.name : 'Solan';
-    if (btnText) btnText.textContent = '📍 ' + townName + ' (' + loc.lat.toFixed(2) + ', ' + loc.lng.toFixed(2) + ')';
-
-    // Auto-switch to nearest Himachal Town
-    const townSelect = document.getElementById('townSelect');
-    if (townSelect && loc.nearestTown) {
-      townSelect.value = loc.nearestTown.id;
-      if (window.customerApp) {
-        window.customerApp.changeTown(loc.nearestTown.id);
+      } catch(e) {
+        this.cart = {
+          'PROD-ATTA-01': 1,
+          'PROD-MILK-01': 1,
+          'PROD-MAGGI-01': 1
+        };
       }
     }
 
-    // Auto-fetch real-time Open-Meteo weather
-    const weather = await window.PahadiLiveServices.fetchRealtimeWeather(loc.lat, loc.lng);
-    const weatherTextEl = document.getElementById('weatherStatusText');
-    if (weatherTextEl) {
-      weatherTextEl.innerText = loc.nearestTown.name + ' Weather: ' + weather.temp + '°C ' + weather.label + ' • 45m SLA';
+    saveCartToStorage() {
+      try {
+        localStorage.setItem('pahadicart_cart_data', JSON.stringify(this.cart));
+      } catch(e) {}
     }
 
-    if (!silent) alert('📍 Location Auto-Detected!\n\n' +
-      'Coordinates: [' + loc.lat.toFixed(4) + ', ' + loc.lng.toFixed(4) + ']\n' +
-      'Altitude: ' + loc.altitude + ' meters\n' +
-      'Nearest Town Hub: ' + loc.nearestTown.name + ' (' + loc.distanceKm + ' km)\n' +
-      'Live Weather: ' + weather.temp + '°C (' + weather.label + ')\n\n' +
-      'Catalog auto-synced with nearest mountain merchants.');
-  } catch (err) {
-    console.error('Customer GPS Error:', err);
-    if (btnText) btnText.textContent = 'Detect My Location';
-    alert('⚠️ ' + (err.message || 'Could not detect device GPS. Defaulting to Solan Hub.'));
-  }
-};
+    // ========================================================
+    // MISC ACTIONS
+    // ========================================================
+    openTownPicker() {
+      const town = prompt('Select Delivery Town:\n1. Dharampur\n2. Kotli\n3. Sarkaghat\n4. Mandi\n5. Jogindernagar\n6. Solan\n7. Shimla', 'Dharampur, Himachal Pradesh');
+      if (town) {
+        this.currentTown = town;
+        document.getElementById('homeTownLabel').innerText = town + ' ▾';
+      }
+    }
 
-// Auto-sync real-time weather for current town on customer load
-setTimeout(async () => {
-  if (window.PahadiLiveServices) {
-    const weather = await window.PahadiLiveServices.fetchRealtimeWeather(30.9084, 77.0999);
-    const weatherTextEl = document.getElementById('weatherStatusText');
-    if (weatherTextEl) {
-      weatherTextEl.innerText = 'Solan Weather: ' + weather.temp + '°C ' + weather.label + ' • Standard 45m SLA';
+    focusSearch() {
+      this.navigateTo('home');
+      const input = document.getElementById('homeSearchInput');
+      if (input) {
+        input.focus();
+      }
+    }
+
+    handleSearch(query) {
+      if (!query || query.trim() === '') {
+        this.renderHomeScreen();
+        return;
+      }
+      const q = query.toLowerCase().trim();
+      const matched = HIMORA_CATALOG.products.filter(p => p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+      
+      const popularList = document.getElementById('homePopularList');
+      if (popularList && matched.length > 0) {
+        popularList.innerHTML = matched.map(p => `
+          <div class="product-card-compact" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+            <div class="prod-img-box">
+              <span>${p.icon}</span>
+              <span class="discount-chip">${p.discount}</span>
+            </div>
+            <div class="prod-name">${p.name}</div>
+            <div class="prod-unit">${p.unit}</div>
+            <div class="prod-price-row">
+              <span class="current-price">₹${p.price}</span>
+            </div>
+            <button class="add-btn-green" onclick="event.stopPropagation(); window.customerApp.addToCart('${p.id}')">
+              <span>+ Add</span>
+            </button>
+          </div>
+        `).join('');
+      }
+    }
+
+    triggerVoiceSearch() {
+      alert('🎤 Himora Hill Voice Assistant:\n"Bolkar order karein: Taaza apples, Aashirvaad Atta, ya Jeevanix Honey."');
+    }
+
+    shareCurrentProduct() {
+      if (navigator.share) {
+        navigator.share({
+          title: this.activeProductDetail ? this.activeProductDetail.name : 'Himora Product',
+          text: 'Check this out on Himora — Local Shopping Made for the Hills!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        alert('Product link copied to clipboard!');
+      }
+    }
+
+    shareCurrentShop() {
+      alert('Shop link copied: Sharma General Store on Himora!');
+    }
+
+    openHelpSupport() {
+      alert('Himora Mountain Customer Care:\n📞 Helpline: +91 98160-12890\n💬 WhatsApp Support available 24x7 across Himachal.');
+    }
+
+
+    // Town Picker Modal Management
+    openTownPicker() {
+      const modal = document.getElementById('townPickerModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    closeTownPicker() {
+      const modal = document.getElementById('townPickerModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    selectTown(townKey, fullTownName) {
+      this.currentTown = fullTownName;
+      this.currentTownId = townKey.toLowerCase();
+      this.currentAddress = `Near Himora Store, ${fullTownName}`;
+      localStorage.setItem('himora_selected_town', fullTownName);
+
+      this.updateTownDisplays();
+      this.closeTownPicker();
+
+      // Update active modal button
+      document.querySelectorAll('.town-choice-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btnTown' + townKey);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    updateTownDisplays() {
+      const homeLabel = document.getElementById('homeTownLabel');
+      const desktopLabel = document.getElementById('desktopTownLabel');
+      const checkoutAddr = document.getElementById('checkoutAddressText');
+
+      const shortTown = (this.currentTown || 'Dharampur').split(',')[0].trim();
+      if (homeLabel) homeLabel.innerText = this.currentTown + ' ▾';
+      if (desktopLabel) desktopLabel.innerText = shortTown + ' ▾';
+      if (checkoutAddr) checkoutAddr.innerText = this.currentAddress;
+    }
+
+    // Address Modal Management
+    openAddressModal() {
+      const modal = document.getElementById('addressEditModal');
+      if (modal) {
+        document.getElementById('editInputAddress').value = this.currentAddress;
+        document.getElementById('editInputStairs').value = this.currentStairs;
+        document.getElementById('editInputPhone').value = this.currentPhone;
+        modal.style.display = 'flex';
+      }
+    }
+
+    closeAddressModal() {
+      const modal = document.getElementById('addressEditModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    saveCustomAddress() {
+      this.currentAddress = document.getElementById('editInputAddress').value;
+      this.currentStairs = document.getElementById('editInputStairs').value;
+      this.currentPhone = document.getElementById('editInputPhone').value;
+
+      const addrEl = document.getElementById('checkoutAddressText');
+      const stairsEl = document.getElementById('checkoutStairsText');
+      const phoneEl = document.getElementById('checkoutPhoneText');
+
+      if (addrEl) addrEl.innerText = this.currentAddress;
+      if (stairsEl) stairsEl.innerText = this.currentStairs;
+      if (phoneEl) phoneEl.innerText = 'Contact: ' + this.currentPhone;
+
+      this.closeAddressModal();
+    }
+
+    // Live Search input across Mobile & Desktop
+    handleSearch(query) {
+      if (!query || query.trim() === '') {
+        this.renderHomeScreen();
+        if (this.currentScreen === 'listing') {
+          this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
+        }
+        return;
+      }
+
+      const q = query.toLowerCase().trim();
+      const matched = HIMORA_CATALOG.products.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.desc && p.desc.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.subcategory && p.subcategory.toLowerCase().includes(q))
+      );
+
+      // If user typed on desktop navbar or mobile search, populate results in active view
+      const popularList = document.getElementById('homePopularList');
+      if (popularList && this.currentScreen === 'home') {
+        popularList.innerHTML = matched.map(p => this.createProductCardHtml(p)).join('');
+      }
+
+      const listingContainer = document.getElementById('listingProductsList');
+      if (listingContainer && this.currentScreen === 'listing') {
+        listingContainer.innerHTML = matched.map(p => this.createHorizontalProductCardHtml(p)).join('');
+      }
+    }
+
+    createProductCardHtml(p) {
+      const qty = this.cart[p.id] || 0;
+      return `
+        <div class="product-card-compact" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+          <div class="prod-img-box">
+            <span>${p.icon}</span>
+            <span class="discount-chip">${p.discount}</span>
+          </div>
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-unit">${p.unit} • ⭐ ${p.rating}</div>
+          <div class="prod-price-row">
+            <span class="current-price">₹${p.price}</span>
+            <span class="mrp-strikethrough">₹${p.mrp}</span>
+          </div>
+          <div onclick="event.stopPropagation();">
+            ${qty > 0 ? `
+              <div class="item-qty-stepper">
+                <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
+                <span class="stepper-qty">${qty}</span>
+                <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
+              </div>
+            ` : `
+              <button class="add-btn-green" onclick="window.customerApp.addToCart('${p.id}')">
+                <span>+ Add</span>
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    createHorizontalProductCardHtml(p) {
+      const qty = this.cart[p.id] || 0;
+      return `
+        <div class="product-card-horizontal" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
+          <div class="prod-thumb-box">
+            <span>${p.icon}</span>
+            <span class="discount-badge-corner">${p.discount}</span>
+          </div>
+          <div class="prod-info-block">
+            <h3 class="prod-title-text">${p.name}</h3>
+            <div class="prod-meta-sub">${p.unit} • ⭐ ${p.rating} (${p.reviewsCount})</div>
+            <div class="prod-rate-row">
+              <span class="deal-price">₹${p.price}</span>
+              <span class="striked-mrp">₹${p.mrp}</span>
+            </div>
+          </div>
+          <div class="prod-action-block" onclick="event.stopPropagation();">
+            ${qty > 0 ? `
+              <div class="item-qty-stepper">
+                <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', -1)">-</button>
+                <span class="stepper-qty">${qty}</span>
+                <button class="stepper-btn" onclick="window.customerApp.changeQty('${p.id}', 1)">+</button>
+              </div>
+            ` : `
+              <button class="add-btn-green" onclick="window.customerApp.addToCart('${p.id}')">
+                <span>+ Add</span>
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    handleLogout() {
+      if (confirm('Kya aap Himora app se logout karna chahte hain?')) {
+        window.location.href = '/index.html';
+      }
     }
   }
-}, 1000);
+
+  window.customerApp = new HimoraApp();
+})();

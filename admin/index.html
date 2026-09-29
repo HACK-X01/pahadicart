@@ -180,7 +180,13 @@
         <div class="town-selector-wrapper">
           <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           <select class="town-select" id="townSelect">
+            <option value="all" selected>All Himachal Hubs</option>
             <option value="solan">Solan (Mushroom City)</option>
+            <option value="kotli">Kotli Valley</option>
+            <option value="dharampur">Dharampur</option>
+            <option value="mandi">Mandi (Vyas Valley)</option>
+            <option value="jogindernagar">Jogindernagar</option>
+            <option value="sarkaghat">Sarkaghat</option>
             <option value="dharamshala">Dharamshala & McLeodGanj</option>
             <option value="shimla">Shimla (The Ridge)</option>
           </select>
@@ -207,6 +213,16 @@
       </div>
 
       <div class="header-right">
+        <!-- 1-Click Broadcast Update Button -->
+        <button id="adminBroadcastUpdateBtn" onclick="window.PahadiUpdateManager && window.PahadiUpdateManager.broadcastUpdate()" class="btn-broadcast-update-pill" title="Push Live App Update to All Devices" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8; padding: 7px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <span>🚀</span>
+          <span>Push App Update</span>
+        </button>
+        <!-- Theme Switcher Toggle -->
+        <button class="theme-toggle-btn" id="adminThemeToggleBtn" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
+          <span class="theme-toggle-icon"></span>
+          <span class="theme-toggle-label">Light</span>
+        </button>
         <!-- 1-Click Simulator Pill -->
         <button id="headerSimBtn" onclick="window.openSimModal()" class="btn-simulator-pill" title="Open Quick Order Simulator">
           <span>⚡</span>
@@ -1619,6 +1635,7 @@
 <script src="js/terrainEta.js?v=3.0.0"></script>
 <script src="js/cod.js?v=3.0.0"></script>
 <script src="js/auditLogs.js?v=3.0.0"></script>
+<script src="../shared/themeController.js"></script>
 <script src="js/systemHealth.js?v=3.0.0"></script>
 <script src="js/settings.js?v=4.0.0"></script>
 <script src="js/demoMode.js?v=3.0.0"></script>
@@ -1640,6 +1657,7 @@
   <script src="../shared/simulationModal.js?v=3.2.0"></script>
   <script src="../shared/offlineQueue.js?v=3.2.0"></script>
 <script src="/shared/pwaInit.js"></script>
+  <script src="/shared/updateEngine.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>
 </body>

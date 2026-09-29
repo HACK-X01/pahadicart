@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="css/rider.css?v=3.3.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   
 
@@ -48,6 +48,11 @@
         <div class="rider-name">Rider Partner</div>
         <div class="rider-bike">Duty Vehicle (Pilot HP-14) • Solan</div>
       </div>
+    <!-- Theme Switcher Toggle -->
+    <button class="theme-toggle-btn" id="riderThemeToggleBtn" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
+      <span class="theme-toggle-icon"></span>
+      <span class="theme-toggle-label">Light</span>
+    </button>
     </div>
 
     <button onclick="window.showBatchedRouteModal()" style="background:linear-gradient(135deg, #10b981, #047857); color:#fff; border:none; padding:7px 13px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; margin-right:8px;">📦 Batched Route</button>
@@ -110,6 +115,7 @@
 
   <!-- Shared Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/shared/themeController.js"></script>
   <script src="/shared/hillAudio.js?v=3.3.0"></script>
   <script src="/shared/pushNotifier.js"></script>
   <script src="/shared/sharedData.js?v=3.3.0"></script>
@@ -119,6 +125,7 @@
   <script src="/shared/batchingEngine.js?v=3.3.0"></script>
   <script src="js/riderApp.js?v=3.3.0"></script>
 <script src="/shared/pwaInit.js"></script>
+  <script src="/shared/updateEngine.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>
 </body>

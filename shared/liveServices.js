@@ -198,6 +198,7 @@
             this.currentLiveLocation = result;
             sessionStorage.setItem('pahadi_live_location', JSON.stringify(result));
             sessionStorage.setItem('pahadi_live_location_confirmed', 'true');
+        localStorage.setItem('pahadi_live_location_confirmed', 'true');
             resolve(result);
           },
           (error) => {
@@ -323,22 +324,27 @@
 
     // COMPULSORY LOCATION ON APP OPEN
     async initCompulsoryLocationFlow() {
-      // Check if user has already confirmed location in this browser tab session
-      const alreadyConfirmed = sessionStorage.getItem('pahadi_live_location_confirmed');
+      // Skip location prompt on Admin and Merchant portals
+      if (window.location.pathname.includes('/admin') || window.location.href.includes('admin/') ||
+          window.location.pathname.includes('/merchant') || window.location.href.includes('merchant/') ||
+          window.location.pathname.includes('/rider') || window.location.href.includes('rider/')) {
+        return;
+      }
+      // Check if user has already confirmed location in this browser tab or stored
+      const alreadyConfirmed = sessionStorage.getItem('pahadi_live_location_confirmed') || localStorage.getItem('pahadi_live_location_confirmed');
       if (alreadyConfirmed) {
         try {
-          const cached = sessionStorage.getItem('pahadi_live_location');
+          const cached = sessionStorage.getItem('pahadi_live_location') || localStorage.getItem('pahadi_live_location');
+          let parsed = null;
           if (cached) {
-            const parsed = JSON.parse(cached);
-            if (parsed && typeof parsed.lat === 'number' && Number.isFinite(parsed.lat) && typeof parsed.lng === 'number' && Number.isFinite(parsed.lng)) {
-              this.currentLiveLocation = parsed;
-              await this.applyLocationAndSyncWeather(parsed);
-              return;
-            } else {
-              sessionStorage.removeItem('pahadi_live_location');
-              sessionStorage.removeItem('pahadi_live_location_confirmed');
-            }
+            try { parsed = JSON.parse(cached); } catch(e) {}
           }
+          if (!parsed || typeof parsed.lat !== 'number' || !Number.isFinite(parsed.lat)) {
+            parsed = { lat: 30.9084, lng: 77.0999, altitude: 1502, nearestTown: HIMACHAL_TOWNS[0] };
+          }
+          this.currentLiveLocation = parsed;
+          await this.applyLocationAndSyncWeather(parsed);
+          return;
         } catch (e) {}
       }
 

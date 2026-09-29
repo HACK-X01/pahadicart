@@ -30,65 +30,80 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/tokens.css">
 
     <style>
     :root {
-      /* PahadiCart Official Design Guide Tokens */
-      --pine-900: #0D2924;
-      --pine-800: #123C35;
-      --pine-600: #1F6F5B;
-      --pine-400: #4FA083;
-      --mountain-orange: #F28C28;
-      --orange-light: #FFF0DE;
-      --snow: #F7F8F5;
+      /* PahadiCart Official Design Guide Tokens - Mountain Luxe */
+      --pine-900: #071914;
+      --pine-800: #0D2922;
+      --pine-600: #10B981;
+      --pine-400: #34D399;
+      --mountain-orange: #F59E0B;
+      --orange-light: #FFFBEB;
+      --snow: #F8FAFC;
       --white: #FFFFFF;
-      --text: #17211F;
-      --text-muted: #66736F;
-      --border: #E1E8E4;
-      --success: #2E8B57;
-      --warning: #E6A23C;
-      --sos: #D64545;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --sos: #EF4444;
 
       /* Radii */
       --radius-sm: 8px;
-      --radius-btn: 12px;
-      --radius-card: 16px;
-      --radius-modal: 20px;
+      --radius-btn: 14px;
+      --radius-card: 18px;
+      --radius-modal: 22px;
       --radius-pill: 9999px;
 
       /* Typography */
-      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: var(--font-family);
-      background-color: var(--snow);
+      background: radial-gradient(circle at 50% 15%, #0F2D24 0%, #081612 55%, #030806 100%);
       color: var(--text);
       min-height: 100vh;
-      padding-top: max(0px, env(safe-area-inset-top));
-      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      padding: 30px 16px;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       -webkit-tap-highlight-color: transparent;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
     .app-shell {
       width: 100%;
-      max-width: 480px;
-      min-height: 100vh;
+      max-width: 460px;
+      min-height: auto;
       background: var(--white);
-      box-shadow: 0 10px 30px -10px rgba(18, 60, 53, 0.08);
+      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12);
       position: relative;
       display: flex;
       flex-direction: column;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+        align-items: flex-start;
+        background: var(--white);
+      }
+      .app-shell {
+        max-width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
     }
 
     /* Active Session Banner */
@@ -270,11 +285,11 @@
       margin-bottom: 18px;
     }
     .headline-wrap h1 {
-      font-family: var(--font-family);
-      font-size: 24px;
+      font-family: var(--font-heading);
+      font-size: 26px;
       font-weight: 800;
       line-height: 1.25;
-      color: var(--pine-900);
+      color: #0F172A;
       letter-spacing: -0.5px;
     }
     .headline-wrap h1 .hl-green { color: var(--pine-800); }
@@ -482,11 +497,15 @@
       transition: all 0.2s;
     }
     .town-pill-btn.active {
-      border-color: var(--pine-800);
-      background: var(--orange-light);
-      color: var(--pine-900);
-      box-shadow: 0 2px 8px rgba(18, 60, 53, 0.08);
-      font-weight: 700;
+      border-color: #10B981;
+      background: #ECFDF5;
+      color: #065F46;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);
+      font-weight: 800;
+    }
+    .town-pill-btn.active small {
+      color: #059669 !important;
+      font-weight: 700 !important;
     }
     .town-pill-btn small {
       display: block;
@@ -630,26 +649,26 @@
     /* Action Buttons (12-14px radius as mandated) */
     .btn-continue {
       width: 100%;
-      padding: 14px;
-      border-radius: var(--radius-btn);
+      height: 50px;
+      border-radius: 14px;
       border: none;
-      font-family: var(--font-family);
+      font-family: var(--font-heading);
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       color: #ffffff;
-      background: var(--mountain-orange);
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(242, 140, 40, 0.35);
-      transition: all 0.15s;
-      margin-top: 14px;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
     }
     .btn-continue:hover {
-      background: #e07d1e;
-      box-shadow: 0 6px 18px rgba(242, 140, 40, 0.45);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.48);
     }
     .btn-continue:active { transform: scale(0.98); }
 
@@ -1595,6 +1614,8 @@
 
   <!-- PWA & Session Engine Scripts -->
   <script src="/shared/pwaInit.js"></script>
+  <script src="/shared/themeController.js"></script>
+  <script src="/shared/updateEngine.js"></script>
   <script>
     let activeRole = 'customer';
     let selectedCustomerTown = 'solan';

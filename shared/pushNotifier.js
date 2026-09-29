@@ -376,25 +376,31 @@
         if (path.includes('/customer')) {
           window.pahadiBus.on('ORDER_STATUS_CHANGED', (update) => {
             console.log('[Notifier] Customer received status update:', update);
-            let title = '🛵 PahadiCart Order Update';
-            let body = `Your order #${update.id || ''} status is now: ${update.status}`;
+            const orderId = update.orderId || (update.order && update.order.id) || update.id || '';
+            const status = update.newStatus || update.status || (update.order && update.order.status) || '';
+            let title = '🛵 Himora Order Update';
+            let body = `Your order #${orderId} status is now: ${status}`;
 
-            if (update.status === 'PREPARING') {
+            const sLower = status.toLowerCase();
+            if (sLower.includes('prepar')) {
               title = '👨‍🍳 Store Preparing Order!';
               body = 'Your food & groceries are being freshly packed.';
-            } else if (update.status === 'OUT_FOR_DELIVERY') {
-              title = '🏍️ Rider Is On The Way!';
-              body = 'Hill rider is climbing stairs with your delivery.';
-            } else if (update.status === 'DELIVERED') {
+            } else if (sLower.includes('ready')) {
+              title = '📦 Ready for Handover!';
+              body = 'Store has packed your order. Rider is picking up.';
+            } else if (sLower.includes('picked') || sLower.includes('out')) {
+              title = '🚴 Rider Is On The Way!';
+              body = 'Pahadi rider is navigating hill trails with your delivery.';
+            } else if (sLower.includes('deliver')) {
               title = '🎉 Order Delivered!';
-              body = 'Enjoy your mountain-fresh delivery from PahadiCart.';
+              body = 'Thank you! Enjoy your fresh mountain delivery from Himora.';
             }
 
             this.sendOrderAlert({
               role: 'customer',
               title,
               body,
-              orderId: update.id,
+              orderId: orderId,
               soundType: 'customer',
               repeat: false,
               targetUrl: '/customer/'

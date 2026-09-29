@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  // Support direct hash routing
+  // Support direct hash routing across all modules
   if (window.location.hash) {
     const hashTab = window.location.hash.replace('#', '');
     if (window.location.hash.includes('triad')) {
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         if (window.showTriadAudit) window.showTriadAudit('ORD-7821');
       }, 400);
-    } else if (["overview", "orders", "merchants", "riders", "finance", "safety", "support", "growth", "zones"].includes(hashTab)) {
+    } else if (hashTab) {
       switchTab(hashTab);
     }
   }

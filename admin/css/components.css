@@ -604,8 +604,8 @@
 /* Toast Notification System */
 .toast-container {
   position: fixed;
-  top: 24px;
-  right: 24px;
+  bottom: 28px;
+  right: 28px;
   z-index: 10000;
   display: flex;
   flex-direction: column;
@@ -656,6 +656,7 @@
 
 /* Global Multi-Filter Strip */
 .global-filter-strip {
+  display: none !important; /* De-clutter global header */
   display: flex;
   align-items: center;
   gap: 10px;

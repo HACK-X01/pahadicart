@@ -1,10 +1,11 @@
-// PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.0
-const CACHE_NAME = 'pahadicart-pwa-v10-fresh';
+// PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.2
+const CACHE_NAME = 'pahadicart-pwa-v11-live';
 
 const STATIC_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/version.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/apple-touch-icon.png',
@@ -30,6 +31,8 @@ const STATIC_SHELL = [
   '/shared/tokens.css',
   '/shared/mockApi.js',
   '/shared/pwaInit.js',
+  '/shared/updateEngine.js',
+  '/shared/themeController.js',
   '/shared/profileSidebar.js',
   '/shared/hillAudio.js',
   '/shared/pushNotifier.js',
@@ -44,12 +47,13 @@ const STATIC_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching Himalayan shells & offline resources v5');
+      console.log('[SW] Pre-caching Himalayan shells & offline resources v11');
       return cache.addAll(STATIC_SHELL).catch((err) => {
         console.warn('[SW] Cache addAll notice:', err);
       });
     })
   );
+  // Auto-skip waiting if allowed
   self.skipWaiting();
 });
 
@@ -57,16 +61,34 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME).map((key) => {
+          console.log('[SW] Deleting legacy cache:', key);
+          return caches.delete(key);
+        })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
+});
+
+// Client message listener for instant skip waiting & update activation
+self.addEventListener('message', (event) => {
+  if (event.data && (event.data.type === 'SKIP_WAITING' || event.data.action === 'skipWaiting')) {
+    console.log('[SW] SKIP_WAITING triggered by client update button');
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
+
+  // Network only for dynamic version checks to ensure instant update detection
+  if (url.pathname.includes('/version.json')) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   // Do not cache external dynamic APIs
   if (url.origin !== self.location.origin) {
@@ -117,7 +139,7 @@ self.addEventListener('push', (event) => {
       url: data.url || '/'
     },
     actions: [
-      { action: 'open', title: '👀 View Order' },
+      { action: 'open', title: '👁️ View Order' },
       { action: 'close', title: '✕ Dismiss' }
     ]
   };
@@ -143,7 +165,6 @@ self.addEventListener('notificationclick', (event) => {
           return client.focus();
         }
       }
-      // If no tab is open, open a new window
       if (clients.openWindow) {
         return clients.openWindow(targetUrl);
       }
