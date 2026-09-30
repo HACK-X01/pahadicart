@@ -1,10 +1,10 @@
 {
-  "version": "4.3.3",
-  "build": 20260929,
-  "releaseName": "Alpine Speed & Theme Engine",
-  "updatedAt": "2026-09-30T03:47:41.048Z",
-  "releaseNotes": "Ultra-reliable Mobile Checkout Button with Inline Style Protection",
+  "version": "4.3.4",
+  "build": 20260930,
+  "releaseName": "Clean Experience & Button Visibility Engine",
+  "updatedAt": "2026-09-30T04:06:09.316Z",
+  "releaseNotes": "Removed PWA download nags and guaranteed 100% button visibility across all screens",
   "apkUrl": "/PahadiCart.apk",
-  "apkVersion": "v4.3.3",
+  "apkVersion": "v4.3.4",
   "apkSize": "6.0 MB"
 }

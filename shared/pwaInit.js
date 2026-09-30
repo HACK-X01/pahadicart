@@ -7,6 +7,11 @@
 ﻿// PahadiCart Universal Multi-Device PWA Engine & Service Worker Registration
 (function() {
   'use strict';
+  // Top-level cleanup of any lingering banner
+  try {
+    const _b = document.getElementById('pahadiPwaInstallBanner');
+    if (_b) _b.remove();
+  } catch (e) {}
 
   // 1. Service Worker Registration
   if ('serviceWorker' in navigator) {
@@ -69,15 +74,17 @@
     e.preventDefault();
     deferredPrompt = e;
     console.log('[PWA] beforeinstallprompt event captured');
-    if (!isStandalone) {
-      if (window.customerApp && (window.customerApp.currentScreen === 'cart' || window.customerApp.currentScreen === 'checkout')) return;
-      showInstallBanner();
-    }
+    // Auto banner disabled per user request - no unsolicited install prompts
   });
 
   window.addEventListener('appinstalled', () => {
     console.log('[PWA] PahadiCart app was successfully installed!');
     deferredPrompt = null;
+    try {
+      localStorage.setItem('pahadi_app_downloaded', 'true');
+      localStorage.setItem('pahadi_pwa_installed', 'true');
+      localStorage.setItem('pahadi_pwa_banner_dismissed_at', (Date.now() + 31536000000).toString());
+    } catch (e) {}
     const banner = document.getElementById('pahadiPwaInstallBanner');
     if (banner) banner.remove();
     showConnectivityToast('🎉 PahadiCart App successfully installed on your phone!', '#10b981');
@@ -91,6 +98,11 @@
     hasNativePrompt: () => !!deferredPrompt,
     
     async promptInstall() {
+      try {
+        localStorage.setItem('pahadi_app_downloaded', 'true');
+        localStorage.setItem('pahadi_pwa_installed', 'true');
+        localStorage.setItem('pahadi_pwa_banner_dismissed_at', (Date.now() + 31536000000).toString());
+      } catch (e) {}
       const triggerDownload = () => {
         const a = document.createElement('a');
         a.href = '/PahadiCart.apk';
@@ -364,81 +376,16 @@
     modal.style.display = 'flex';
   }
 
-  // 6. Floating Smart Install Banner
+  // 6. Floating Smart Install Banner (Disabled per user request - no unsolicited nag)
   function showInstallBanner() {
-    if (isStandalone) return;
-    if (document.getElementById('pahadiPwaInstallBanner')) return;
-
-    // Check if dismissed in last 6 hours
-    const lastDismissed = localStorage.getItem('pahadi_pwa_banner_dismissed_at');
-    if (lastDismissed && (Date.now() - parseInt(lastDismissed, 10)) < (6 * 3600 * 1000)) {
-      return;
-    }
-
-    const banner = document.createElement('div');
-    banner.id = 'pahadiPwaInstallBanner';
-    banner.style.cssText = `
-      position: fixed;
-      bottom: max(76px, calc(76px + env(safe-area-inset-bottom, 0px)));
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 999998;
-      background: rgba(11, 19, 41, 0.95);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(16, 185, 129, 0.25);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 18px;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 440px;
-      width: calc(100% - 24px);
-      box-sizing: border-box;
-      color: #fff;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      animation: slideUpPwa 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    `;
-
-    banner.innerHTML = `
-      <img src="/icons/icon-192.png" alt="PahadiCart" style="width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.4);" />
-      <div style="flex: 1; min-width: 0;">
-        <div style="font-size: 13px; font-weight: 800; color: #fff; line-height: 1.25;">Install PahadiCart App</div>
-        <div style="font-size: 11px; color: #34d399; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Direct APK Download & Fast Hill GPS</div>
-      </div>
-      <button id="pwaInstallNowBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; padding: 7px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 800; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(16,185,129,0.3); display: flex; align-items: center; gap: 4px;">
-        📲 Download App</button>
-      <button id="pwaDismissBannerBtn" style="background: transparent; border: none; color: #64748b; font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1;" title="Dismiss">&times;</button>
-    `;
-
-    const animStyle = document.createElement('style');
-    animStyle.textContent = `
-      @keyframes slideUpPwa {
-        from { transform: translate(-50%, 40px); opacity: 0; }
-        to { transform: translate(-50%, 0); opacity: 1; }
-      }
-    `;
-    document.head.appendChild(animStyle);
-    document.body.appendChild(banner);
-
-    document.getElementById('pwaInstallNowBtn').addEventListener('click', () => {
-      window.PahadiPWA.promptInstall();
-    });
-
-    document.getElementById('pwaDismissBannerBtn').addEventListener('click', () => {
-      localStorage.setItem('pahadi_pwa_banner_dismissed_at', Date.now().toString());
-      banner.remove();
-    });
+    const banner = document.getElementById('pahadiPwaInstallBanner');
+    if (banner) banner.remove();
   }
 
-  // Auto trigger banner on non-standalone mobile devices after a short 2s engagement
+  // Auto banner disabled per user request
   window.addEventListener('DOMContentLoaded', () => {
-    if (!isStandalone) {
-      setTimeout(() => {
-        showInstallBanner();
-      }, 2000);
-    }
+    const banner = document.getElementById('pahadiPwaInstallBanner');
+    if (banner) banner.remove();
   });
 
   // 7. Offline / Online Connectivity Alerts

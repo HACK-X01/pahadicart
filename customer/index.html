@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/customer.css?v=4.3.3">
+  <link rel="stylesheet" href="css/customer.css?v=4.3.4">
   
   <!-- PWA Headers -->
   <link rel="manifest" href="/manifest.json">
@@ -58,6 +58,9 @@
       #cartContentWrapper {
         padding-bottom: 96px !important;
       }
+      .checkout-desktop-split {
+        padding-bottom: 110px !important;
+      }
       .cart-sticky-footer {
         position: fixed !important;
         bottom: 0 !important;
@@ -80,12 +83,44 @@
         border-color: rgba(255, 255, 255, 0.08) !important;
         box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45) !important;
       }
+      .detail-bottom-bar {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        max-width: 480px !important;
+        margin: 0 auto !important;
+        background: #FFFFFF !important;
+        border-top: 1px solid #E2E8F0 !important;
+        padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+        z-index: 999 !important;
+        box-sizing: border-box !important;
+      }
+      html[data-theme="dark"] .detail-bottom-bar {
+        background: #0B131F !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45) !important;
+      }
+      #screen-product-detail .prod-detail-body {
+        padding-bottom: 96px !important;
+      }
     }
     @media (min-width: 768px) {
       #cartContentWrapper,
       .cart-desktop-split {
         display: grid !important;
         grid-template-columns: 1fr 380px !important;
+        gap: 28px !important;
+        padding: 20px 24px 40px !important;
+        align-items: start !important;
+      }
+      .checkout-desktop-split {
+        display: grid !important;
+        grid-template-columns: 1fr 400px !important;
         gap: 28px !important;
         padding: 20px 24px 40px !important;
         align-items: start !important;
@@ -97,10 +132,7 @@
         border: 1px solid #E2E8F0 !important;
         border-radius: 20px !important;
         padding: 24px !important;
-      }
-      html[data-theme="dark"] .cart-bill-desktop-card {
-        background: #111A28 !important;
-        border-color: rgba(255, 255, 255, 0.09) !important;
+        margin: 0 !important;
       }
       .cart-sticky-footer {
         position: static !important;
@@ -108,8 +140,22 @@
         padding: 16px 0 0 !important;
         box-shadow: none !important;
         background: transparent !important;
-        display: flex !important;
-        z-index: auto !important;
+        width: 100% !important;
+      }
+      .checkout-right-col .cart-sticky-footer {
+        position: static !important;
+        border: none !important;
+        padding: 16px 0 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        width: 100% !important;
+      }
+      .detail-bottom-bar {
+        position: static !important;
+        border: none !important;
+        padding: 18px 0 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
       }
     }
   </style>
@@ -1031,14 +1077,14 @@
   </main>
 
   <!-- Shared Service Layer -->
-  <script src="/shared/pwaInit.js?v=4.3.3"></script>
-  <script src="/shared/updateEngine.js?v=4.3.3"></script>
+  <script src="/shared/pwaInit.js?v=4.3.4"></script>
+  <script src="/shared/updateEngine.js?v=4.3.4"></script>
   <script src="/shared/themeController.js"></script>
   <script src="/shared/hillAudio.js"></script>
   <script src="/shared/pushNotifier.js"></script>
   <script src="/shared/sharedData.js"></script>
   <script src="/shared/eventBus.js"></script>
   <!-- Himora App Logic -->
-  <script src="js/customerApp.js?v=4.3.3"></script>
+  <script src="js/customerApp.js?v=4.3.4"></script>
 </body>
 </html>
