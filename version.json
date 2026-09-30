@@ -1,10 +1,10 @@
 {
-  "version": "4.3.1",
+  "version": "4.3.2",
   "build": 20260929,
   "releaseName": "Alpine Speed & Theme Engine",
-  "updatedAt": "2026-09-29T15:17:45.395Z",
-  "releaseNotes": "Native mobile UI polish: removed mockup status bar, clean top bar layout",
+  "updatedAt": "2026-09-30T03:35:49.906Z",
+  "releaseNotes": "Mobile Cart & Checkout UI fix: sticky proceed button, responsive layout",
   "apkUrl": "/PahadiCart.apk",
-  "apkVersion": "v4.3.1",
+  "apkVersion": "v4.3.2",
   "apkSize": "6.0 MB"
 }

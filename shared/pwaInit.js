@@ -70,6 +70,7 @@
     deferredPrompt = e;
     console.log('[PWA] beforeinstallprompt event captured');
     if (!isStandalone) {
+      if (window.customerApp && (window.customerApp.currentScreen === 'cart' || window.customerApp.currentScreen === 'checkout')) return;
       showInstallBanner();
     }
   });
@@ -378,7 +379,7 @@
     banner.id = 'pahadiPwaInstallBanner';
     banner.style.cssText = `
       position: fixed;
-      bottom: max(16px, env(safe-area-inset-bottom, 16px));
+      bottom: max(76px, calc(76px + env(safe-area-inset-bottom, 0px)));
       left: 50%;
       transform: translateX(-50%);
       z-index: 999998;

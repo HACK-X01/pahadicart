@@ -410,6 +410,18 @@
       }
 
       // Switch active class
+      
+      // Clean checkout flow: hide banners on cart & checkout
+      if (screenId === 'cart' || screenId === 'checkout') {
+        const uBanner = document.getElementById('pahadiUpdateBanner');
+        if (uBanner) uBanner.style.display = 'none';
+        const pBanner = document.getElementById('pahadiPwaInstallBanner');
+        if (pBanner) pBanner.style.display = 'none';
+      } else if (screenId === 'home') {
+        const uBanner = document.getElementById('pahadiUpdateBanner');
+        if (uBanner && !window.PahadiUpdateManager?.bannerDismissed) uBanner.style.display = 'flex';
+      }
+  
       document.querySelectorAll('.himora-screen').forEach(el => el.classList.remove('active'));
       targetScreen.classList.add('active');
       targetScreen.scrollTop = 0;
@@ -770,7 +782,7 @@
         return;
       }
 
-      if (wrapper) wrapper.style.display = 'flex';
+      if (wrapper) { wrapper.style.display = ''; wrapper.style.removeProperty('display'); }
       if (emptyMsg) emptyMsg.style.display = 'none';
 
       let subtotal = 0;

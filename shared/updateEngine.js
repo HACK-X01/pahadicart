@@ -366,7 +366,7 @@
         /* Floating Update Banner */
         .pahadi-update-banner {
           position: fixed;
-          bottom: max(20px, env(safe-area-inset-bottom, 20px));
+          bottom: max(82px, calc(82px + env(safe-area-inset-bottom, 0px)));
           left: 50%;
           transform: translate(-50%, 60px);
           opacity: 0;
