@@ -784,6 +784,8 @@
 
       if (wrapper) { wrapper.style.display = ''; wrapper.style.removeProperty('display'); }
       if (emptyMsg) emptyMsg.style.display = 'none';
+      const f = document.querySelector('.cart-sticky-footer');
+      if (f) f.style.display = 'flex';
 
       let subtotal = 0;
       container.innerHTML = productIds.map(id => {
