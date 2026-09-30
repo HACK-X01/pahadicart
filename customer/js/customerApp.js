@@ -3,7 +3,7 @@
 
 (function() {
   // Master Catalog Data aligned with PDF Blueprint
-  const HIMORA_CATALOG = {
+  const HIMORA_CATALOG = window.HIMORA_CATALOG = {
     products: [
       {
         id: 'PROD-ATTA-01',
@@ -305,6 +305,10 @@
       this.activeListingSubcat = 'all';
       this.selectedPayMode = 'UPI';
       this.activeOrder = null;
+    try {
+      const savedActive = localStorage.getItem('himora_last_active_order');
+      if (savedActive) this.activeOrder = JSON.parse(savedActive);
+    } catch(e) {}
       this.wishlist = new Set(['PROD-ATTA-01']);
 
       this.init();
@@ -494,14 +498,14 @@
           return `
             <div class="product-card-compact" onclick="window.customerApp.navigateTo('product-detail', { productId: '${p.id}' })">
               <div class="prod-img-box">
-                <span>${p.icon}</span>
-                <span class="discount-chip">${p.discount}</span>
+                <span>${p.icon || '📦'}</span>
+            <span class="discount-chip">${p.discount || 'Fresh'}</span>
               </div>
               <div class="prod-name">${p.name}</div>
-              <div class="prod-unit">${p.unit} • ⭐ ${p.rating}</div>
+              <div class="prod-unit">${p.unit || '1 unit'} • ⭐ ${p.rating || 4.8}</div>
               <div class="prod-price-row">
                 <span class="current-price">₹${p.price}</span>
-                <span class="mrp-strikethrough">₹${p.mrp}</span>
+                <span class="mrp-strikethrough">₹${p.mrp || p.price}</span>
               </div>
               <div onclick="event.stopPropagation();">
                 ${qty > 0 ? `
@@ -888,7 +892,12 @@
         customerPhone: this.currentPhone,
         colony: this.currentTown,
         address: this.currentAddress,
+        deliveryAddress: this.currentAddress,
         landmark: 'Near Himora Store',
+        staircaseNotes: this.currentStairs,
+        staircaseNote: this.currentStairs,
+        total: grandTotal,
+        eta: '30-45 min (Hill SLA)',
         staircaseNotes: this.currentStairs,
         merchantId: 'm-101',
         merchantName: 'Sharma General Store',
@@ -906,6 +915,9 @@
       };
 
       this.activeOrder = order;
+      try {
+        localStorage.setItem('himora_last_active_order', JSON.stringify(order));
+      } catch(e) {}
 
       // Save and broadcast across Super Admin, Merchant Terminal, and Rider Cockpit!
       if (window.pahadiBus) {
@@ -1034,7 +1046,8 @@
           status: 'Delivered',
           statusType: 'delivered',
           thumbs: ['🌾', '🌻', '🍜'],
-          total: 374
+          total: 374,
+          rawOrder: { id: 'HM1024', date: '12 Apr', time: '10:24 AM', status: 'Delivered', grandTotal: 374, riderName: 'Rohit Kumar', otp: '5570' }
         },
         {
           id: 'HM1018',
@@ -1042,7 +1055,8 @@
           status: 'Delivered',
           statusType: 'delivered',
           thumbs: ['🥛', '🍪'],
-          total: 62
+          total: 62,
+          rawOrder: { id: 'HM1018', date: '10 Apr', time: '05:27 PM', status: 'Delivered', grandTotal: 62, riderName: 'Rohit Kumar', otp: '5570' }
         },
         {
           id: 'HM1005',
@@ -1050,27 +1064,62 @@
           status: 'Delivered',
           statusType: 'delivered',
           thumbs: ['🍎', '🍅', '🧂'],
-          total: 200
+          total: 200,
+          rawOrder: { id: 'HM1005', date: '06 Apr', time: '11:45 AM', status: 'Delivered', grandTotal: 200, riderName: 'Rohit Kumar', otp: '5570' }
         }
       ];
 
-      let displayOrders = samplePastOrders;
-      if (this.activeOrder) {
-        displayOrders = [{
-          id: this.activeOrder.id,
-          date: 'Today, ' + this.activeOrder.time,
-          status: 'On The Way',
-          statusType: 'transit',
-          thumbs: this.activeOrder.items.map(i => {
-            const p = HIMORA_CATALOG.products.find(pr => pr.name === i.name);
+      const liveOrders = (window.pahadiBus ? window.pahadiBus.getOrders() : []).map(o => {
+        const isDelivered = (o.status || '').toLowerCase().includes('deliv');
+        const isCancelled = (o.status || '').toLowerCase().includes('cancel');
+        const sType = isDelivered ? 'delivered' : isCancelled ? 'cancelled' : 'transit';
+        return {
+          id: o.id,
+          date: (o.date || 'Today') + (o.time ? ', ' + o.time : ''),
+          status: o.status || 'Placed',
+          statusType: sType,
+          thumbs: (o.items || []).map(i => {
+            const p = HIMORA_CATALOG.products.find(pr => pr.name === i.name || pr.id === i.id);
             return p ? p.icon : '📦';
           }),
-          total: this.activeOrder.grandTotal
-        }, ...samplePastOrders];
+          total: o.grandTotal || o.total || o.amount || 250,
+          rawOrder: o
+        };
+      });
+
+      let displayOrders = [];
+      if (liveOrders.length > 0) {
+        if (tab === 'current') {
+          displayOrders = liveOrders.filter(o => o.statusType === 'transit');
+        } else {
+          displayOrders = [...liveOrders.filter(o => o.statusType !== 'transit'), ...samplePastOrders];
+        }
+      } else {
+        if (tab === 'current') {
+          displayOrders = this.activeOrder ? [{
+            id: this.activeOrder.id,
+            date: 'Today, ' + this.activeOrder.time,
+            status: this.activeOrder.status || 'On The Way',
+            statusType: 'transit',
+            thumbs: (this.activeOrder.items || []).map(i => '📦'),
+            total: this.activeOrder.grandTotal,
+            rawOrder: this.activeOrder
+          }] : [];
+        } else {
+          displayOrders = samplePastOrders;
+        }
       }
 
-      if (tab === 'current') {
-        displayOrders = displayOrders.filter(o => o.statusType === 'transit' || o.id === (this.activeOrder ? this.activeOrder.id : 'HM1024'));
+      if (displayOrders.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--himora-text-muted); padding: 48px 16px;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📦</div>
+            <div style="font-weight: 700; color: var(--himora-text); margin-bottom: 4px;">Koi ${tab === 'current' ? 'active' : 'purana'} order nahi hai</div>
+            <p style="font-size: 12px; margin-bottom: 16px;">Apni manpasand dukaan se taaza saman mangwayein.</p>
+            <button class="btn-primary-green" onclick="window.customerApp.navigateTo('home')" style="max-width: 180px; margin: 0 auto; height: 38px; font-size: 13px;">Shop Now →</button>
+          </div>
+        `;
+        return;
       }
 
       container.innerHTML = displayOrders.map(o => `
@@ -1088,17 +1137,17 @@
           </div>
 
           <div class="order-actions-row">
-            <button class="btn-order-view" onclick="window.customerApp.navigateTo('tracking', { order: { id: '${o.id}', date: '${o.date}' } })">View Details</button>
+            <button class="btn-order-view" onclick="window.customerApp.openTrackingForOrder('${o.id}')">View Details</button>
             <button class="btn-order-reorder" onclick="window.customerApp.reorderPastItems('${o.id}')">Reorder</button>
           </div>
         </div>
       `).join('');
     }
 
-    switchOrderTab(tab, el) {
-      document.querySelectorAll('.order-tab-btn').forEach(b => b.classList.remove('active'));
-      if (el) el.classList.add('active');
-      this.renderOrdersScreen(tab);
+    openTrackingForOrder(orderId) {
+      const orders = window.pahadiBus ? window.pahadiBus.getOrders() : [];
+      const found = orders.find(o => o.id === orderId);
+      this.navigateTo('tracking', { order: found || this.activeOrder });
     }
 
     reorderPastItems(orderId) {

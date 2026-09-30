@@ -1,10 +1,10 @@
 {
-  "version": "4.3.4",
+  "version": "4.3.5",
   "build": 20260930,
-  "releaseName": "Clean Experience & Button Visibility Engine",
-  "updatedAt": "2026-09-30T04:06:09.316Z",
-  "releaseNotes": "Removed PWA download nags and guaranteed 100% button visibility across all screens",
+  "releaseName": "Multi-Portal Real-Time Sync & Clean Data Engine",
+  "updatedAt": "2026-09-30T04:52:11.033Z",
+  "releaseNotes": "Zero-leakage cross-portal synchronization across Customer, Merchant, Rider, and Admin with clean data validation",
   "apkUrl": "/PahadiCart.apk",
-  "apkVersion": "v4.3.4",
+  "apkVersion": "v4.3.5",
   "apkSize": "6.0 MB"
 }

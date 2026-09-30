@@ -15,15 +15,18 @@ function getAdminLiveOrders(currentTown = null) {
     else if (rawStatus.includes('pick') || rawStatus.includes('transit') || rawStatus.includes('route') || rawStatus.includes('climb')) normStatus = 'in_transit';
     else if (rawStatus.includes('ready')) normStatus = 'preparing';
 
-    const amt = Number(o.grandTotal || (o.pricing && o.pricing.totalAmount) || o.itemTotal || o.amount || 250);
+    const amt = Number(o.grandTotal || (o.pricing && o.pricing.totalAmount) || o.itemTotal || o.total || o.amount || 250);
     const mName = o.merchantName || (o.merchant && o.merchant.name) || 'Sharma Kirana & Fresh Produce';
     const cName = o.customerName || (o.customer && o.customer.name) || 'Customer';
     const rName = o.riderName || (o.rider && o.rider.name) || 'Vikas Thakur';
     const cPhone = o.customerPhone || (o.customer && o.customer.phone) || '98160-12890';
-    const cColony = o.colony || (o.customer && o.customer.colony) || 'The Mall Road';
-    const cStairs = o.staircaseNotes || (o.customer && o.customer.staircaseDetails) || 'Direct road level';
+    const cColony = o.colony || (o.customer && o.customer.colony) || (o.townName || 'Mall Road');
+    const cAddress = o.deliveryAddress || o.address || (o.customer && o.customer.address) || (cColony + ', ' + (o.town || 'Solan'));
+    const cStairs = o.staircaseNotes || o.staircaseNote || (o.customer && o.customer.staircaseDetails) || 'Direct road level';
+    const cEta = o.eta || (normStatus === 'delivered' ? 'Delivered' : '30-45 mins (Hill SLA)');
 
     return {
+      ...o,
       id: o.id,
       town: (o.town || 'solan').toLowerCase(),
       status: normStatus,
@@ -32,20 +35,29 @@ function getAdminLiveOrders(currentTown = null) {
       customerName: cName,
       customerPhone: cPhone,
       colony: cColony,
+      address: cAddress,
+      deliveryAddress: cAddress,
       merchant: mName,
       merchantName: mName,
       rider: rName,
       riderName: rName,
+      assignedRider: rName,
+      riderVehicle: o.riderVehicle || 'Hero Splendor Hill Edition',
       items: o.items || [{ name: 'Mountain Item', qty: 1 }],
       amount: amt,
+      total: amt,
       grandTotal: amt,
       time: o.time || 'Live Shift',
       payment: o.paymentMode || 'COD',
       paymentMode: o.paymentMode || 'COD',
-      elevation: '+140m Climb',
+      elevation: o.elevation || '+140m Climb',
+      eta: cEta,
       stairs: cStairs,
+      staircaseNote: cStairs,
       staircaseNotes: cStairs,
-      otp: o.otp || '1234'
+      merchantDistanceMeters: o.merchantDistanceMeters || 850,
+      riderDistanceMeters: o.riderDistanceMeters || 1200,
+      otp: o.otp || '5570'
     };
   });
 
@@ -58,7 +70,11 @@ function getAdminLiveOrders(currentTown = null) {
           customerName: mockOrder.customer || mockOrder.customerName,
           merchantName: mockOrder.merchant || mockOrder.merchantName,
           riderName: mockOrder.rider || mockOrder.riderName,
-          grandTotal: mockOrder.amount
+          total: mockOrder.amount || mockOrder.total,
+          grandTotal: mockOrder.amount || mockOrder.total,
+          deliveryAddress: mockOrder.deliveryAddress || mockOrder.address || 'Solan, Himachal',
+          staircaseNote: mockOrder.staircaseNote || mockOrder.staircaseNotes || 'Road level drop',
+          eta: mockOrder.eta || '30-45 mins'
         });
       }
     });
@@ -209,7 +225,14 @@ function advanceOrderStatus(orderId, newStatus) {
 
   order.status = newStatus;
   if (newStatus === 'delivered') {
-    order.eta = "Delivered (OTP: " + Math.floor(1000 + Math.random() * 9000) + ")";
+    order.eta = "Delivered (OTP: " + (order.otp || '5570') + ")";
+  }
+
+  // Cross-portal synchronization to Merchant, Rider, and Customer
+  if (window.pahadiBus) {
+    window.pahadiBus.updateOrderStatus(orderId, newStatus, {
+      eta: order.eta
+    });
   }
 
   playPahadiChime();
@@ -250,6 +273,9 @@ function simulateIncomingOrder() {
   };
 
   PahadiMockDB.orders.unshift(newOrder);
+  if (window.pahadiBus) {
+    window.pahadiBus.placeOrder(newOrder);
+  }
   playPahadiChime();
   showToast("🔔 New Hill Order Received: " + newId + " (₹486)!");
   renderOrdersFeed();
@@ -624,6 +650,11 @@ window.advanceOrderStatusAndAudit = function(orderId, nextStatus) {
   const oldStatus = order.status;
   order.status = nextStatus;
 
+  // Cross-portal sync to Merchant, Rider, Customer
+  if (window.pahadiBus) {
+    window.pahadiBus.updateOrderStatus(orderId, nextStatus);
+  }
+
   if (window.AdminApiService) {
     window.AdminApiService.createAuditLog(
       'ORDER_STATUS_CHANGED',
@@ -649,8 +680,19 @@ window.reassignRiderPrompt = function(orderId) {
 
   const order = getAdminOrderById(orderId);
   if (!order) return;
-  const oldRider = order.assignedRider || 'Unassigned';
+  const oldRider = order.assignedRider || order.riderName || 'Unassigned';
   order.assignedRider = newRider;
+  order.riderName = newRider;
+  order.rider = newRider;
+
+  // Cross-portal sync to Rider & Customer
+  if (window.pahadiBus) {
+    window.pahadiBus.updateOrderStatus(orderId, order.status, {
+      riderName: newRider,
+      rider: newRider,
+      assignedRider: newRider
+    });
+  }
 
   if (window.AdminApiService) {
     window.AdminApiService.createAuditLog(
@@ -658,7 +700,7 @@ window.reassignRiderPrompt = function(orderId) {
       'ORDER',
       order.id,
       { assignedRider: oldRider },
-      { assignedRider: newRider, reason: 'Manual operational dispatch override' }
+      { assignedRider: newRider, actor: (window.RbacService ? window.RbacService.getActiveRole() : 'SUPER_ADMIN') }
     );
   }
 
@@ -682,6 +724,13 @@ window.cancelOrderPrompt = function(orderId) {
   order.status = 'cancelled';
   order.cancellationReason = reason;
 
+  // Cross-portal sync to Merchant, Rider, Customer
+  if (window.pahadiBus) {
+    window.pahadiBus.updateOrderStatus(orderId, 'Cancelled', {
+      cancellationReason: reason
+    });
+  }
+
   if (window.AdminApiService) {
     window.AdminApiService.createAuditLog(
       'ORDER_CANCELLED',
@@ -695,4 +744,24 @@ window.cancelOrderPrompt = function(orderId) {
   renderOrdersFeed();
   window.closeOrderCommandDrawer();
   if (window.showToast) window.showToast('Order ' + orderId + ' cancelled and audited.', 'error');
+};
+
+
+// Direct button bindings and aliases for full portal parity
+window.openReassignRiderModal = function(orderId) {
+  if (typeof window.reassignRiderPrompt === 'function') {
+    window.reassignRiderPrompt(orderId);
+  }
+};
+
+window.openStatusOverrideModal = function(orderId) {
+  if (typeof window.openOrderCommandDrawer === 'function') {
+    window.openOrderCommandDrawer(orderId);
+  }
+};
+
+window.cancelAndRefundOrder = function(orderId) {
+  if (typeof window.cancelOrderPrompt === 'function') {
+    window.cancelOrderPrompt(orderId);
+  }
 };

@@ -277,15 +277,31 @@
         alert('Kripya product ka naam aur sahi price dalein.');
         return;
       }
+      const iconMap = {
+        grocery: '🌾',
+        produce: '🍎',
+        dairy: '🥛',
+        snacks: '🍪',
+        tea: '☕',
+        household: '🧼'
+      };
       const newProd = {
         id: 'p-' + Date.now(),
         merchantId: this.currentMerchantId,
+        merchantName: (window.PAHADICART_DATA && window.PAHADICART_DATA.merchants) 
+          ? (window.PAHADICART_DATA.merchants.find(m => m.id === this.currentMerchantId)?.name || 'Sharma General Store')
+          : 'Sharma General Store',
         name: name,
         category: cat,
         price: price,
+        mrp: Math.round(price * 1.15),
+        discount: '12% OFF',
+        icon: iconMap[cat] || '📦',
         prepTime: 10,
         unit: 'unit',
         rating: 5.0,
+        reviewsCount: 1,
+        inStock: true,
         badge: 'Fresh',
         desc: name + ' - Fresh store listing.'
       };
