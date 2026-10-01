@@ -36,6 +36,7 @@
   <meta name="apple-mobile-web-app-title" content="PahadiCart">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="/icons/favicon.png">
+  <link rel="stylesheet" href="/shared/portalSwitcher.css">
 </head>
 <body>
 
@@ -54,6 +55,10 @@
     </div>
 
     <div class="header-controls">
+      <button class="portal-switch-trigger-btn merchant-theme" onclick="window.PahadiPortalSwitcher.open()" title="Switch Portal" style="margin-right: 8px;">
+        <span>🔄</span>
+        <span>Portals ▾</span>
+      </button>
       <!-- Theme Switcher Toggle -->
       <button class="theme-toggle-btn" id="merchantThemeToggleBtn" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
         <span class="theme-toggle-icon"></span>
@@ -222,5 +227,6 @@
   <script src="/shared/updateEngine.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>
+  <script src="/shared/portalSwitcher.js"></script>
 </body>
 </html>

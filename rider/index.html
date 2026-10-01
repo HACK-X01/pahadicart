@@ -37,6 +37,7 @@
   <meta name="apple-mobile-web-app-title" content="PahadiCart">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="/icons/favicon.png">
+  <link rel="stylesheet" href="/shared/portalSwitcher.css">
 </head>
 <body>
 
@@ -57,6 +58,10 @@
 
     <button onclick="window.showBatchedRouteModal()" style="background:linear-gradient(135deg, #10b981, #047857); color:#fff; border:none; padding:7px 13px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; margin-right:8px;">📦 Batched Route</button>
     <!-- Duty Status Switch -->
+    <button class="portal-switch-trigger-btn rider-theme" onclick="window.PahadiPortalSwitcher.open()" title="Switch Portal" style="margin-right: 8px;">
+      <span>🔄</span>
+      <span>Portals ▾</span>
+    </button>
     <button class="duty-toggle" id="dutyToggleBtn" onclick="window.riderApp.toggleDuty()">
       <span>🟢 Online (On Duty)</span>
     </button>
@@ -128,5 +133,6 @@
   <script src="/shared/updateEngine.js"></script>
   <script src="/shared/mockApi.js"></script>
   <script src="/shared/profileSidebar.js"></script>
+  <script src="/shared/portalSwitcher.js"></script>
 </body>
 </html>

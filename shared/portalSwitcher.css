@@ -1,0 +1,251 @@
+/* PahadiCart Universal Portal Switcher Widget */
+.portal-switch-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10b981;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.portal-switch-trigger-btn:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #10b981;
+  transform: translateY(-1px);
+}
+.portal-switch-trigger-btn.rider-theme {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: rgba(2, 132, 199, 0.4);
+  color: #38bdf8;
+}
+.portal-switch-trigger-btn.merchant-theme {
+  background: rgba(217, 119, 6, 0.15);
+  border-color: rgba(217, 119, 6, 0.4);
+  color: #fbbf24;
+}
+.portal-switch-trigger-btn.admin-theme {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #c084fc;
+}
+
+/* Floating Fallback Button (visible if header button is not placed) */
+.portal-floating-pill {
+  position: fixed;
+  bottom: 84px;
+  right: 16px;
+  z-index: 99999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.88);
+  color: #f8fafc;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: pulsePortalGlow 3s infinite;
+}
+.portal-floating-pill:hover {
+  transform: scale(1.05);
+}
+@keyframes pulsePortalGlow {
+  0%, 100% { box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35); }
+  50% { box-shadow: 0 4px 26px rgba(16, 185, 129, 0.7); }
+}
+
+/* Modal Overlay */
+.portal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999999;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+@media (min-width: 640px) {
+  .portal-modal-overlay {
+    align-items: center;
+  }
+}
+.portal-modal-overlay.open {
+  display: flex;
+  opacity: 1;
+}
+
+/* Modal Content Card */
+.portal-modal-sheet {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 480px;
+  padding: 22px 20px 26px;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+@media (min-width: 640px) {
+  .portal-modal-sheet {
+    border-radius: 24px;
+    transform: scale(0.92) translateY(0);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  }
+}
+.portal-modal-overlay.open .portal-modal-sheet {
+  transform: translateY(0);
+}
+@media (min-width: 640px) {
+  .portal-modal-overlay.open .portal-modal-sheet {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.portal-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.portal-sheet-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.portal-sheet-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.portal-sheet-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.portal-roles-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.portal-role-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.7);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+.portal-role-card:hover {
+  transform: translateY(-2px);
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.portal-role-card.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+}
+.portal-role-card.role-rider:hover {
+  border-color: #0284c7;
+  background: rgba(2, 132, 199, 0.15);
+}
+.portal-role-card.role-merchant:hover {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.15);
+}
+.portal-role-card.role-admin:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.portal-role-icon {
+  font-size: 26px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+.portal-role-card.active .portal-role-icon {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.portal-role-info {
+  flex: 1;
+}
+.portal-role-name {
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.portal-role-desc {
+  font-size: 11.5px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.portal-role-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.portal-role-tag.current {
+  background: #10b981;
+  color: #064e3b;
+}
+.portal-role-tag.action {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}

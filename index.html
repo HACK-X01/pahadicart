@@ -900,6 +900,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/shared/portalSwitcher.css">
 </head>
 <body>
 
@@ -1115,6 +1116,21 @@
 
         <!-- 2.A: Existing Rider Login -->
         <div id="riderLoginWrap">
+
+          <!-- 1-Tap Instant Rider Launch Card -->
+          <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(14, 165, 233, 0.08)); border: 1.5px solid #0284c7; border-radius: 16px; padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 28px;">🛵</span>
+              <div>
+                <div style="font-size: 14px; font-weight: 800; color: #38bdf8;">1-Tap Direct Cockpit Access</div>
+                <div style="font-size: 11.5px; color: #94a3b8;">Launch directly as active rider Aman Thakur (#01) — No OTP needed</div>
+              </div>
+            </div>
+            <button type="button" onclick="saveSessionAndLaunch('rider', 'Aman Thakur (#01)', '9805111223', selectedRiderTown, '/rider/')" style="background: #0284c7; color: #fff; border: none; font-weight: 800; font-size: 13px; padding: 9px 16px; border-radius: 12px; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
+              Launch Cockpit ➔
+            </button>
+          </div>
+
           <div class="headline-wrap">
             <h1>Pahadi Rider <span class="hl-sky">Cockpit Login</span></h1>
             <p>Access high-altitude hill missions & staircase navigation.</p>
@@ -1370,6 +1386,21 @@
 
         <!-- 3.A: Existing Merchant Login -->
         <div id="merchantLoginWrap">
+
+          <!-- 1-Tap Instant Merchant Launch Card -->
+          <div style="background: linear-gradient(135deg, rgba(217, 119, 6, 0.18), rgba(245, 158, 11, 0.08)); border: 1.5px solid #d97706; border-radius: 16px; padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 28px;">🏪</span>
+              <div>
+                <div style="font-size: 14px; font-weight: 800; color: #fbbf24;">1-Tap Direct Store Access</div>
+                <div style="font-size: 11.5px; color: #94a3b8;">Launch directly as Anand Sweet Shop & Bakers — No OTP needed</div>
+              </div>
+            </div>
+            <button type="button" onclick="saveSessionAndLaunch('merchant', 'Anand Sweet Shop & Bakers', '9816012345', selectedMerchantTown, '/merchant/')" style="background: #d97706; color: #fff; border: none; font-weight: 800; font-size: 13px; padding: 9px 16px; border-radius: 12px; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);">
+              Launch Terminal ➔
+            </button>
+          </div>
+
           <div class="headline-wrap">
             <h1>Vyapar Mandal <span class="hl-amber">Store Login</span></h1>
             <p>Accept customer orders, track inventory & manage settlements.</p>
@@ -1633,6 +1664,20 @@
       document.getElementById('viewCustomer').style.display = role === 'customer' ? 'block' : 'none';
       document.getElementById('viewRider').style.display = role === 'rider' ? 'block' : 'none';
       document.getElementById('viewMerchant').style.display = role === 'merchant' ? 'block' : 'none';
+
+      const skipBtn = document.getElementById('btnSkipGuest');
+      if (skipBtn) {
+        if (role === 'rider') {
+          skipBtn.innerHTML = 'Open Rider Cockpit 🛵 &rarr;';
+          skipBtn.title = 'Directly launch Rider Cockpit';
+        } else if (role === 'merchant') {
+          skipBtn.innerHTML = 'Open Merchant Store 🏪 &rarr;';
+          skipBtn.title = 'Directly launch Merchant Store Terminal';
+        } else {
+          skipBtn.innerHTML = 'Skip &rarr;';
+          skipBtn.title = 'Direct guest browse into customer store';
+        }
+      }
     }
 
     // Town Selectors
@@ -1703,9 +1748,15 @@
       document.getElementById('merchBadgeStep3').className = 'step-badge ' + (step === 3 ? 'active' : '');
     }
 
-    // Skip Button
+    // Skip Button (Role Aware)
     document.getElementById('btnSkipGuest').addEventListener('click', () => {
-      saveSessionAndLaunch('customer', 'Guest Customer', '9816400000', selectedCustomerTown, '/customer/');
+      if (activeRole === 'rider') {
+        saveSessionAndLaunch('rider', 'Aman Thakur (#01)', '9805111223', selectedRiderTown, '/rider/');
+      } else if (activeRole === 'merchant') {
+        saveSessionAndLaunch('merchant', 'Anand Sweet Shop & Bakers', '9816012345', selectedMerchantTown, '/merchant/');
+      } else {
+        saveSessionAndLaunch('customer', 'Guest Customer', '9816400000', selectedCustomerTown, '/customer/');
+      }
     });
 
     // Customer OTP
@@ -2008,5 +2059,6 @@
     });
   </script>
   <script src="/shared/mockApi.js"></script>
+  <script src="/shared/portalSwitcher.js"></script>
 </body>
 </html>

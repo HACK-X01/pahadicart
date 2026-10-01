@@ -160,6 +160,7 @@
     }
   </style>
 
+  <link rel="stylesheet" href="/shared/portalSwitcher.css">
 </head>
 <body>
 
@@ -198,6 +199,10 @@
 
       <div class="desktop-nav-right">
         <!-- Desktop Theme Toggle -->
+        <button class="portal-switch-trigger-btn" onclick="window.PahadiPortalSwitcher.open()" title="Switch Role Portal" style="margin-left: 6px; margin-right: 6px;">
+          <span>🔄</span>
+          <span>Switch Portal ▾</span>
+        </button>
         <button class="theme-toggle-btn desktop-theme-toggle" id="themeToggleBtnDesktop" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
           <span class="theme-toggle-icon"></span>
           <span class="theme-toggle-label">Dark</span>
@@ -248,6 +253,10 @@
               <div class="brand-tagline">Local Shopping. Made for the Hills.</div>
             </div>
           </div>
+          <button class="portal-switch-trigger-btn" onclick="window.PahadiPortalSwitcher.open()" title="Switch Role Portal" style="margin-right: 6px; padding: 5px 9px; font-size: 11px;">
+            <span>🔄</span>
+            <span>Portals ▾</span>
+          </button>
           <button class="theme-toggle-btn mobile-theme-toggle" id="themeToggleBtnMobile" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode" style="margin-right: 8px;">
             <span class="theme-toggle-icon"></span>
           </button>
@@ -851,12 +860,63 @@
               <span class="menu-item-icon">🚀</span>
               <div>
                 <div style="font-weight: 700; color: inherit;">App Updates & Version</div>
-                <div id="accountAppVersionLabel" style="font-size: 11px; color: var(--himora-text-muted);">Himora v4.3.0 • Tap to check for updates</div>
+                <div id="accountAppVersionLabel" style="font-size: 11px; color: var(--himora-text-muted);">Himora v4.3.6 • Tap to check for updates</div>
               </div>
             </div>
             <span id="accountUpdateBadge" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 9999px; margin-right: 6px;">Check</span>
             <span class="menu-item-chevron">›</span>
           </div>
+
+          
+        <!-- Switch Portals Section -->
+        <div style="margin: 22px 0 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B;">
+          🏢 Switch Portals &amp; Business Apps
+        </div>
+        <div class="account-menu-list" style="margin-bottom: 20px;">
+          <div class="account-menu-item" onclick="window.PahadiPortalSwitcher ? window.PahadiPortalSwitcher.switchTo('rider') : location.href='/rider/'" style="border-left: 4px solid #0284c7;">
+            <div class="menu-item-left">
+              <span class="menu-item-icon" style="background: rgba(2, 132, 199, 0.15); border-radius: 10px; padding: 6px; font-size: 20px;">🛵</span>
+              <div>
+                <div style="font-weight: 700; color: #0284c7;">Pahadi Rider Cockpit</div>
+                <div style="font-size: 11.5px; color: #64748B;">Hill missions, GPS routes, battery telemetry &amp; earnings</div>
+              </div>
+            </div>
+            <span class="menu-item-chevron" style="color: #0284c7; font-weight: 800; font-size: 12px;">Launch ➔</span>
+          </div>
+
+          <div class="account-menu-item" onclick="window.PahadiPortalSwitcher ? window.PahadiPortalSwitcher.switchTo('merchant') : location.href='/merchant/'" style="border-left: 4px solid #d97706;">
+            <div class="menu-item-left">
+              <span class="menu-item-icon" style="background: rgba(217, 119, 6, 0.15); border-radius: 10px; padding: 6px; font-size: 20px;">🏪</span>
+              <div>
+                <div style="font-weight: 700; color: #d97706;">Vyapar Mandal Merchant Terminal</div>
+                <div style="font-size: 11.5px; color: #64748B;">Store dashboard, accept orders, KOT printer &amp; stock inventory</div>
+              </div>
+            </div>
+            <span class="menu-item-chevron" style="color: #d97706; font-weight: 800; font-size: 12px;">Launch ➔</span>
+          </div>
+
+          <div class="account-menu-item" onclick="window.PahadiPortalSwitcher ? window.PahadiPortalSwitcher.switchTo('admin') : location.href='/admin/'" style="border-left: 4px solid #8b5cf6;">
+            <div class="menu-item-left">
+              <span class="menu-item-icon" style="background: rgba(139, 92, 246, 0.15); border-radius: 10px; padding: 6px; font-size: 20px;">🏢</span>
+              <div>
+                <div style="font-weight: 700; color: #8b5cf6;">Super Admin Dispatch Tower</div>
+                <div style="font-size: 11.5px; color: #64748B;">Central dispatcher, hill fleet tracking &amp; cross-portal sync</div>
+              </div>
+            </div>
+            <span class="menu-item-chevron" style="color: #8b5cf6; font-weight: 800; font-size: 12px;">Launch ➔</span>
+          </div>
+
+          <div class="account-menu-item" onclick="location.href='/'">
+            <div class="menu-item-left">
+              <span class="menu-item-icon" style="background: rgba(100, 116, 139, 0.15); border-radius: 10px; padding: 6px; font-size: 20px;">🏠</span>
+              <div>
+                <div style="font-weight: 700;">Main Portal Hub</div>
+                <div style="font-size: 11.5px; color: #64748B;">Change corridor town or login as another role</div>
+              </div>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+        </div>
 
           <div class="account-menu-item account-logout-item" onclick="window.customerApp.handleLogout()">
             <div class="menu-item-left">
@@ -1085,6 +1145,7 @@
   <script src="/shared/sharedData.js"></script>
   <script src="/shared/eventBus.js"></script>
   <!-- Himora App Logic -->
-  <script src="js/customerApp.js?v=4.3.5"></script>
+  <script src="js/customerApp.js?v=4.3.6"></script>
+  <script src="/shared/portalSwitcher.js"></script>
 </body>
 </html>
