@@ -1,138 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>
-    // Immediate pre-render cache purge to ensure fresh styles and zero stale stats
-    if ('caches' in window && localStorage.getItem('pahadi_v10_purge') !== 'true') {
-      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
-      localStorage.removeItem('pahadicart_cart_data');
-      localStorage.removeItem('pahadicart_orders_db');
-      localStorage.removeItem('pahadicart_products');
-      localStorage.setItem('pahadi_v10_purge', 'true');
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-          for (let reg of regs) reg.update();
-        });
-      }
-    }
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PahadiCart Rider Cockpit — Mountain Delivery Partner</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=3.3.0" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <link rel="stylesheet" href="/shared/tokens.css">
-  <link rel="stylesheet" href="css/rider.css?v=3.3.0">
+  <title>Himora Rider Partner — Local Shopping. Made for the Hills.</title>
+  <meta name="description" content="Himora Mountain Delivery Partner Cockpit. Fast dispatch, staircase navigation & live hill order tracking. Powered by Jeevanix.">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Google Fonts: Outfit, Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  
-
-  <!-- PWA Headers -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#059669">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="PahadiCart">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" href="/icons/favicon.png">
+  <!-- Core App Stylesheet -->
+  <link rel="stylesheet" href="css/rider.css?v=4.5.0">
   <link rel="stylesheet" href="/shared/portalSwitcher.css">
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0D7C66">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="icon" type="image/png" href="/icons/favicon.png">
 </head>
 <body>
 
-  <!-- Mobile App Header -->
-  <header class="rider-top-bar">
-    <div class="rider-info">
-      <div class="rider-avatar">🛵</div>
-      <div>
-        <div class="rider-name">Rider Partner</div>
-        <div class="rider-bike">Duty Vehicle (Pilot HP-14) • Solan</div>
+  <!-- Main Himora Rider Mobile Shell -->
+  <div class="himora-rider-shell">
+
+    <!-- Top Header -->
+    <header class="rider-top-bar">
+      <!-- Row 1: Brand Logo & Actions -->
+      <div class="top-bar-row-1">
+        <div class="brand-lockup">
+          <svg class="brand-logo-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 38L18 16L27 28L34 18L44 38H6Z" fill="#0D7C66"/>
+            <path d="M18 16L24 26L31 16L44 38H32L24 26L18 38H6L18 16Z" fill="#10B981"/>
+            <path d="M12 38C18 32 28 32 36 38" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div class="brand-title">
+              Himora <span class="rider-tag-pill">Rider</span>
+            </div>
+            <div class="brand-subtitle">Mountain Delivery &bull; Solan Ridge</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <!-- Switch Portal Trigger Button -->
+          <button class="portal-switch-trigger-btn rider-theme" onclick="window.PahadiPortalSwitcher.open()" title="Switch Portal" style="margin-right: 2px;">
+            <span>🔄</span>
+            <span>Portals ▾</span>
+          </button>
+          
+          <!-- Theme Toggle -->
+          <button class="theme-toggle-btn" id="riderThemeToggleBtn" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Theme">
+            🌓
+          </button>
+        </div>
       </div>
-    <!-- Theme Switcher Toggle -->
-    <button class="theme-toggle-btn" id="riderThemeToggleBtn" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
-      <span class="theme-toggle-icon"></span>
-      <span class="theme-toggle-label">Light</span>
-    </button>
+
+      <!-- Row 2: Pilot Profile & Duty Switch -->
+      <div class="top-bar-row-2">
+        <div class="rider-pilot-profile">
+          <div class="pilot-avatar">🛵</div>
+          <div>
+            <div class="pilot-name">Rohit Kumar</div>
+            <div class="pilot-vehicle">Pilot HP-14 &bull; Solan Ridge</div>
+          </div>
+        </div>
+
+        <button class="duty-switch-btn" id="dutyToggleBtn" onclick="window.riderApp.toggleDuty()">
+          <span class="duty-pulse-dot"></span>
+          <span>Online (Duty On)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Telemetry 4-Card Deck -->
+    <section class="telemetry-deck">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Aaj Ki Kamai</span>
+          <span class="stat-icon">💰</span>
+        </div>
+        <div class="stat-value" id="todayEarnings">₹850</div>
+        <div class="stat-hint" id="deliveriesCompletedHint">7 Deliveries Completed</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">COD Floating Cash</span>
+          <span class="stat-icon">💵</span>
+        </div>
+        <div class="stat-value" id="cashBalance">₹1,240</div>
+        <div class="stat-hint" style="color:#B45309;">Safe (&lt; ₹12,500 Limit)</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Altitude Climbed</span>
+          <span class="stat-icon">⛰️</span>
+        </div>
+        <div class="stat-value" id="altitudeClimbed">+340 m</div>
+        <div class="stat-hint" style="color:#10B981;">Mountain Bonus: ₹15/climb</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Device & GPS</span>
+          <span class="stat-icon">🔋</span>
+        </div>
+        <div class="stat-value" style="color:#10B981;">92% &bull; 4G</div>
+        <div class="stat-hint">GPS Precision: 3 meters</div>
+      </div>
+    </section>
+
+    <!-- Emergency SOS Hill Breakdown Strip -->
+    <div class="sos-strip">
+      <button class="sos-btn" onclick="window.riderApp.triggerSOS()">
+        <span>🚨</span>
+        <span>EMERGENCY SOS: Mountain Breakdown / Landslide Alert</span>
+      </button>
     </div>
 
-    <button onclick="window.showBatchedRouteModal()" style="background:linear-gradient(135deg, #10b981, #047857); color:#fff; border:none; padding:7px 13px; border-radius:20px; font-size:12px; font-weight:800; cursor:pointer; margin-right:8px;">📦 Batched Route</button>
-    <!-- Duty Status Switch -->
-    <button class="portal-switch-trigger-btn rider-theme" onclick="window.PahadiPortalSwitcher.open()" title="Switch Portal" style="margin-right: 8px;">
-      <span>🔄</span>
-      <span>Portals ▾</span>
-    </button>
-    <button class="duty-toggle" id="dutyToggleBtn" onclick="window.riderApp.toggleDuty()">
-      <span>🟢 Online (On Duty)</span>
-    </button>
+    <!-- Main Screens Viewport -->
+    <main class="screens-viewport">
 
-    <!-- Direct Header Logout Button -->
-    <button class="header-logout-btn" onclick="window.pahadiLogout()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 7px 13px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; margin-left: 8px;" title="Logout from Rider Cockpit">
-      <span>🚪</span>
-      <span>Logout</span>
-    </button>
-  </header>
+      <!-- Screen 1: Radar / Incoming Orders -->
+      <section class="himora-screen active" id="screen-radar">
+        <div id="radarContainer">
+          <!-- Injected dynamically by riderApp.js -->
+        </div>
+      </section>
 
-  <!-- Telemetry & Floating Cash Bar -->
-  <section class="telemetry-deck">
-    <div class="stat-box">
-      <div class="stat-lbl">AAJ KI KAMAI (EARNINGS)</div>
-      <div class="stat-val" id="todayEarnings">₹0</div>
-      <div class="stat-hint">0 Deliveries Completed</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-lbl">COD FLOATING CASH</div>
-      <div class="stat-val" id="cashBalance">₹0</div>
-      <div class="stat-hint" style="color: #fbbf24;">Safe (&lt; ₹2,500 Limit)</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-lbl">ALTITUDE CLIMBED</div>
-      <div class="stat-val" id="altitudeClimbed">0 m</div>
-      <div class="stat-hint">₹0 Mountain Bonus</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-lbl">BATTERY & SIGNAL</div>
-      <div class="stat-val" style="color: #10b981;">88% • 4G</div>
-      <div class="stat-hint">GPS Precision: 3 meters</div>
-    </div>
-  </section>
+      <!-- Screen 2: Active Mission (Mirror of Screen 8 Blueprint) -->
+      <section class="himora-screen" id="screen-mission">
+        <div id="missionContainer">
+          <!-- Injected dynamically by riderApp.js -->
+        </div>
+      </section>
 
-  <!-- Emergency SOS Breakdown -->
-  <div class="sos-strip">
-    <button class="sos-btn" onclick="window.riderApp.triggerSOS()">
-      <span>🚨</span>
-      <span>EMERGENCY SOS: Hill Breakdown / Landslide Alert</span>
-    </button>
+      <!-- Screen 3: Mountain Hill Routes -->
+      <section class="himora-screen" id="screen-routes">
+        <div id="routesContainer">
+          <!-- Injected dynamically by riderApp.js -->
+        </div>
+      </section>
+
+      <!-- Screen 4: Earnings & COD Cash -->
+      <section class="himora-screen" id="screen-earnings">
+        <div id="earningsContainer">
+          <!-- Injected dynamically by riderApp.js -->
+        </div>
+      </section>
+
+      <!-- Screen 5: Rider Profile & Safety -->
+      <section class="himora-screen" id="screen-profile">
+        <div id="profileContainer">
+          <!-- Injected dynamically by riderApp.js -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Fixed Bottom Navigation Bar (Blueprint 5-Tab Standard) -->
+    <nav class="bottom-nav-bar" id="riderBottomNav">
+      <button class="nav-tab-btn active" id="tabNavRadar" onclick="window.riderApp.navigateTo('radar')">
+        <span class="nav-tab-icon">📡</span>
+        <span class="nav-tab-label">Radar</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavMission" onclick="window.riderApp.navigateTo('mission')">
+        <span class="nav-tab-icon">📦</span>
+        <span class="nav-tab-label">Mission</span>
+        <span class="nav-badge-dot" id="missionNavBadge" style="display:none;">1</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavRoutes" onclick="window.riderApp.navigateTo('routes')">
+        <span class="nav-tab-icon">🗺️</span>
+        <span class="nav-tab-label">Routes</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavEarnings" onclick="window.riderApp.navigateTo('earnings')">
+        <span class="nav-tab-icon">💰</span>
+        <span class="nav-tab-label">Earnings</span>
+      </button>
+
+      <button class="nav-tab-btn" id="tabNavProfile" onclick="window.riderApp.navigateTo('profile')">
+        <span class="nav-tab-icon">👤</span>
+        <span class="nav-tab-label">Profile</span>
+      </button>
+    </nav>
+
   </div>
 
-  <!-- Cockpit Main Area -->
-  <main class="cockpit-view">
-    <!-- Active Delivery Mission (If order picked) -->
-    <div id="activeMissionContainer" style="display: none;">
-      <!-- Injected by JS -->
-    </div>
-
-    <!-- Incoming Dispatch Radar (When an order is available) -->
-    <div id="incomingRadarContainer">
-      <!-- Injected by JS -->
-    </div>
-  </main>
-
-  <!-- Shared Scripts -->
+  <!-- Leaflet GPS Map Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Core Shared Services -->
   <script src="/shared/themeController.js"></script>
   <script src="/shared/hillAudio.js?v=3.3.0"></script>
-  <script src="/shared/pushNotifier.js"></script>
   <script src="/shared/sharedData.js?v=3.3.0"></script>
   <script src="/shared/eventBus.js?v=3.3.0"></script>
-  <!-- Rider Controller -->
-  <script src="/shared/liveServices.js?v=3.3.0"></script>
   <script src="/shared/batchingEngine.js?v=3.3.0"></script>
-  <script src="js/riderApp.js?v=3.3.0"></script>
-<script src="/shared/pwaInit.js"></script>
-  <script src="/shared/updateEngine.js"></script>
-  <script src="/shared/mockApi.js"></script>
-  <script src="/shared/profileSidebar.js"></script>
+
+  <!-- Himora Rider Controller -->
+  <script src="js/riderApp.js?v=4.5.0"></script>
   <script src="/shared/portalSwitcher.js"></script>
 </body>
 </html>

@@ -1,39 +1,69 @@
-/* PahadiCart Rider Mobile Cockpit CSS — High-Contrast Mountain-Pilot Dark Theme */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* =========================================================
+   Himora Rider Partner Cockpit - UI/UX Design System
+   Exact Visual Alignment with Himora 12-Screen Blueprint
+   Local Shopping. Made for the Hills. Powered by Jeevanix
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* High-Contrast Mountain Night Palette */
-  --rider-bg: #070D14;
-  --rider-card: #0F1A26;
-  --rider-card-elevated: #162536;
-  --rider-card-border: rgba(255, 255, 255, 0.09);
+  /* Brand Master Palette (Himora Emerald & Alpine Luxe) */
+  --himora-primary: #0D7C66;
+  --himora-primary-dark: #075E4D;
+  --himora-primary-light: #10B981;
+  --himora-emerald-soft: #ECFDF5;
+  --himora-emerald-border: #A7F3D0;
   
-  --rider-primary: #10B981;
-  --rider-primary-dark: #059669;
-  --rider-primary-glow: rgba(16, 185, 129, 0.25);
+  --himora-accent: #F59E0B;
+  --himora-accent-light: #FFFBEB;
+  --himora-accent-border: #FDE68A;
   
-  --rider-accent: #F59E0B;
-  --rider-accent-glow: rgba(245, 158, 11, 0.3);
+  --himora-sky: #0284C7;
+  --himora-sky-soft: #F0F9FF;
   
-  --rider-sky: #38BDF8;
-  --rider-text: #F8FAFC;
-  --rider-muted: #94A3B8;
-  --rider-dim: #64748B;
-  --sos-error: #EF4444;
-  --sos-bg: rgba(239, 68, 68, 0.12);
+  --himora-bg: #F8FAFC;
+  --himora-card: #FFFFFF;
+  --himora-border: #E2E8F0;
+  --himora-border-light: #F1F5F9;
+  
+  --himora-text: #0F172A;
+  --himora-text-muted: #64748B;
+  --himora-text-dim: #94A3B8;
 
+  --himora-danger: #EF4444;
+  --himora-danger-soft: #FEF2F2;
+  --himora-danger-border: #FECACA;
+  
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --radius-sm: 8px;
-  --radius-btn: 14px;
-  --radius-card: 18px;
-  --radius-modal: 22px;
+  --radius-md: 12px;
+  --radius-card: 16px;
+  --radius-lg: 20px;
   --radius-pill: 9999px;
-  --btn-height-rider: 54px; /* Glove-friendly touch target */
 
-  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --shadow-card: 0 4px 14px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-elevated: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Dark Theme Overrides */
+html[data-theme="dark"] {
+  --himora-bg: #070D14;
+  --himora-card: #0F1A26;
+  --himora-border: rgba(255, 255, 255, 0.1);
+  --himora-border-light: rgba(255, 255, 255, 0.06);
+  --himora-text: #F8FAFC;
+  --himora-text-muted: #94A3B8;
+  --himora-text-dim: #64748B;
+  --himora-emerald-soft: rgba(16, 185, 129, 0.12);
+  --himora-emerald-border: rgba(16, 185, 129, 0.25);
+  --himora-accent-light: rgba(245, 158, 11, 0.12);
+  --himora-accent-border: rgba(245, 158, 11, 0.25);
+  --himora-sky-soft: rgba(2, 132, 199, 0.12);
+  --himora-danger-soft: rgba(239, 68, 68, 0.15);
+  --himora-danger-border: rgba(239, 68, 68, 0.3);
 }
 
 *, *::before, *::after {
@@ -45,569 +75,813 @@
 
 body {
   font-family: var(--font-body);
-  background-color: var(--rider-bg);
-  color: var(--rider-text);
+  background-color: var(--himora-bg);
+  color: var(--himora-text);
   min-height: 100vh;
   line-height: 1.5;
-  padding-top: max(0px, env(safe-area-inset-top));
-  padding-bottom: max(80px, calc(70px + env(safe-area-inset-bottom)));
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-}
-
-button, input, select {
-  font-family: inherit;
-}
-
-/* 1. Portal Switch Bar */
-.portal-switch-bar {
-  background: #04080D;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 8px 18px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-}
-.portal-switch-links {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.portal-switch-links::-webkit-scrollbar { display: none; }
-.portal-link {
-  color: #64748B;
-  text-decoration: none;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-.portal-link:hover {
-  color: #F8FAFC;
-  background: rgba(255, 255, 255, 0.06);
-}
-.portal-link.active {
-  color: var(--rider-primary);
-  background: rgba(16, 185, 129, 0.12);
-  font-weight: 700;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-/* 2. Rider Top Cockpit Bar */
-.rider-top-bar {
-  background: linear-gradient(180deg, #0F1A26 0%, #0A121A 100%);
-  border-bottom: 1px solid var(--rider-card-border);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-  position: relative;
-}
-.rider-top-bar::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
-}
-
-.rider-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.rider-avatar {
-  font-size: 24px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1.5px solid var(--rider-primary);
-  border-radius: 50%;
-  width: 46px;
-  height: 46px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+  overflow-x: hidden;
 }
-.rider-name {
+
+/* App Shell - Mobile Phone Centered on Desktop */
+.himora-rider-shell {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background-color: var(--himora-bg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 76px; /* Space for bottom nav */
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+  .himora-rider-shell {
+    margin: 20px auto;
+    min-height: calc(100vh - 40px);
+    border-radius: 28px;
+    border: 1px solid var(--himora-border);
+    overflow: hidden;
+  }
+}
+
+/* 1. Rider Top Header */
+.rider-top-bar {
+  background: var(--himora-card);
+  border-bottom: 1px solid var(--himora-border);
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+}
+
+.top-bar-row-1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.brand-logo-svg {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.brand-title {
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 800;
-  color: #FFFFFF;
-  letter-spacing: -0.2px;
-}
-.rider-bike {
-  font-size: 11.5px;
-  color: var(--rider-muted);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Duty Switch */
-.duty-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1.5px solid var(--rider-primary);
-  color: #34D399;
-  font-weight: 800;
-  font-size: 13px;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.duty-toggle:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
-}
-.duty-toggle.offline {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: #EF4444;
-  color: #FCA5A5;
-  box-shadow: none;
-}
-
-.header-logout-btn {
-  background: rgba(239, 68, 68, 0.12) !important;
-  border: 1px solid rgba(239, 68, 68, 0.35) !important;
-  color: #FCA5A5 !important;
-  padding: 8px 14px !important;
-  border-radius: var(--radius-pill) !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  cursor: pointer;
+  color: var(--himora-primary);
+  line-height: 1.1;
   display: flex;
   align-items: center;
   gap: 5px;
-  transition: all 0.2s;
-}
-.header-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.25) !important;
-  color: #FFFFFF !important;
 }
 
-/* 3. Telemetry Deck */
-.telemetry-deck {
-  padding: 16px 20px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  max-width: 600px;
-  margin: 0 auto;
-}
-.stat-box {
-  background: var(--rider-card);
-  border: 1px solid var(--rider-card-border);
-  border-radius: var(--radius-card);
-  padding: 14px 16px;
-  box-shadow: var(--shadow-subtle);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s;
-}
-.stat-box::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #10B981, #34D399);
-}
-.stat-box:nth-child(2)::before {
-  background: linear-gradient(90deg, #F59E0B, #FBBF24);
-}
-.stat-box:nth-child(3)::before {
-  background: linear-gradient(90deg, #38BDF8, #60A5FA);
-}
-.stat-box:nth-child(4)::before {
-  background: linear-gradient(90deg, #10B981, #059669);
-}
-
-.stat-lbl {
-  font-size: 11px;
-  color: var(--rider-muted);
+.rider-tag-pill {
+  font-size: 10px;
+  background: var(--himora-emerald-soft);
+  color: var(--himora-primary);
+  border: 1px solid var(--himora-emerald-border);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.stat-val {
-  font-family: var(--font-heading);
-  font-size: 24px;
-  font-weight: 800;
-  color: #FFFFFF;
-  margin-top: 4px;
-  letter-spacing: -0.3px;
-}
-.stat-hint {
-  font-size: 11.5px;
-  color: var(--rider-primary);
-  margin-top: 4px;
-  font-weight: 600;
 }
 
-/* 4. Cockpit View: Incoming Radar & Active Missions */
-.cockpit-view {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 20px 24px;
+.brand-subtitle {
+  font-size: 10.5px;
+  color: var(--himora-text-muted);
+  font-weight: 500;
 }
 
-/* Incoming Mission Radar Ping Card */
-.incoming-radar-card {
-  background: var(--rider-card-elevated);
-  border: 2px solid var(--rider-accent);
-  border-radius: var(--radius-card);
-  padding: 22px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 35px rgba(245, 158, 11, 0.2);
-  animation: radarPulse 2s infinite ease-in-out;
-}
-@keyframes radarPulse {
-  0% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
-  50% { transform: scale(1.008); box-shadow: 0 0 40px rgba(245, 158, 11, 0.35); }
-  100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.radar-header {
+.theme-toggle-btn {
+  background: var(--himora-border-light);
+  border: 1px solid var(--himora-border);
+  color: var(--himora-text);
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Duty & Pilot Info Row */
+.top-bar-row-2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  gap: 8px;
+  background: var(--himora-bg);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
 }
-.radar-tag {
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  color: #000000;
-  font-size: 11px;
-  font-weight: 900;
-  padding: 5px 12px;
+
+.rider-pilot-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pilot-avatar {
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #0D7C66, #10B981);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(13, 124, 102, 0.25);
+}
+
+.pilot-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--himora-text);
+  line-height: 1.2;
+}
+
+.pilot-vehicle {
+  font-size: 11px;
+  color: var(--himora-text-muted);
+}
+
+.duty-switch-btn {
+  border: none;
+  background: var(--himora-emerald-soft);
+  color: var(--himora-primary);
+  border: 1px solid var(--himora-emerald-border);
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.duty-switch-btn.offline {
+  background: var(--himora-border-light);
+  color: var(--himora-text-muted);
+  border-color: var(--himora-border);
+}
+
+.duty-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+.duty-switch-btn.offline .duty-pulse-dot {
+  background: #94A3B8;
+  box-shadow: none;
+}
+
+/* 2. Telemetry 4-Card Deck */
+.telemetry-deck {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px 16px 6px;
+}
+
+.stat-card {
+  background: var(--himora-card);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  box-shadow: var(--shadow-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--himora-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-flex;
+  letter-spacing: 0.3px;
+}
+
+.stat-icon {
+  font-size: 14px;
+}
+
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--himora-text);
+  line-height: 1.2;
+}
+
+.stat-hint {
+  font-size: 10.5px;
+  color: var(--himora-text-dim);
+  margin-top: 2px;
+}
+
+/* 3. Emergency SOS Banner */
+.sos-strip {
+  padding: 6px 16px 10px;
+}
+
+.sos-btn {
+  width: 100%;
+  background: var(--himora-danger-soft);
+  border: 1px solid var(--himora-danger-border);
+  color: var(--himora-danger);
+  border-radius: var(--radius-md);
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all 0.2s;
+}
+
+.sos-btn:hover {
+  background: #FEE2E2;
+}
+
+/* 4. Screen Container & Switching */
+.screens-viewport {
+  flex: 1;
+  padding: 0 16px 20px;
+}
+
+.himora-screen {
+  display: none;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.himora-screen.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card General */
+.himora-card {
+  background: var(--himora-card);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 14px;
+}
+
+/* Screen Title Header */
+.screen-header-block {
+  margin-bottom: 14px;
+}
+
+.screen-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--himora-text);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.screen-subtitle {
+  font-size: 12px;
+  color: var(--himora-text-muted);
+  margin-top: 2px;
+}
+
+/* Radar Specific Styles */
+.radar-pulse-box {
+  background: var(--himora-card);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-card);
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-subtle);
+  margin-bottom: 14px;
+}
+
+.radar-circle-animation {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--himora-emerald-soft);
+  border: 2px solid var(--himora-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  position: relative;
+}
+
+.radar-circle-animation::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  animation: radarWave 2s infinite cubic-bezier(0, 0.2, 0.8, 1);
+}
+
+@keyframes radarWave {
+  0% { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Incoming Order Dispatch Card */
+.incoming-order-card {
+  background: var(--himora-card);
+  border: 2px solid var(--himora-primary-light);
+  border-radius: var(--radius-card);
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(13, 124, 102, 0.12);
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.order-badge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.dispatch-tag {
+  background: var(--himora-accent-light);
+  border: 1px solid var(--himora-accent-border);
+  color: #B45309;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  display: flex;
   align-items: center;
   gap: 4px;
 }
-.radar-payout {
+
+.payout-tag {
   font-family: var(--font-heading);
-  font-size: 26px;
+  font-size: 15px;
   font-weight: 900;
-  color: #34D399;
-  letter-spacing: -0.5px;
+  color: var(--himora-primary);
+  background: var(--himora-emerald-soft);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
 }
 
-.route-step {
-  display: flex;
-  gap: 12px;
+.order-id-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--himora-text);
   margin-bottom: 12px;
-  align-items: flex-start;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
-.route-icon {
-  font-size: 20px;
+
+.location-route-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--himora-bg);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.route-stop {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.route-stop-icon {
+  font-size: 16px;
   flex-shrink: 0;
   margin-top: 1px;
 }
-.route-text {
-  font-size: 13.5px;
-  line-height: 1.4;
-  color: #E2E8F0;
-}
-.route-text strong {
-  color: #FFFFFF;
+
+.route-stop-detail strong {
+  font-size: 11px;
+  color: var(--himora-text-muted);
+  display: block;
 }
 
-.hill-metric-tags {
-  display: flex;
-  gap: 8px;
-  margin: 16px 0;
-  flex-wrap: wrap;
-}
-.tag-pill {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--rider-card-border);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--rider-sky);
-}
-
-/* Big Action Buttons */
-.big-action-btn {
-  width: 100%;
-  height: var(--btn-height-rider);
-  border-radius: var(--radius-btn);
-  font-size: 16px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
-}
-.big-action-btn:active {
-  transform: scale(0.98);
-}
-.btn-accept-ride {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  color: #000000;
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
-}
-.btn-accept-ride:hover {
-  background: linear-gradient(135deg, #FBBF24 0%, #EA580C 100%);
-}
-.btn-complete-ride {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  color: #FFFFFF;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
-}
-.btn-complete-ride:hover {
-  background: linear-gradient(135deg, #34D399 0%, #047857 100%);
-}
-
-/* Active Mission View */
-.active-mission-card {
-  background: var(--rider-card-elevated);
-  border: 1.5px solid var(--rider-primary);
-  border-radius: var(--radius-card);
-  padding: 22px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-}
-.mission-map {
-  width: 100%;
-  height: 230px;
-  border-radius: 14px;
-  margin: 16px 0;
-  background: #070D14;
-  border: 1px solid var(--rider-card-border);
-}
-.staircase-alert-box {
-  background: rgba(245, 158, 11, 0.12);
-  border-left: 4px solid var(--rider-accent);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
+.route-stop-detail span {
   font-size: 13px;
-  color: #FEF08A;
-  line-height: 1.45;
+  font-weight: 700;
+  color: var(--himora-text);
 }
 
-/* OTP Entry */
-.otp-input-box {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--rider-card-border);
-  border-radius: var(--radius-card);
-  padding: 18px;
-  margin-bottom: 18px;
-  text-align: center;
-}
-.otp-input-field {
-  background: #000000;
-  border: 2px solid var(--rider-accent);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: 10px;
-  text-align: center;
-  width: 190px;
-  padding: 10px;
-  border-radius: 12px;
-  margin: 10px 0;
-  outline: none;
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
-}
-.otp-input-field:focus {
-  border-color: #34D399;
-  box-shadow: 0 0 20px rgba(52, 211, 153, 0.35);
+.trail-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
 }
 
-/* 5. Emergency SOS Trigger */
-.sos-strip {
-  max-width: 600px;
-  margin: 0 auto 16px;
-  padding: 0 20px;
+.trail-chip {
+  background: var(--himora-bg);
+  border: 1px solid var(--himora-border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--himora-text-muted);
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
 }
-.sos-btn {
+
+/* Primary Action Buttons */
+.btn-primary-emerald {
   width: 100%;
-  height: 50px;
-  background: var(--sos-bg);
-  border: 1.5px solid var(--sos-error);
-  color: #FCA5A5;
-  font-size: 13.5px;
+  background: linear-gradient(135deg, var(--himora-primary) 0%, var(--himora-primary-light) 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 13px 16px;
+  font-size: 14px;
   font-weight: 800;
-  padding: 10px;
-  border-radius: var(--radius-btn);
+  font-family: var(--font-heading);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 4px 14px rgba(13, 124, 102, 0.25);
   transition: all 0.2s;
-  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.2);
 }
-.sos-btn:hover {
-  background: rgba(239, 68, 68, 0.22);
-  color: #FFFFFF;
-}
-.sos-btn:active {
-  background: var(--sos-error);
-  color: #FFFFFF;
+
+.btn-primary-emerald:active {
   transform: scale(0.98);
 }
 
-/* Mobile Responsiveness Rules */
-@media (max-width: 480px) {
-  .telemetry-deck {
-    gap: 10px;
-    padding: 14px 16px;
-  }
-  .cockpit-view {
-    padding: 0 16px 20px;
-  }
-  .sos-strip {
-    padding: 0 16px;
-  }
-  .stat-val {
-    font-size: 21px;
-  }
-}
-@media (max-width: 360px) {
-  .telemetry-deck {
-    grid-template-columns: 1fr;
-  }
+/* =========================================================
+   Screen 8 Mirror: Interactive Tracking Stepper
+   ========================================================= */
+.stepper-card {
+  background: var(--himora-card);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-card);
+  padding: 18px 16px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 14px;
 }
 
+.stepper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--himora-border-light);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
 
-/* Rider Theme Toggle Button */
-.theme-toggle-btn {
-  display: inline-flex;
+.stepper-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--himora-text);
+}
+
+.tracking-stepper-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-left: 10px;
+}
+
+.tracking-stepper-list::before {
+  content: '';
+  position: absolute;
+  left: 21px;
+  top: 10px;
+  bottom: 20px;
+  width: 2px;
+  background: var(--himora-border);
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.step-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--himora-bg);
+  border: 2px solid var(--himora-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--himora-text-dim);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.step-item.completed .step-circle {
+  background: #10B981;
+  border-color: #10B981;
+  color: #FFFFFF;
+}
+
+.step-item.active .step-circle {
+  background: var(--himora-primary);
+  border-color: var(--himora-primary);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px var(--himora-emerald-soft);
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--himora-text);
+  line-height: 1.2;
+}
+
+.step-time {
+  font-size: 11px;
+  color: var(--himora-text-muted);
+  margin-top: 1px;
+}
+
+.step-note {
+  font-size: 11px;
+  color: var(--himora-text-dim);
+}
+
+/* Customer Direct Contact Card */
+.customer-contact-card {
+  background: var(--himora-card);
+  border: 1px solid var(--himora-border);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.cust-details-col {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cust-avatar-box {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.cust-name-text {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--himora-text);
+}
+
+.cust-phone-sub {
+  font-size: 11.5px;
+  color: var(--himora-text-muted);
+}
+
+.cust-quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--himora-bg);
+  border: 1px solid var(--himora-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: var(--himora-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-circle-btn.call-btn {
+  color: var(--himora-primary);
+  background: var(--himora-emerald-soft);
+  border-color: var(--himora-emerald-border);
+}
+
+.action-circle-btn.wa-btn {
+  color: #10B981;
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+
+/* Staircase & Hill Landmark Alert Box */
+.staircase-box {
+  background: var(--himora-accent-light);
+  border: 1px solid var(--himora-accent-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.staircase-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #B45309;
+  display: flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 13px;
-  border-radius: 20px;
-  font-family: inherit;
+}
+
+.staircase-desc {
   font-size: 12px;
-  font-weight: 700;
+  color: #78350F;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Leaflet Map Box */
+.mission-map-container {
+  height: 180px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--himora-border);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+/* OTP Handover Box */
+.otp-handover-card {
+  background: var(--himora-bg);
+  border: 1.5px dashed var(--himora-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.otp-input-field {
+  width: 160px;
+  margin: 8px auto 0;
+  text-align: center;
+  letter-spacing: 6px;
+  font-size: 20px;
+  font-weight: 900;
+  font-family: var(--font-heading);
+  padding: 8px;
+  background: var(--himora-card);
+  border: 2px solid var(--himora-primary-light);
+  border-radius: var(--radius-sm);
+  color: var(--himora-text);
+}
+
+/* 5. Fixed Bottom Navigation Bar (Blueprint Mirror) */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 64px;
+  background: var(--himora-card);
+  border-top: 1px solid var(--himora-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px;
+  z-index: 90;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.nav-tab-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #FFFFFF;
-  margin-right: 8px;
-}
-.theme-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-1px);
-}
-.theme-toggle-btn:active {
-  transform: scale(0.96);
+  position: relative;
+  transition: all 0.2s;
+  color: var(--himora-text-muted);
+  flex: 1;
 }
 
-/* ======================================================== */
-/* RIDER LIGHT THEME (Sunlight-Readable Day Mode)           */
-/* ======================================================== */
-html[data-theme="light"],
-body[data-theme="light"] {
-  --rider-bg: #F1F5F9;
-  --rider-card: #FFFFFF;
-  --rider-card-elevated: #F8FAFC;
-  --rider-card-border: #E2E8F0;
-  --rider-text: #0F172A;
-  --rider-muted: #475569;
-  --rider-dim: #64748B;
-  background-color: #F1F5F9 !important;
-  color: #0F172A !important;
-  color-scheme: light;
+.nav-tab-btn.active {
+  color: var(--himora-primary);
 }
 
-html[data-theme="light"] .portal-switch-bar {
-  background: #E2E8F0 !important;
-  border-bottom: 1px solid #CBD5E1 !important;
-}
-html[data-theme="light"] .portal-link {
-  color: #475569 !important;
-}
-html[data-theme="light"] .portal-link:hover,
-html[data-theme="light"] .portal-link.active {
-  color: #0F172A !important;
-  background: rgba(0, 0, 0, 0.06) !important;
+.nav-tab-icon {
+  font-size: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-html[data-theme="light"] .rider-top-bar {
-  background: #FFFFFF !important;
-  border-bottom: 1px solid #E2E8F0 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
-}
-html[data-theme="light"] .rider-name {
-  color: #0F172A !important;
-}
-html[data-theme="light"] .rider-bike {
-  color: #64748B !important;
-}
-html[data-theme="light"] .theme-toggle-btn {
-  background: #F1F5F9 !important;
-  border-color: #CBD5E1 !important;
-  color: #0F172A !important;
+.nav-tab-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
 }
 
-html[data-theme="light"] .stat-box {
-  background: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
-}
-html[data-theme="light"] .stat-lbl {
-  color: #64748B !important;
-}
-html[data-theme="light"] .stat-val {
-  color: #0F172A !important;
+.nav-tab-btn.active .nav-tab-label {
+  font-weight: 800;
+  color: var(--himora-primary);
 }
 
-html[data-theme="light"] .delivery-card {
-  background: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+.nav-badge-dot {
+  position: absolute;
+  top: 4px;
+  right: 20px;
+  background: #EF4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
 }
 
-html[data-theme="light"] .customer-block {
-  background: #F8FAFC !important;
-  border-color: #E2E8F0 !important;
-}
-html[data-theme="light"] .cust-name {
-  color: #0F172A !important;
-}
-html[data-theme="light"] .cust-sub {
-  color: #475569 !important;
+/* History / Earnings list item */
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--himora-border-light);
 }
 
-html[data-theme="light"] .modal-content {
-  background: #FFFFFF !important;
-  color: #0F172A !important;
-  border-color: #E2E8F0 !important;
-}
-html[data-theme="light"] .otp-input-field {
-  background: #F8FAFC !important;
-  color: #0F172A !important;
-  border-color: #F59E0B !important;
+.history-item:last-child {
+  border-bottom: none;
 }
