@@ -476,7 +476,81 @@
     // ========================================================
     // SCREEN 1: HOME SCREEN RENDERING
     // ========================================================
+    
+    applyCmsHomepageConfig() {
+      try {
+        const stored = localStorage.getItem('pahadicart_homepage_cms');
+        if (!stored) return;
+        const cms = JSON.parse(stored);
+        if (!cms) return;
+
+        // 1. Hero Banner Customization
+        const bannerWrap = document.getElementById('homeHeroBannerWrap') || document.querySelector('.hero-banner-wrap');
+        const bannerCard = document.getElementById('homeHeroBannerCard') || document.querySelector('.hero-banner-card');
+        const headlineEl = document.getElementById('homeHeroHeadline') || document.querySelector('.hero-headline');
+        const trustChipsEl = document.getElementById('homeHeroTrustChips') || document.querySelector('.hero-trust-chips');
+
+        if (cms.heroBanner && bannerWrap && bannerCard) {
+          if (cms.heroBanner.active === false) {
+            bannerWrap.style.display = 'none';
+          } else {
+            bannerWrap.style.display = 'block';
+
+            if (cms.heroBanner.title && headlineEl) {
+              headlineEl.innerText = cms.heroBanner.title;
+            }
+
+            if (cms.heroBanner.badge && trustChipsEl) {
+              const badgeTag = '<span class="trust-chip cms-custom-badge" style="background: rgba(254, 240, 138, 0.22); border-color: #fef08a; color: #fef08a; font-weight: 800;">' + cms.heroBanner.badge + '</span>';
+              const existingCustom = trustChipsEl.querySelector('.cms-custom-badge');
+              if (existingCustom) {
+                existingCustom.outerHTML = badgeTag;
+              } else {
+                trustChipsEl.insertAdjacentHTML('afterbegin', badgeTag);
+              }
+            }
+
+            // Custom Uploaded Picture or Preset Mountain Photo
+            if (cms.heroBanner.imageUrl) {
+              bannerCard.style.backgroundImage = 'linear-gradient(135deg, rgba(9, 55, 46, 0.82) 0%, rgba(13, 124, 102, 0.72) 100%), url("' + cms.heroBanner.imageUrl + '")';
+              bannerCard.style.backgroundSize = 'cover';
+              bannerCard.style.backgroundPosition = 'center';
+              bannerCard.style.backgroundRepeat = 'no-repeat';
+            } else {
+              bannerCard.style.backgroundImage = '';
+            }
+          }
+        }
+
+        // 2. Announcement Ticker Bar
+        const ticker = document.getElementById('homeAnnouncementTicker');
+        const tickerMsg = document.getElementById('homeTickerMsg');
+        const tickerIcon = document.getElementById('homeTickerIcon');
+        if (cms.announcement && ticker && tickerMsg) {
+          if (cms.announcement.active && cms.announcement.text) {
+            ticker.style.display = 'flex';
+            tickerMsg.innerText = cms.announcement.text;
+            const typeThemes = {
+              info: { bg: 'rgba(56, 189, 248, 0.15)', border: '#38bdf8', color: '#38bdf8', icon: '📢' },
+              alert: { bg: 'rgba(239, 68, 68, 0.15)', border: '#ef4444', color: '#fca5a5', icon: '⚠️' },
+              deal: { bg: 'rgba(245, 158, 11, 0.15)', border: '#f59e0b', color: '#fbbf24', icon: '🎉' }
+            };
+            const theme = typeThemes[cms.announcement.type] || typeThemes.info;
+            ticker.style.background = theme.bg;
+            ticker.style.border = '1px solid ' + theme.border;
+            ticker.style.color = theme.color;
+            if (tickerIcon) tickerIcon.innerText = theme.icon;
+          } else {
+            ticker.style.display = 'none';
+          }
+        }
+      } catch (e) {
+        console.warn('Error applying CMS homepage config:', e);
+      }
+    }
+
     renderHomeScreen() {
+      this.applyCmsHomepageConfig();
       // 8 Category Tiles
       const catGrid = document.getElementById('homeCategoryGrid');
       if (catGrid) {

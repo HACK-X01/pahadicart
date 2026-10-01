@@ -284,14 +284,20 @@
           </div>
         </div>
 
-        <!-- Hero Banner Card -->
-        <div class="hero-banner-wrap">
-          <div class="hero-banner-card">
-            <div class="hero-headline">Apna Bazaar. Apne Log. Ghar Tak.</div>
-            <div class="hero-trust-chips">
-              <span class="trust-chip">🏪 Local Shops</span>
-              <span class="trust-chip">⚡ Fast Delivery (Within 2 Hours)</span>
-              <span class="trust-chip">🛡️ Verified & Safe</span>
+        <!-- Live Ticker Announcement Bar (Controlled via Admin CMS) -->
+        <div id="homeAnnouncementTicker" style="display:none; margin: 0 20px 10px; padding: 10px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; align-items: center; gap: 8px; box-sizing: border-box; backdrop-filter: blur(8px);">
+          <span id="homeTickerIcon" style="font-size: 16px;">📢</span>
+          <span id="homeTickerMsg" style="flex:1; line-height: 1.35;"></span>
+        </div>
+
+        <!-- Hero Banner Card (Dynamic via Admin CMS) -->
+        <div class="hero-banner-wrap" id="homeHeroBannerWrap">
+          <div class="hero-banner-card" id="homeHeroBannerCard">
+            <div class="hero-headline" id="homeHeroHeadline">Apna Bazaar. Apne Log. Ghar Tak.</div>
+            <div class="hero-trust-chips" id="homeHeroTrustChips">
+              <span class="trust-chip" id="homeHeroBadge1">🏪 Local Shops</span>
+              <span class="trust-chip" id="homeHeroBadge2">⚡ Fast Delivery (Within 2 Hours)</span>
+              <span class="trust-chip" id="homeHeroBadge3">🛡️ Verified & Safe</span>
             </div>
             <button class="hero-cta-btn" onclick="window.customerApp.navigateTo('offers')">
               <span>Shop Now</span>
@@ -1145,7 +1151,7 @@
   <script src="/shared/sharedData.js"></script>
   <script src="/shared/eventBus.js"></script>
   <!-- Himora App Logic -->
-  <script src="js/customerApp.js?v=4.3.6"></script>
+  <script src="js/customerApp.js?v=4.3.7"></script>
   <script src="/shared/portalSwitcher.js"></script>
 </body>
 </html>
