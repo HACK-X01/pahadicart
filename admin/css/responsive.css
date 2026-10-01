@@ -345,3 +345,91 @@ body {
 .mobile-bottom-nav {
   padding-bottom: max(6px, env(safe-area-inset-bottom));
 }
+
+
+/* ========================================================
+   SUPER ADMIN MOBILE RESPONSIVE: ZERO COLLISION & ZERO HORIZONTAL SCROLL
+   ======================================================== */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  touch-action: pan-y;
+}
+
+@media screen and (max-width: 768px) {
+  .app-container, .main-wrapper, .content-body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure content is never covered by fixed mobile bottom navigation */
+  .main-wrapper, .content-body {
+    padding-bottom: max(100px, calc(85px + env(safe-area-inset-bottom, 20px))) !important;
+  }
+
+  /* Hide Desktop-only Header items on Mobile to prevent overlapping collisions */
+  #adminBroadcastUpdateBtn,
+  .btn-broadcast-update-pill,
+  .desktop-only-btn,
+  #headerSimBtn,
+  .rbac-role-badge,
+  .header-right .logout-btn {
+    display: none !important;
+  }
+
+  .top-header {
+    height: 52px !important;
+    padding: 0 10px !important;
+    gap: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+
+  .header-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 130px) !important;
+  }
+
+  .town-selector-wrapper {
+    max-width: 130px !important;
+    padding: 4px 8px !important;
+  }
+
+  .header-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    justify-content: flex-end !important;
+  }
+
+  /* All tables isolated in horizontally scrollable container without stretching the page */
+  .table-responsive,
+  .orders-table-wrapper,
+  .inventory-table-wrapper,
+  .panel-card table,
+  .content-body table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+
+  /* All cards and panels strictly fit mobile width */
+  .metric-card, .dashboard-card, .panel-card, .orders-feed, .map-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}

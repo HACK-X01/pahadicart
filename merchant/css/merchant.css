@@ -706,3 +706,85 @@ html[data-theme="dark"] .empty-state {
 html[data-theme="dark"] .board-title {
   color: #F8FAFC !important;
 }
+
+
+/* ========================================================
+   MERCHANT MOBILE RESPONSIVE: ZERO HORIZONTAL SCROLL & VERTICAL STACK
+   ======================================================== */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  touch-action: pan-y;
+}
+
+@media (max-width: 768px) {
+  .merchant-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 12px 14px !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .header-controls {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+  }
+
+  .header-controls button {
+    flex: 1 1 calc(50% - 8px) !important;
+    font-size: 12px !important;
+    padding: 8px 10px !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .header-controls .online-toggle-btn {
+    flex: 1 1 100% !important;
+    justify-content: center !important;
+    padding: 10px 14px !important;
+    font-size: 13.5px !important;
+  }
+
+  .kanban-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .kanban-col {
+    min-height: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .terminal-main-view {
+    padding: 12px 14px max(90px, calc(75px + env(safe-area-inset-bottom, 20px))) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}

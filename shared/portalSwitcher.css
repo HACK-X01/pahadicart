@@ -249,3 +249,20 @@
   background: rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
 }
+
+
+/* Mobile Sheet Viewport Fit */
+@media (max-width: 639px) {
+  .portal-modal-sheet {
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    padding: 20px 16px max(24px, calc(16px + env(safe-area-inset-bottom, 16px))) !important;
+  }
+  .portal-role-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
