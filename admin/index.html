@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="css/tokens.css?v=3.2.0">
   <link rel="stylesheet" href="css/layout.css?v=3.2.0">
   <link rel="stylesheet" href="css/components.css?v=3.2.0">
-  <link rel="stylesheet" href="css/responsive.css?v=3.2.0">
+  <link rel="stylesheet" href="css/responsive.css?v=3.2.1">
   <link rel="manifest" href="../manifest.json">
   <!-- PWA Headers -->
   <link rel="manifest" href="/manifest.json">
@@ -59,6 +59,10 @@
       <div class="nav-item sim-nav-drawer-btn" onclick="window.openSimModal()" style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #34d399; font-weight: 700; margin-bottom: 8px;">
         <span style="font-size: 15px;">⚡</span>
         <span>1-Click Order Simulator</span>
+      </div>
+      <div class="nav-item mobile-broadcast-update-btn" onclick="window.PahadiUpdateManager && window.PahadiUpdateManager.broadcastUpdate()" style="background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.3); color: #38bdf8; font-weight: 700; margin-bottom: 8px; cursor: pointer;">
+        <span style="font-size: 15px;">🚀</span>
+        <span>Push App Update to Fleet</span>
       </div>
 
       <!-- 1. Operations & Dispatch -->
@@ -158,11 +162,23 @@
       </div>
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="admin-avatar">SA</div>
-      <div class="admin-info">
-        <h4>Super Admin</h4>
-        <p>Himachal Operations</p>
+    <div class="sidebar-footer" style="flex-direction: column; align-items: stretch; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="admin-avatar">SA</div>
+        <div class="admin-info">
+          <h4>Super Admin</h4>
+          <p>Himachal Operations</p>
+        </div>
+      </div>
+      <div class="sidebar-rbac-wrap" style="width: 100%;">
+        <div style="font-size: 10.5px; color: var(--slate-400); font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">Role Profile</div>
+        <select class="role-switcher-dropdown" style="width: 100%; background: #0f172a; color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 8px; font-size: 12px;" onchange="window.RbacService && window.RbacService.switchRole(this.value)">
+          <option value="SUPER_ADMIN" selected>👑 SUPER_ADMIN</option>
+          <option value="OPERATIONS_ADMIN">🚀 OPERATIONS_ADMIN</option>
+          <option value="FINANCE_ADMIN">💳 FINANCE_ADMIN</option>
+          <option value="SUPPORT_ADMIN">🛡️ SUPPORT_ADMIN</option>
+          <option value="TOWN_COORDINATOR">🏔️ TOWN_COORDINATOR</option>
+        </select>
       </div>
     </div>
   </aside>
@@ -1642,7 +1658,7 @@
 <script src="js/auditLogs.js?v=3.0.0"></script>
 <script src="../shared/themeController.js"></script>
 <script src="js/systemHealth.js?v=3.0.0"></script>
-<script src="js/settings.js?v=4.0.0"></script>
+<script src="js/settings.js?v=4.0.2"></script>
 <script src="js/demoMode.js?v=3.0.0"></script>
 
 <script src="js/map.js?v=3.2.0"></script>

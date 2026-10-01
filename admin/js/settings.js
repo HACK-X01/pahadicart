@@ -65,7 +65,7 @@ window.SettingsService = (function() {
 
     container.innerHTML = `
       <!-- Sub-Tab Navigation Header -->
-      <div style="display:flex; gap:12px; margin-bottom:24px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
+      <div class="settings-subtabs-bar" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
         <button class="btn ${activeSubTab === 'business_rules' ? 'btn-primary' : 'btn-secondary'}" onclick="window.SettingsService.switchSubTab('business_rules')" style="font-weight:700; font-size:13px; display:flex; align-items:center; gap:8px;">
           <span>⚙️ Business Rules & Operating Controls</span>
           <span style="background:rgba(255,255,255,0.2); font-size:10px; padding:2px 6px; border-radius:10px;">CORE</span>
@@ -82,7 +82,7 @@ window.SettingsService = (function() {
   function renderBusinessRulesSection(rules) {
     return `
       <form id="businessRulesForm" onsubmit="window.SettingsService.handleSaveRules(event)">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="settings-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap:16px;">
 
           <!-- Card 1: Commission & Financial Rules -->
           <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(16,185,129,0.3); border-radius:14px; padding:20px;">
@@ -260,7 +260,7 @@ window.SettingsService = (function() {
 
   function renderPrdAlgorithmsSection() {
     return `
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+      <div class="settings-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap:16px;">
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(245,158,11,0.3); border-radius:14px; padding:20px;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
             <div>
