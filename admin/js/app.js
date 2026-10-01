@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mobileMenuBtn = document.getElementById("mobileMenuBtn");
   const sidebar = document.getElementById("sidebar");
   const backdrop = document.getElementById("sidebarBackdrop");
+  const sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
 
   if (mobileMenuBtn && sidebar && backdrop) {
     mobileMenuBtn.addEventListener("click", () => {
@@ -71,6 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebar.classList.remove("mobile-open");
       backdrop.classList.remove("active");
     });
+
+    if (sidebarCloseBtn) {
+      sidebarCloseBtn.addEventListener("click", () => {
+        sidebar.classList.remove("mobile-open");
+        backdrop.classList.remove("active");
+      });
+    }
   }
 
   setInterval(() => {

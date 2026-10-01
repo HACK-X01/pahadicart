@@ -43,7 +43,14 @@ function getAdminLiveOrders(currentTown = null) {
       riderName: rName,
       assignedRider: rName,
       riderVehicle: o.riderVehicle || 'Hero Splendor Hill Edition',
-      items: o.items || [{ name: 'Mountain Item', qty: 1 }],
+      items: (o.items && Array.isArray(o.items) && o.items.length > 0)
+        ? o.items.map(it => ({
+            ...it,
+            name: it.name || it.title || it.productName || 'Mountain Item',
+            qty: Number(it.qty != null ? it.qty : (it.quantity != null ? it.quantity : (it.count != null ? it.count : 1))) || 1,
+            price: Number(it.price || 100)
+          }))
+        : [{ name: 'Mountain Item', qty: 1, price: 100 }],
       amount: amt,
       total: amt,
       grandTotal: amt,
@@ -182,12 +189,18 @@ function renderOrdersFeed(filterStatus = "all") {
           '</span>' +
         '</div>' +
         '<div class="order-meta">' +
-          '<div class="order-merchant"><span>🏪 ' + order.merchantName + '</span></div>' +
-          '<div class="order-hill-route"><span>🏔️ ' + order.eta + '</span></div>' +
-        '<div style="font-size:11.5px; color:#38bdf8; margin-top:2px;">👤 <b>Customer:</b> ' + (order.customerName || 'Customer') + ' &bull; ' + (order.customerPhone || 'N/A') + '</div>' +
+          '<div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:6px; flex-wrap:wrap;">' +
+            '<div class="order-merchant"><span>🏪 ' + order.merchantName + '</span></div>' +
+            '<div class="order-hill-route"><span>🏔️ ' + order.eta + '</span></div>' +
+          '</div>' +
+          '<div style="font-size:11.5px; color:#38bdf8; margin-top:2px; word-break:break-word;">👤 <b>Customer:</b> ' + (order.customerName || 'Customer') + ' &bull; ' + (order.customerPhone || 'N/A') + '</div>' +
         '</div>' +
-        '<div style="font-size:12px; color:var(--slate-300);">' +
-          order.items.map(i => i.qty + 'x ' + i.name).join(', ') +
+        '<div style="font-size:12px; color:var(--slate-300); line-height:1.5;">' +
+          order.items.map(i => {
+            const qty = (i && (i.qty != null ? i.qty : (i.quantity != null ? i.quantity : (i.count != null ? i.count : 1)))) || 1;
+            const name = (i && (i.name || i.title || i.productName || 'Mountain Item')) || 'Mountain Item';
+            return qty + 'x ' + name;
+          }).join(', ') +
         '</div>' +
         '<div style="font-size:11px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:6px 10px; border-radius:6px; color:var(--slate-400);">' +
           '📍 <b>Drop:</b> ' + order.deliveryAddress + ' <br>' +
@@ -601,7 +614,7 @@ window.openOrderCommandDrawer = function(orderId) {
       '<table style="width:100%; font-size:12px; border-collapse:collapse;">' +
         order.items.map(i => 
           '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">' +
-            '<td style="padding:6px 0; color:#e2e8f0;">' + i.qty + 'x ' + i.name + '</td>' +
+            '<td style="padding:6px 0; color:#e2e8f0;">' + ((i && (i.qty != null ? i.qty : (i.quantity != null ? i.quantity : 1))) || 1) + 'x ' + (i.name || 'Item') + '</td>' +
             '<td style="text-align:right; color:#fff; font-family:var(--font-mono);">₹' + (i.price * i.qty) + '</td>' +
           '</tr>'
         ).join('') +
