@@ -1,5 +1,5 @@
 // PahadiCart Himalayan Offline Cache & Web Push Service Worker v5.2
-const CACHE_NAME = 'pahadicart-pwa-v25-live';
+const CACHE_NAME = 'jeevanix-mvp-v26-live';
 
 const STATIC_SHELL = [
   '/',
@@ -14,6 +14,10 @@ const STATIC_SHELL = [
   '/customer/index.html',
   '/customer/css/customer.css',
   '/customer/js/customerApp.js',
+  '/customer/js/customerAuth.js',
+  '/admin/js/founderAuth.js',
+  '/admin/js/paymentsDesk.js',
+  '/admin/js/dbExplorer.js',
   '/rider/',
   '/rider/index.html',
   '/rider/css/rider.css',

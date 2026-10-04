@@ -594,29 +594,61 @@
             <!-- Payment Method Card -->
             <div class="checkout-section-card">
               <div class="checkout-card-title" style="margin-bottom: 12px;">
-                <span>💳 Payment Method</span>
+                <span>💳 Payment Method (₹0 Model)</span>
               </div>
-              <label class="pay-option-row">
-                <input type="radio" name="checkoutPayMethod" value="UPI" checked class="pay-radio" onchange="window.customerApp.setPayMode('UPI')">
+              <label class="pay-option-row" style="margin-bottom: 8px;">
+                <input type="radio" name="checkoutPayMethod" value="COD" checked class="pay-radio" onchange="window.customerApp.setPayMode('COD')">
                 <div>
-                  <div>UPI (Google Pay, PhonePe, Paytm, BHIM)</div>
-                  <div style="font-size: 11px; color: #059669; font-weight: 600;">Fast 1-click hill confirmation</div>
+                  <div style="font-weight: 700;">💵 Cash on Delivery (COD)</div>
+                  <div style="font-size: 11px; color: #64748B;">Pay cash directly to rider upon doorstep delivery</div>
                 </div>
               </label>
               <label class="pay-option-row">
-                <input type="radio" name="checkoutPayMethod" value="COD" class="pay-radio" onchange="window.customerApp.setPayMode('COD')">
+                <input type="radio" name="checkoutPayMethod" value="UPI_QR" class="pay-radio" onchange="window.customerApp.setPayMode('UPI_QR')">
                 <div>
-                  <div>Cash on Delivery</div>
-                  <div style="font-size: 11px; color: #64748B;">Pay cash to rider upon delivery</div>
+                  <div style="font-weight: 700;">📱 UPI QR Payment (GPay, PhonePe, Paytm)</div>
+                  <div style="font-size: 11px; color: #059669; font-weight: 600;">Scan QR, transfer directly to Jeevanix, enter UTR</div>
                 </div>
               </label>
-              <label class="pay-option-row">
-                <input type="radio" name="checkoutPayMethod" value="WALLET" class="pay-radio" onchange="window.customerApp.setPayMode('WALLET')">
-                <div>
-                  <div>Paytm / Himora Wallet</div>
-                  <div style="font-size: 11px; color: #64748B;">Balance: ₹250 available</div>
+
+              <!-- Dynamic UPI QR Payment Container -->
+              <div id="checkoutUpiQrContainer" style="display: none; margin-top: 14px; background: rgba(16, 185, 129, 0.05); border: 1.5px dashed #10b981; border-radius: 14px; padding: 16px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 12px; font-weight: 800; color: #059669; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Jeevanix Local Direct UPI QR</div>
+                  <div style="margin: 10px auto; width: 160px; height: 160px; background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;">
+                    <img id="checkoutUpiQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi%3A%2F%2Fpay%3Fpa%3Djeevanix%40upi%26pn%3DJeevanix%2520Local%26cu%3DINR" alt="Jeevanix Local UPI QR" style="width: 144px; height: 144px;">
+                  </div>
+                  <div style="font-size: 13px; font-weight: 700; color: #1e293b;">UPI ID: <span style="color: #059669; font-family: monospace;">jeevanix@upi</span>
+                    <button type="button" onclick="navigator.clipboard.writeText('jeevanix@upi'); alert('UPI ID Copied: jeevanix@upi');" style="background: rgba(16,185,129,0.15); border: none; padding: 3px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; color: #059669; font-weight: 700; margin-left: 4px;">Copy</button>
+                  </div>
+                  <div style="font-size: 11.5px; color: #64748B; margin-top: 4px;">Amount Payable: <strong style="color: #0f172a;" id="checkoutUpiAmountDisplay">₹0</strong></div>
                 </div>
-              </label>
+
+                <!-- UTR Reference Input Box -->
+                <div style="margin-top: 14px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                    12-Digit UTR / Transaction Reference ID <span style="color: #ef4444;">*</span>
+                  </label>
+                  <input type="text" id="checkoutUtrInput" placeholder="e.g. 428190382910" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-family: monospace; font-weight: 700; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase()">
+                  <div style="font-size: 10.5px; color: #64748B; margin-top: 4px;">GPay/PhonePe/Paytm transaction history se 12-digit UTR copy karein.</div>
+                </div>
+
+                <!-- Screenshot Upload -->
+                <div style="margin-top: 10px;">
+                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                    Payment Screenshot (Proof)
+                  </label>
+                  <input type="file" id="checkoutScreenshotInput" accept="image/*" style="font-size: 12px; width: 100%;" onchange="window.customerApp.handleScreenshotUpload(event)">
+                  <div id="checkoutScreenshotPreviewWrap" style="display: none; margin-top: 6px;">
+                    <img id="checkoutScreenshotPreview" style="max-height: 80px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                  </div>
+                </div>
+
+                <!-- Crucial Security Notice -->
+                <div style="margin-top: 12px; background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 4px; font-size: 11px; color: #b45309; line-height: 1.4;">
+                  🛡️ <strong>Payment Security:</strong> Order placement par status <em>PAYMENT_SUBMITTED</em> rahega. Founder bank reference verify karne ke baad hi order ko <em>PAID</em> confirm karega.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1098,5 +1130,67 @@
   <script src="/shared/eventBus.js"></script>
   <!-- Himora App Logic -->
   <script src="js/customerApp.js?v=4.4.1"></script>
+
+  <!-- Customer Authentication Screen (Zero-OTP ₹0 Registration & Login) -->
+  <div class="modal-backdrop" id="customerAuthModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 99999; align-items: center; justify-content: center; padding: 16px;">
+    <div class="modal-dialog" style="background: #ffffff; border-radius: 20px; max-width: 440px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+        <div style="font-weight: 800; font-size: 18px; color: #0f172a;">Jeevanix Local Account</div>
+        <button onclick="document.getElementById('customerAuthModal').style.display='none'" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #94a3b8;">&times;</button>
+      </div>
+
+      <div style="display: flex; background: #f1f5f9; border-radius: 10px; padding: 4px; margin-bottom: 18px;">
+        <button id="authTabLoginBtn" onclick="window.customerApp.switchAuthTab('login')" style="flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; background: #fff; color: #059669; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">Login</button>
+        <button id="authTabRegisterBtn" onclick="window.customerApp.switchAuthTab('register')" style="flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; background: transparent; color: #64748b; cursor: pointer;">New Registration</button>
+      </div>
+
+      <div id="authLoginForm">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Contact Number (10 Digits)</label>
+          <input type="tel" id="authLoginPhone" placeholder="e.g. 9816012890" maxlength="10" style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Password</label>
+          <input type="password" id="authLoginPassword" placeholder="••••••••" style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+        </div>
+        <button onclick="window.customerApp.handleLoginSubmit()" style="width: 100%; padding: 12px; background: #059669; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer;">Login to Jeevanix</button>
+        <div style="text-align: center; margin-top: 12px; font-size: 12px; color: #64748b;">
+          Naya account banana hai? <a href="javascript:void(0)" onclick="window.customerApp.switchAuthTab('register')" style="color: #059669; font-weight: 700; text-decoration: none;">Register karein (Zero-OTP)</a>
+        </div>
+      </div>
+
+      <div id="authRegisterForm" style="display: none;">
+        <div style="margin-bottom: 10px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Full Name *</label>
+          <input type="text" id="authRegName" placeholder="e.g. Rohit Thakur" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Contact Number (10 Digits) *</label>
+          <input type="tel" id="authRegPhone" placeholder="e.g. 9816112345" maxlength="10" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; box-sizing: border-box;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+          <div>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Password *</label>
+            <input type="password" id="authRegPassword" placeholder="••••••••" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Confirm Password *</label>
+            <input type="password" id="authRegPasswordConfirm" placeholder="••••••••" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; box-sizing: border-box;">
+          </div>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Complete Delivery Address *</label>
+          <textarea id="authRegAddress" rows="2" placeholder="House/Flat No, Landmark, Corridor" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; box-sizing: border-box;"></textarea>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Hill Staircase Note (Optional)</label>
+          <input type="text" id="authRegStairs" placeholder="e.g. 20 steps down, green gate on left" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; box-sizing: border-box;">
+        </div>
+        <button onclick="window.customerApp.handleRegisterSubmit()" style="width: 100%; padding: 12px; background: #059669; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer;">Create Account (Zero-OTP)</button>
+      </div>
+    </div>
+  </div>
+
+<script src="js/customerAuth.js?v=4.6.0"></script>
 </body>
 </html>

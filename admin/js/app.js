@@ -178,6 +178,10 @@ function switchTab(tabId) {
     if (window.SystemHealthService) window.SystemHealthService.init();
   } else if (tabId === "settings") {
     if (window.SettingsService) window.SettingsService.init();
+  } else if (tabId === "payments") {
+    if (window.PaymentsDesk) window.PaymentsDesk.render();
+  } else if (tabId === "db_explorer") {
+    if (window.DbExplorer) window.DbExplorer.render();
   }
 }
 window.switchTab = switchTab;

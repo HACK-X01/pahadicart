@@ -323,6 +323,7 @@
       this.renderOrdersScreen('current');
       this.updateCartBadges();
       this.updateTownDisplays();
+      this.syncUserProfileUI();
 
       // Cross-portal real-time event listeners
       if (window.pahadiBus) {
@@ -929,6 +930,15 @@
 
     setPayMode(mode) {
       this.selectedPayMode = mode;
+      const upiContainer = document.getElementById('checkoutUpiQrContainer');
+      const totalEl = document.getElementById('checkoutTotal');
+      const upiAmountDisplay = document.getElementById('checkoutUpiAmountDisplay');
+      if (upiContainer) {
+        upiContainer.style.display = mode === 'UPI_QR' ? 'block' : 'none';
+        if (totalEl && upiAmountDisplay) {
+          upiAmountDisplay.innerText = totalEl.innerText;
+        }
+      }
     }
 
     placeFinalOrder() {
@@ -955,24 +965,38 @@
 
       // Generate random 4-digit ID matching PDF (e.g. HM1024)
       const orderNum = 'HM' + (1000 + Math.floor(Math.random() * 9000));
+      let utrRef = null;
+      let payStatus = 'PAYMENT_PENDING';
+      const currentUser = window.JeevanixCustomerAuth ? window.JeevanixCustomerAuth.getCurrentUser() : null;
+
+      if (this.selectedPayMode === 'UPI_QR') {
+        const utrInput = document.getElementById('checkoutUtrInput');
+        utrRef = (utrInput?.value || '').trim();
+        if (!utrRef || utrRef.length < 6) {
+          alert('⚠️ UPI Payment Verification Required:\nKripya 12-digit UTR / Reference ID dalein jo aapko payment ke baad mila hai.');
+          if (utrInput) utrInput.focus();
+          return;
+        }
+        payStatus = 'PAYMENT_SUBMITTED';
+      }
+
       const order = {
         id: orderNum,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
         town: this.currentTownId || 'solan',
         townName: this.currentTown,
-        customer: 'Amar Thakur',
-        customerName: 'Amar Thakur',
-        customerPhone: this.currentPhone,
+        customer: currentUser ? currentUser.name : 'Amar Thakur',
+        customerName: currentUser ? currentUser.name : 'Amar Thakur',
+        customerPhone: currentUser ? currentUser.phone : this.currentPhone,
         colony: this.currentTown,
-        address: this.currentAddress,
-        deliveryAddress: this.currentAddress,
-        landmark: 'Near Himora Store',
-        staircaseNotes: this.currentStairs,
-        staircaseNote: this.currentStairs,
+        address: currentUser ? currentUser.address : this.currentAddress,
+        deliveryAddress: currentUser ? currentUser.address : this.currentAddress,
+        landmark: 'Near Jeevanix Hub',
+        staircaseNotes: currentUser ? currentUser.staircaseNote : this.currentStairs,
+        staircaseNote: currentUser ? currentUser.staircaseNote : this.currentStairs,
         total: grandTotal,
         eta: '30-45 min (Hill SLA)',
-        staircaseNotes: this.currentStairs,
         merchantId: 'm-101',
         merchantName: 'Sharma General Store',
         riderId: 'r-1',
@@ -981,9 +1005,12 @@
         items: items,
         grandTotal: grandTotal,
         amount: grandTotal,
-        paymentMode: this.selectedPayMode,
+        paymentMode: this.selectedPayMode || 'COD',
+        paymentStatus: payStatus,
+        utrRef: utrRef,
+        screenshotUrl: this.uploadedPaymentScreenshot || null,
         status: 'Placed',
-        rawStatus: 'Placed',
+        rawStatus: payStatus === 'PAYMENT_SUBMITTED' ? 'PAYMENT_VERIFICATION_REQUIRED' : 'Placed',
         otp: '5570',
         createdAt: new Date().toISOString()
       };
@@ -1589,9 +1616,143 @@
       `;
     }
 
+    openAuthModal(defaultTab = 'login') {
+      const modal = document.getElementById('customerAuthModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        this.switchAuthTab(defaultTab);
+      }
+    }
+
+    closeAuthModal() {
+      const modal = document.getElementById('customerAuthModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    switchAuthTab(tab) {
+      const loginForm = document.getElementById('authLoginForm');
+      const regForm = document.getElementById('authRegisterForm');
+      const loginBtn = document.getElementById('authTabLoginBtn');
+      const regBtn = document.getElementById('authTabRegisterBtn');
+
+      if (tab === 'login') {
+        if (loginForm) loginForm.style.display = 'block';
+        if (regForm) regForm.style.display = 'none';
+        if (loginBtn) {
+          loginBtn.style.background = '#fff';
+          loginBtn.style.color = '#059669';
+          loginBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+        }
+        if (regBtn) {
+          regBtn.style.background = 'transparent';
+          regBtn.style.color = '#64748b';
+          regBtn.style.boxShadow = 'none';
+        }
+      } else {
+        if (loginForm) loginForm.style.display = 'none';
+        if (regForm) regForm.style.display = 'block';
+        if (regBtn) {
+          regBtn.style.background = '#fff';
+          regBtn.style.color = '#059669';
+          regBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+        }
+        if (loginBtn) {
+          loginBtn.style.background = 'transparent';
+          loginBtn.style.color = '#64748b';
+          loginBtn.style.boxShadow = 'none';
+        }
+      }
+    }
+
+    handleLoginSubmit() {
+      const phone = document.getElementById('authLoginPhone')?.value;
+      const pass = document.getElementById('authLoginPassword')?.value;
+
+      if (!window.JeevanixCustomerAuth) {
+        alert('Authentication engine loading...');
+        return;
+      }
+
+      const res = window.JeevanixCustomerAuth.login(phone, pass);
+      if (!res.success) {
+        alert('⚠️ ' + res.message);
+        return;
+      }
+
+      this.currentPhone = res.user.phone;
+      this.currentAddress = res.user.address;
+      this.currentStairs = res.user.staircaseNote || '';
+      this.closeAuthModal();
+      this.syncUserProfileUI();
+      alert('✅ ' + res.message + ' Swagat hai, ' + res.user.name + '!');
+    }
+
+    handleRegisterSubmit() {
+      const name = document.getElementById('authRegName')?.value;
+      const phone = document.getElementById('authRegPhone')?.value;
+      const pass = document.getElementById('authRegPassword')?.value;
+      const passConfirm = document.getElementById('authRegPasswordConfirm')?.value;
+      const address = document.getElementById('authRegAddress')?.value;
+      const stairs = document.getElementById('authRegStairs')?.value;
+
+      if (!window.JeevanixCustomerAuth) {
+        alert('Authentication engine loading...');
+        return;
+      }
+
+      const res = window.JeevanixCustomerAuth.register(name, phone, pass, passConfirm, address, this.currentTown, stairs, this.currentTownId);
+      if (!res.success) {
+        alert('⚠️ ' + res.message);
+        return;
+      }
+
+      this.currentPhone = res.user.phone;
+      this.currentAddress = res.user.address;
+      this.currentStairs = res.user.staircaseNote || '';
+      this.closeAuthModal();
+      this.syncUserProfileUI();
+      alert('🎉 ' + res.message + ' Account successfully ban gaya!');
+    }
+
+    handleScreenshotUpload(event) {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('⚠️ Screenshot size 5MB se kam honi chahiye.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.uploadedPaymentScreenshot = e.target.result;
+        const preview = document.getElementById('checkoutScreenshotPreview');
+        const previewWrap = document.getElementById('checkoutScreenshotPreviewWrap');
+        if (preview) preview.src = e.target.result;
+        if (previewWrap) previewWrap.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    syncUserProfileUI() {
+      const user = window.JeevanixCustomerAuth ? window.JeevanixCustomerAuth.getCurrentUser() : null;
+      const nameEl = document.getElementById('profileUserName');
+      const contactSubEl = document.querySelector('.account-contact-sub');
+      const checkoutAddressEl = document.getElementById('checkoutAddress');
+
+      if (user) {
+        if (nameEl) nameEl.innerText = user.name;
+        if (contactSubEl) contactSubEl.innerText = (user.email || user.phone + '@jeevanix.in') + ' • ' + user.phone;
+        if (checkoutAddressEl && user.address) {
+          checkoutAddressEl.innerText = user.address;
+        }
+      }
+    }
+
     handleLogout() {
-      if (confirm('Kya aap Himora app se logout karna chahte hain?')) {
-        window.location.href = '/index.html';
+      if (confirm('Kya aap Jeevanix Local app se logout karna chahte hain?')) {
+        if (window.JeevanixCustomerAuth) window.JeevanixCustomerAuth.logout();
+        this.openAuthModal('login');
       }
     }
   }
