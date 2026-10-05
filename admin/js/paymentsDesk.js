@@ -42,6 +42,13 @@ window.PaymentsDesk = (function() {
 
     const payments = getPaymentList();
 
+    // Populate Founder UPI Inputs
+    const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank', businessName: 'Jeevanix Local' };
+    const inpVpa = document.getElementById('founderUpiVpaInput');
+    const inpName = document.getElementById('founderUpiNameInput');
+    if (inpVpa && !inpVpa.value) inpVpa.value = upiSettings.upiVpa || '';
+    if (inpName && !inpName.value) inpName.value = upiSettings.businessName || '';
+
     const submittedCount = payments.filter(p => p.paymentStatus === 'PAYMENT_SUBMITTED' || p.paymentStatus === 'PAYMENT_VERIFICATION_REQUIRED').length;
     const verifiedTotal = payments.filter(p => p.paymentStatus === 'PAYMENT_VERIFIED').reduce((sum, p) => sum + p.amount, 0);
     const failedCount = payments.filter(p => p.paymentStatus === 'PAYMENT_FAILED').length;
@@ -140,6 +147,15 @@ window.PaymentsDesk = (function() {
           verifiedAt: new Date().toISOString()
         });
       }
+      if (window.JeevanixCloudSync) {
+        window.JeevanixCloudSync.updateOrderStatus(orderId, {
+          status: 'Preparing',
+          paymentStatus: 'PAYMENT_VERIFIED',
+          rawStatus: 'PAYMENT_VERIFIED',
+          verifiedBy: 'FOUNDER_CEO',
+          verifiedAt: new Date().toISOString()
+        });
+      }
       showToast('✅ Payment for Order #' + orderId + ' VERIFIED & MARKED PAID!');
       renderPaymentsDesk();
       if (window.renderOrdersFeed) window.renderOrdersFeed();
@@ -151,6 +167,16 @@ window.PaymentsDesk = (function() {
     window.JeevanixFounderAuth.promptVerification('REJECT_UPI_PAYMENT', () => {
       if (window.pahadiBus) {
         window.pahadiBus.updateOrderStatus(orderId, 'Cancelled', {
+          paymentStatus: 'PAYMENT_FAILED',
+          rawStatus: 'PAYMENT_FAILED',
+          rejectionReason: reason,
+          rejectedBy: 'FOUNDER_CEO',
+          rejectedAt: new Date().toISOString()
+        });
+      }
+      if (window.JeevanixCloudSync) {
+        window.JeevanixCloudSync.updateOrderStatus(orderId, {
+          status: 'Cancelled',
           paymentStatus: 'PAYMENT_FAILED',
           rawStatus: 'PAYMENT_FAILED',
           rejectionReason: reason,
@@ -181,6 +207,23 @@ window.PaymentsDesk = (function() {
     }, true);
   }
 
+  function saveUpiConfig() {
+    const vpa = document.getElementById('founderUpiVpaInput')?.value || '';
+    const name = document.getElementById('founderUpiNameInput')?.value || '';
+    if (!vpa || !vpa.includes('@')) {
+      alert('⚠️ Kripya valid Bank UPI ID dalein (e.g. sachin@okhdfcbank ya 98160xxxxx@paytm)');
+      return;
+    }
+    if (window.JeevanixCloudSync) {
+      window.JeevanixCloudSync.saveUpiSettings(vpa, name || 'Jeevanix Local');
+    }
+    if (typeof showToast === 'function') {
+      showToast('✅ Founder Real UPI VPA Saved: ' + vpa);
+    } else {
+      alert('✅ Founder Real UPI VPA Saved: ' + vpa);
+    }
+  }
+
   function openScreenshot(url) {
     const modal = document.getElementById('paymentScreenshotModal');
     const img = document.getElementById('paymentScreenshotImg');
@@ -196,6 +239,7 @@ window.PaymentsDesk = (function() {
     verifyPayment,
     rejectPayment,
     processRefund,
-    openScreenshot
+    openScreenshot,
+    saveUpiConfig
   };
 })();

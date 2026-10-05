@@ -45,6 +45,7 @@ const STATIC_SHELL = [
   '/shared/liveServices.js',
   '/shared/sharedData.js',
   '/shared/eventBus.js',
+  '/shared/cloudSync.js',
   '/shared/dispatchEngine.js',
   '/shared/simulationEngine.js',
   '/shared/offlineQueue.js'

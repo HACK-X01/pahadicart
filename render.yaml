@@ -1,11 +1,10 @@
 services:
   - type: web
-    name: pahadicart-himachal
+    name: jeevanix-local
     env: node
-    buildCommand: "echo 'PahadiCart ready for Himalayan deployment'"
-    startCommand: "node server.js"
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
     envVars:
-      - key: PORT
-        value: 3333
       - key: NODE_ENV
         value: production

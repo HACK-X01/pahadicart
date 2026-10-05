@@ -938,6 +938,18 @@
         if (totalEl && upiAmountDisplay) {
           upiAmountDisplay.innerText = totalEl.innerText;
         }
+
+        if (mode === 'UPI_QR') {
+          const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank', businessName: 'Jeevanix Local' };
+          const rawAmount = totalEl ? totalEl.innerText.replace(/[^0-9.]/g, '') : '250';
+          const upiUrl = 'upi://pay?pa=' + encodeURIComponent(upiSettings.upiVpa) + '&pn=' + encodeURIComponent(upiSettings.businessName) + '&am=' + encodeURIComponent(rawAmount) + '&cu=INR&tn=Jeevanix Order';
+          const qrImg = document.getElementById('checkoutUpiQrImg');
+          if (qrImg) {
+            qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(upiUrl);
+          }
+          const vpaText = document.getElementById('checkoutUpiVpaText');
+          if (vpaText) vpaText.innerText = upiSettings.upiVpa;
+        }
       }
     }
 
@@ -1023,6 +1035,9 @@
       // Save and broadcast across Super Admin, Merchant Terminal, and Rider Cockpit!
       if (window.pahadiBus) {
         window.pahadiBus.placeOrder(order);
+      }
+      if (window.JeevanixCloudSync) {
+        window.JeevanixCloudSync.createOrder(order);
       }
 
       // Audio Chime
@@ -1614,6 +1629,12 @@
           </div>
         </div>
       `;
+    }
+
+    copyUpiVpa() {
+      const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank' };
+      navigator.clipboard.writeText(upiSettings.upiVpa);
+      alert('✅ UPI ID Copied: ' + upiSettings.upiVpa + '\nApne GPay / PhonePe / Paytm me paste karein.');
     }
 
     openAuthModal(defaultTab = 'login') {
