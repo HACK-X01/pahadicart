@@ -369,6 +369,9 @@
       const p = window.PAHADICART_DATA.products.find(item => item.id === prodId);
       if (p) {
         p.inStock = !!isInStock;
+        if (window.HimoraApi) {
+          window.HimoraApi.updateProduct(prodId, { stock: isInStock ? 20 : 0, inStock: !!isInStock }, 'Merchant Stock Toggle').catch(e => console.warn('[Merchant DB error]', e));
+        }
         try {
           localStorage.setItem('pahadicart_products', JSON.stringify(window.PAHADICART_DATA.products));
         } catch(e) {}

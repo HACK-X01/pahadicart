@@ -58,6 +58,13 @@ window.DbExplorer = (function() {
 
   function getCollectionData(colName) {
     try {
+      if (window.HimoraApi) {
+        if (colName === 'products') return window.HimoraApi.cache.products || [];
+        if (colName === 'categories') return window.HimoraApi.cache.categories || [];
+        if (colName === 'merchants') return window.HimoraApi.cache.merchants || [];
+        if (colName === 'riders') return window.HimoraApi.cache.riders || [];
+        if (colName === 'orders') return window.HimoraApi.cache.orders || [];
+      }
       if (colName === 'orders') {
         return window.pahadiBus ? window.pahadiBus.getOrders('all') : [];
       } else if (colName === 'payments') {
@@ -192,7 +199,15 @@ window.DbExplorer = (function() {
   }
 
   function exportFullSnapshot() {
-    window.JeevanixFounderAuth.promptVerification('EXPORT_FULL_DATABASE', () => {
+    window.JeevanixFounderAuth.promptVerification('EXPORT_FULL_DATABASE', async () => {
+      try {
+        if (window.HimoraApi) {
+          const snapshot = await window.HimoraApi.exportDatabase();
+          downloadFile(JSON.stringify(snapshot, null, 2), 'himora_sqlite_snapshot_' + Date.now() + '.json', 'application/json');
+          showToast('👑 Master SQLite Database Snapshot Downloaded!');
+          return;
+        }
+      } catch(e) {}
       const snapshot = {
         platform: 'Jeevanix Local',
         exportedAt: new Date().toISOString(),

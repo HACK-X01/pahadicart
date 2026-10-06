@@ -345,37 +345,66 @@
         });
 
         window.pahadiBus.on('CATEGORIES_UPDATED', () => {
-          this.renderCategoriesScreen();
+          this.loadDatabaseCatalog();
+        });
+      }
+
+      // SQLite Database SSE Real-Time Sync
+      if (window.HimoraApi) {
+        window.HimoraApi.on('products_changed', (products) => {
+          if (Array.isArray(products)) {
+            HIMORA_CATALOG.products = products.filter(p => (p.active !== 0 && p.active !== false) && (p.is_launched !== 0 && p.isLaunched !== false));
+            this.reRenderCurrentScreens();
+          }
+        });
+        window.HimoraApi.on('cms_changed', () => {
+          this.renderHomeScreen();
+        });
+        window.HimoraApi.on('rules_changed', () => {
           this.renderHomeScreen();
         });
       }
     }
 
-    reloadProductsFromStorage() {
-      try {
-        const stored = localStorage.getItem('pahadicart_products');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            HIMORA_CATALOG.products = parsed;
-            this.renderHomeScreen();
-            if (this.currentScreen === 'listing') {
-              this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
-            }
+    async loadDatabaseCatalog() {
+      if (window.HimoraApi) {
+        try {
+          const [products, categories, cms, rules] = await Promise.all([
+            window.HimoraApi.getProducts(false, true),
+            window.HimoraApi.getCategories(true),
+            window.HimoraApi.getCms(true),
+            window.HimoraApi.getBusinessRules(true)
+          ]);
+          if (Array.isArray(products) && products.length > 0) {
+            // Strictly enforce database visibility rules: active only and launched only
+            HIMORA_CATALOG.products = products.filter(p => (p.active !== 0 && p.active !== false) && (p.is_launched !== 0 && p.isLaunched !== false));
           }
+          if (Array.isArray(categories) && categories.length > 0) {
+            HIMORA_CATALOG.categories = categories.filter(c => !c.hidden);
+          }
+          this.reRenderCurrentScreens();
+        } catch(e) {
+          console.warn('[CustomerApp] Error loading DB catalog:', e);
         }
-      } catch(e) {}
+      }
     }
 
-    // Sync mock catalog to window.PAHADICART_DATA so Admin & Merchant portals also see it
-    syncMasterProductsToDataLayer() {
-      if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-      if (!window.PAHADICART_DATA.products || window.PAHADICART_DATA.products.length === 0) {
-        window.PAHADICART_DATA.products = HIMORA_CATALOG.products;
-        try {
-          localStorage.setItem('pahadicart_products', JSON.stringify(HIMORA_CATALOG.products));
-        } catch(e) {}
+    reRenderCurrentScreens() {
+      this.renderHomeScreen();
+      this.renderCategoriesScreen();
+      this.renderJeevanixScreen();
+      if (this.currentScreen === 'listing') {
+        this.renderListingScreen(this.activeListingCategory, this.activeListingSubcat);
       }
+    }
+
+    reloadProductsFromStorage() {
+      this.loadDatabaseCatalog();
+    }
+
+    syncMasterProductsToDataLayer() {
+      // Database is the single source of truth; load directly from backend
+      this.loadDatabaseCatalog();
     }
 
     // ========================================================

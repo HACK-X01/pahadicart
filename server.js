@@ -1,14 +1,27 @@
+/**
+ * Himora / Jeevanix Local — Master Production Server & REST API
+ * Single Source of Truth: SQLite Database (data/himora.db)
+ * Real-Time Broadcast: Native Server-Sent Events (SSE)
+ */
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const {
+  ProductsRepo,
+  CategoriesRepo,
+  MerchantsRepo,
+  RidersRepo,
+  OrdersRepo,
+  CmsRepo,
+  BusinessRulesRepo,
+  CouponsRepo,
+  AuditLogsRepo,
+  exportFullDatabase
+} = require('./server/db');
 
 const PORT = process.env.PORT || 3333;
 const ROOT_DIR = __dirname;
-const DATA_DIR = path.join(ROOT_DIR, 'data');
-
-if (!fs.existsSync(DATA_DIR)) {
-  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
-}
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=UTF-8',
@@ -41,28 +54,6 @@ function broadcastSse(eventType, payload) {
   }
 }
 
-// Database Helpers
-function readJson(fileName, defaultVal = []) {
-  try {
-    const fPath = path.join(DATA_DIR, fileName);
-    if (!fs.existsSync(fPath)) return defaultVal;
-    return JSON.parse(fs.readFileSync(fPath, 'utf8'));
-  } catch (e) {
-    return defaultVal;
-  }
-}
-
-function writeJson(fileName, data) {
-  try {
-    const fPath = path.join(DATA_DIR, fileName);
-    fs.writeFileSync(fPath, JSON.stringify(data, null, 2), 'utf8');
-    return true;
-  } catch (e) {
-    console.error('Failed to write ' + fileName, e);
-    return false;
-  }
-}
-
 // Helper to parse JSON body
 function parseBody(req) {
   return new Promise((resolve) => {
@@ -83,174 +74,406 @@ function sendJson(res, statusCode, data) {
     'Content-Type': 'application/json; charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Cache-Control': 'no-cache'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Role, X-Founder-PIN',
+    'Cache-Control': 'no-cache, no-store, must-revalidate'
   });
   res.end(JSON.stringify(data));
+}
+
+// Server-side authorization guard
+function checkAdminAuth(req) {
+  const role = req.headers['x-admin-role'] || '';
+  const pin = req.headers['x-founder-pin'] || '';
+  // Allowed if valid admin role or Founder PIN passed
+  if (role === 'SUPER_ADMIN' || role === 'OPERATIONS_ADMIN' || role === 'FINANCE_ADMIN' || pin === '7890') {
+    return { authorized: true, role: role || 'SUPER_ADMIN' };
+  }
+  // For local development / same-origin convenience, check referer
+  const referer = req.headers['referer'] || '';
+  if (referer.includes('/admin/')) {
+    return { authorized: true, role: 'SUPER_ADMIN' };
+  }
+  return { authorized: false };
 }
 
 const server = http.createServer(async (req, res) => {
   const urlParts = req.url.split('?');
   const reqPath = urlParts[0];
+  const queryString = urlParts[1] || '';
+  const queryParams = new URLSearchParams(queryString);
 
   // Handle CORS Preflight
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Role, X-Founder-PIN'
     });
     res.end();
     return;
   }
 
   // ==========================================
-  // REAL-TIME CLOUD API ROUTES
+  // REAL-TIME CLOUD API ROUTES (SQLITE BACKED)
   // ==========================================
   if (reqPath.startsWith('/api/')) {
-    // 1. SSE Stream for Real-Time Cross-Device Events
-    if (reqPath === '/api/sync/stream') {
-      res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Access-Control-Allow-Origin': '*'
-      });
-      res.write('event: connected\ndata: {"status":"connected","timestamp":"' + new Date().toISOString() + '"}\n\n');
-      sseClients.add(res);
-
-      req.on('close', () => {
-        sseClients.delete(res);
-      });
-      return;
-    }
-
-    // 2. Health Check
-    if (reqPath === '/api/health') {
-      sendJson(res, 200, {
-        status: 'ok',
-        app: 'Jeevanix Local Cloud Engine',
-        time: new Date().toISOString(),
-        clientsCount: sseClients.size
-      });
-      return;
-    }
-
-    // 3. Orders API
-    if (reqPath === '/api/orders') {
-      if (req.method === 'GET') {
-        const orders = readJson('orders.json', []);
-        sendJson(res, 200, { success: true, count: orders.length, orders });
-        return;
-      }
-
-      if (req.method === 'POST') {
-        const newOrder = await parseBody(req);
-        if (!newOrder.id) {
-          newOrder.id = 'HM' + (1000 + Math.floor(Math.random() * 9000));
-        }
-        newOrder.createdAt = newOrder.createdAt || new Date().toISOString();
-        newOrder.serverTimestamp = new Date().toISOString();
-
-        const orders = readJson('orders.json', []);
-        // Prepend new order
-        orders.unshift(newOrder);
-        writeJson('orders.json', orders);
-
-        // Broadcast to all connected devices in real time!
-        broadcastSse('ORDER_CREATED', newOrder);
-
-        sendJson(res, 201, { success: true, order: newOrder });
-        return;
-      }
-    }
-
-    // 4. Single Order Update API (/api/orders/:id)
-    if (reqPath.startsWith('/api/orders/')) {
-      const orderId = reqPath.split('/')[3];
-      if (req.method === 'PATCH' || req.method === 'PUT') {
-        const updates = await parseBody(req);
-        const orders = readJson('orders.json', []);
-        const idx = orders.findIndex(o => o.id === orderId);
-
-        if (idx !== -1) {
-          Object.assign(orders[idx], updates);
-          orders[idx].updatedAt = new Date().toISOString();
-          writeJson('orders.json', orders);
-
-          // Broadcast status change to all devices
-          broadcastSse('ORDER_UPDATED', orders[idx]);
-
-          sendJson(res, 200, { success: true, order: orders[idx] });
-        } else {
-          sendJson(res, 404, { success: false, message: 'Order not found' });
-        }
-        return;
-      }
-
-      if (req.method === 'GET') {
-        const orders = readJson('orders.json', []);
-        const found = orders.find(o => o.id === orderId);
-        if (found) {
-          sendJson(res, 200, { success: true, order: found });
-        } else {
-          sendJson(res, 404, { success: false, message: 'Order not found' });
-        }
-        return;
-      }
-    }
-
-    // 5. Settings API (Founder UPI VPA, Platform rules)
-    if (reqPath === '/api/settings') {
-      if (req.method === 'GET') {
-        const settings = readJson('settings.json', {
-          upiVpa: 'jeevanix@okhdfcbank',
-          businessName: 'Jeevanix Local'
+    try {
+      // 1. SSE Stream for Real-Time Cross-Device Events
+      if (reqPath === '/api/sync/stream') {
+        res.writeHead(200, {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+          'Access-Control-Allow-Origin': '*'
         });
-        sendJson(res, 200, { success: true, settings });
+        res.write('event: connected\ndata: {"status":"connected","timestamp":"' + new Date().toISOString() + '"}\n\n');
+        sseClients.add(res);
+        req.on('close', () => { sseClients.delete(res); });
         return;
       }
 
-      if (req.method === 'POST') {
-        const newSettings = await parseBody(req);
-        const current = readJson('settings.json', {});
-        const updated = Object.assign({}, current, newSettings, { updatedAt: new Date().toISOString() });
-        writeJson('settings.json', updated);
-
-        // Broadcast settings update to clients
-        broadcastSse('SETTINGS_UPDATED', updated);
-
-        sendJson(res, 200, { success: true, settings: updated });
-        return;
-      }
-    }
-
-    // 6. Users API (Zero-OTP Cloud backup)
-    if (reqPath === '/api/users') {
-      if (req.method === 'GET') {
-        const users = readJson('users.json', []);
-        sendJson(res, 200, { success: true, count: users.length, users });
+      // 2. Health & DB Status
+      if (reqPath === '/api/health') {
+        sendJson(res, 200, {
+          status: 'ok',
+          app: 'Himora Master SQLite Engine',
+          time: new Date().toISOString(),
+          clientsCount: sseClients.size
+        });
         return;
       }
 
-      if (req.method === 'POST') {
-        const newUser = await parseBody(req);
-        const users = readJson('users.json', []);
-        const exists = users.find(u => u.phone === newUser.phone);
-        if (exists) {
-          sendJson(res, 400, { success: false, message: 'Phone already registered' });
+      // 3. PRODUCTS CRUD
+      if (reqPath === '/api/products') {
+        if (req.method === 'GET') {
+          const includeAll = queryParams.get('all') === 'true';
+          const products = ProductsRepo.getAll(includeAll);
+          sendJson(res, 200, { success: true, count: products.length, products });
           return;
         }
-        users.push(newUser);
-        writeJson('users.json', users);
-        sendJson(res, 201, { success: true, user: newUser });
+
+        if (req.method === 'POST') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized: Admin privileges required to create product' });
+            return;
+          }
+          const body = await parseBody(req);
+          if (!body.name || body.price === undefined) {
+            sendJson(res, 400, { success: false, message: 'Product name and price are required' });
+            return;
+          }
+          const product = ProductsRepo.create(body, auth.role);
+          broadcastSse('PRODUCT_CHANGED', { action: 'CREATED', product });
+          sendJson(res, 201, { success: true, product });
+          return;
+        }
+      }
+
+      // Single Product (/api/products/:id)
+      if (reqPath.startsWith('/api/products/')) {
+        const id = decodeURIComponent(reqPath.split('/')[3]);
+
+        if (req.method === 'GET') {
+          const product = ProductsRepo.getById(id);
+          if (product) {
+            sendJson(res, 200, { success: true, product });
+          } else {
+            sendJson(res, 404, { success: false, message: 'Product not found: ' + id });
+          }
+          return;
+        }
+
+        if (req.method === 'PATCH' || req.method === 'PUT') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized: Admin privileges required to update product' });
+            return;
+          }
+          const updates = await parseBody(req);
+          const reason = req.headers['x-audit-reason'] || updates._reason || 'Admin modification';
+          const product = ProductsRepo.update(id, updates, auth.role, reason);
+          broadcastSse('PRODUCT_CHANGED', { action: 'UPDATED', product });
+          sendJson(res, 200, { success: true, product });
+          return;
+        }
+
+        if (req.method === 'DELETE') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized: Admin privileges required to delete product' });
+            return;
+          }
+          const reason = req.headers['x-audit-reason'] || 'Admin deleted';
+          const result = ProductsRepo.delete(id, auth.role, reason);
+          broadcastSse('PRODUCT_CHANGED', { action: 'DELETED', id });
+          sendJson(res, 200, result);
+          return;
+        }
+      }
+
+      // 4. CATEGORIES CRUD
+      if (reqPath === '/api/categories') {
+        if (req.method === 'GET') {
+          const categories = CategoriesRepo.getAll();
+          sendJson(res, 200, { success: true, count: categories.length, categories });
+          return;
+        }
+
+        if (req.method === 'POST') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const body = await parseBody(req);
+          const cat = CategoriesRepo.create(body, auth.role);
+          broadcastSse('CATEGORY_CHANGED', { action: 'CREATED', category: cat });
+          sendJson(res, 201, { success: true, category: cat });
+          return;
+        }
+      }
+
+      if (reqPath.startsWith('/api/categories/')) {
+        const id = decodeURIComponent(reqPath.split('/')[3]);
+        if (req.method === 'PATCH' || req.method === 'PUT') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const updates = await parseBody(req);
+          const cat = CategoriesRepo.update(id, updates, auth.role);
+          broadcastSse('CATEGORY_CHANGED', { action: 'UPDATED', category: cat });
+          sendJson(res, 200, { success: true, category: cat });
+          return;
+        }
+
+        if (req.method === 'DELETE') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const result = CategoriesRepo.delete(id, auth.role);
+          broadcastSse('CATEGORY_CHANGED', { action: 'DELETED', id });
+          sendJson(res, 200, result);
+          return;
+        }
+      }
+
+      // 5. MERCHANTS / SHOPS CRUD
+      if (reqPath === '/api/merchants') {
+        if (req.method === 'GET') {
+          const merchants = MerchantsRepo.getAll();
+          sendJson(res, 200, { success: true, count: merchants.length, merchants });
+          return;
+        }
+      }
+
+      if (reqPath.startsWith('/api/merchants/')) {
+        const id = decodeURIComponent(reqPath.split('/')[3]);
+        if (req.method === 'GET') {
+          const m = MerchantsRepo.getById(id);
+          sendJson(res, m ? 200 : 404, m ? { success: true, merchant: m } : { success: false, message: 'Merchant not found' });
+          return;
+        }
+
+        if (req.method === 'PATCH' || req.method === 'PUT') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const updates = await parseBody(req);
+          const reason = req.headers['x-audit-reason'] || updates._reason || 'Merchant status/commission update';
+          const updated = MerchantsRepo.update(id, updates, auth.role, reason);
+          broadcastSse('MERCHANT_CHANGED', { action: 'UPDATED', merchant: updated });
+          sendJson(res, 200, { success: true, merchant: updated });
+          return;
+        }
+      }
+
+      // 6. RIDERS CRUD
+      if (reqPath === '/api/riders') {
+        if (req.method === 'GET') {
+          const riders = RidersRepo.getAll();
+          sendJson(res, 200, { success: true, count: riders.length, riders });
+          return;
+        }
+      }
+
+      if (reqPath.startsWith('/api/riders/')) {
+        const id = decodeURIComponent(reqPath.split('/')[3]);
+        if (req.method === 'GET') {
+          const r = RidersRepo.getById(id);
+          sendJson(res, r ? 200 : 404, r ? { success: true, rider: r } : { success: false, message: 'Rider not found' });
+          return;
+        }
+
+        if (req.method === 'PATCH' || req.method === 'PUT') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const updates = await parseBody(req);
+          const updated = RidersRepo.update(id, updates, auth.role);
+          broadcastSse('RIDER_CHANGED', { action: 'UPDATED', rider: updated });
+          sendJson(res, 200, { success: true, rider: updated });
+          return;
+        }
+      }
+
+      // 7. ORDERS CRUD
+      if (reqPath === '/api/orders') {
+        if (req.method === 'GET') {
+          const orders = OrdersRepo.getAll();
+          sendJson(res, 200, { success: true, count: orders.length, orders });
+          return;
+        }
+
+        if (req.method === 'POST') {
+          const body = await parseBody(req);
+          const newOrder = OrdersRepo.create(body);
+          broadcastSse('ORDER_CREATED', newOrder);
+          sendJson(res, 201, { success: true, order: newOrder });
+          return;
+        }
+      }
+
+      if (reqPath.startsWith('/api/orders/')) {
+        const id = decodeURIComponent(reqPath.split('/')[3]);
+        if (req.method === 'GET') {
+          const o = OrdersRepo.getById(id);
+          sendJson(res, o ? 200 : 404, o ? { success: true, order: o } : { success: false, message: 'Order not found' });
+          return;
+        }
+
+        if (req.method === 'PATCH' || req.method === 'PUT') {
+          const auth = checkAdminAuth(req);
+          const updates = await parseBody(req);
+          const updated = OrdersRepo.update(id, updates, auth.role || 'RIDER/OPS');
+          broadcastSse('ORDER_UPDATED', updated);
+          sendJson(res, 200, { success: true, order: updated });
+          return;
+        }
+      }
+
+      // 8. HOMEPAGE CMS
+      if (reqPath === '/api/cms') {
+        if (req.method === 'GET') {
+          const cms = CmsRepo.getAll();
+          sendJson(res, 200, { success: true, cms });
+          return;
+        }
+
+        if (req.method === 'POST') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const body = await parseBody(req);
+          for (const [k, v] of Object.entries(body)) {
+            CmsRepo.save(k, v, auth.role);
+          }
+          const freshCms = CmsRepo.getAll();
+          broadcastSse('CMS_UPDATED', freshCms);
+          sendJson(res, 200, { success: true, cms: freshCms });
+          return;
+        }
+      }
+
+      // 9. BUSINESS RULES & SETTINGS
+      if (reqPath === '/api/business-rules' || reqPath === '/api/settings') {
+        if (req.method === 'GET') {
+          const rules = BusinessRulesRepo.get();
+          sendJson(res, 200, { success: true, rules, settings: rules });
+          return;
+        }
+
+        if (req.method === 'POST') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const body = await parseBody(req);
+          const updated = BusinessRulesRepo.save(body, auth.role);
+          broadcastSse('RULES_UPDATED', updated);
+          sendJson(res, 200, { success: true, rules: updated, settings: updated });
+          return;
+        }
+      }
+
+      // 10. COUPONS
+      if (reqPath === '/api/coupons') {
+        if (req.method === 'GET') {
+          const coupons = CouponsRepo.getAll();
+          sendJson(res, 200, { success: true, count: coupons.length, coupons });
+          return;
+        }
+
+        if (req.method === 'POST') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const body = await parseBody(req);
+          const c = CouponsRepo.create(body, auth.role);
+          sendJson(res, 201, { success: true, coupon: c });
+          return;
+        }
+      }
+
+      if (reqPath.startsWith('/api/coupons/')) {
+        const code = decodeURIComponent(reqPath.split('/')[3]);
+        if (req.method === 'DELETE') {
+          const auth = checkAdminAuth(req);
+          if (!auth.authorized) {
+            sendJson(res, 403, { success: false, message: 'Unauthorized' });
+            return;
+          }
+          const result = CouponsRepo.delete(code, auth.role);
+          sendJson(res, 200, result);
+          return;
+        }
+      }
+
+      // 11. AUDIT LOGS
+      if (reqPath === '/api/audit-logs') {
+        const auth = checkAdminAuth(req);
+        if (!auth.authorized) {
+          sendJson(res, 403, { success: false, message: 'Unauthorized' });
+          return;
+        }
+        const logs = AuditLogsRepo.getAll(100);
+        sendJson(res, 200, { success: true, count: logs.length, logs });
         return;
       }
-    }
 
-    // Unknown API
-    sendJson(res, 404, { success: false, message: 'API route not found' });
-    return;
+      // 12. FULL DATABASE EXPORT
+      if (reqPath === '/api/db/export') {
+        const auth = checkAdminAuth(req);
+        if (!auth.authorized) {
+          sendJson(res, 403, { success: false, message: 'Unauthorized' });
+          return;
+        }
+        const snapshot = exportFullDatabase();
+        sendJson(res, 200, { success: true, snapshot });
+        return;
+      }
+
+      sendJson(res, 404, { success: false, message: 'API route not found' });
+      return;
+
+    } catch (err) {
+      console.error('[API Error]:', err);
+      sendJson(res, 500, { success: false, error: err.message });
+      return;
+    }
   }
 
   // ==========================================
@@ -319,7 +542,7 @@ const server = http.createServer(async (req, res) => {
 
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   server.listen(PORT, '0.0.0.0', () => {
-    console.log('Jeevanix Local Engine listening on port ' + PORT);
+    console.log('Himora Master Engine (SQLite) listening on port ' + PORT);
   });
 }
 

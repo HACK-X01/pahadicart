@@ -10,26 +10,14 @@ window.InventoryService = (function() {
   let filterProductType = 'all'; // 'all' | 'local' | 'jeevanix' | 'pending_approval'
   let searchQuery = '';
 
-  // One-time purge of stale test inventory data so admin starts completely clean
-  if (localStorage.getItem('pahadi_clean_inventory_v1') !== 'true') {
-    localStorage.removeItem('pahadicart_products');
-    localStorage.setItem('pahadi_clean_inventory_v1', 'true');
-    if (window.PAHADICART_DATA) {
-      window.PAHADICART_DATA.products = [];
-    }
-  }
-
   function getProducts() {
-    if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-    if (!window.PAHADICART_DATA.products) {
-      try {
-        const stored = localStorage.getItem('pahadicart_products');
-        window.PAHADICART_DATA.products = stored ? JSON.parse(stored) : [];
-      } catch (e) {
-        window.PAHADICART_DATA.products = [];
-      }
+    if (window.HimoraApi && Array.isArray(window.HimoraApi.cache.products) && window.HimoraApi.cache.products.length > 0) {
+      return window.HimoraApi.cache.products;
     }
-    return window.PAHADICART_DATA.products;
+    if (window.PAHADICART_DATA && Array.isArray(window.PAHADICART_DATA.products) && window.PAHADICART_DATA.products.length > 0) {
+      return window.PAHADICART_DATA.products;
+    }
+    return [];
   }
 
   function clearAllProducts() {
@@ -41,12 +29,11 @@ window.InventoryService = (function() {
   }
 
   function saveProducts(products) {
+    if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
     window.PAHADICART_DATA.products = products;
     try {
       localStorage.setItem('pahadicart_products', JSON.stringify(products));
-    } catch (e) {
-      console.error('Failed to save products:', e);
-    }
+    } catch (e) {}
     if (window.pahadiBus) {
       window.pahadiBus.emit('PRODUCT_ADDED', products);
       window.pahadiBus.emit('PRODUCT_STOCK_CHANGED', products);
@@ -195,8 +182,8 @@ window.InventoryService = (function() {
     }).join('');
   }
 
-  // --- Quick Actions ---
-  function quickStockEdit(id, currentStock) {
+  // --- Quick Actions (Persisted Directly to SQLite Database) ---
+  async function quickStockEdit(id, currentStock) {
     const val = prompt('Naya Stock Level daalein:', currentStock);
     if (val === null) return;
     const num = parseInt(val, 10);
@@ -204,18 +191,24 @@ window.InventoryService = (function() {
       alert('Kripya valid stock number daalein.');
       return;
     }
-    const products = getProducts();
-    const p = products.find(i => i.id === id);
-    if (p) {
-      p.stock = num;
-      p.inStock = num > 0;
-      saveProducts(products);
+    try {
+      if (window.HimoraApi) {
+        await window.HimoraApi.updateProduct(id, { stock: num, inStock: num > 0 }, 'Quick Stock Edit');
+        const prods = await window.HimoraApi.getProducts(true, true);
+        saveProducts(prods);
+      } else {
+        const products = getProducts();
+        const p = products.find(i => i.id === id);
+        if (p) { p.stock = num; p.inStock = num > 0; saveProducts(products); }
+      }
       renderInventoryTable();
-      if (window.showToast) window.showToast(`Stock updated to ${num} for ${p.name}`);
+      if (window.showToast) window.showToast(`✅ Stock updated to ${num} in Database!`);
+    } catch(err) {
+      alert('❌ Database update error: ' + err.message);
     }
   }
 
-  function quickPriceEdit(id, currentPrice) {
+  async function quickPriceEdit(id, currentPrice) {
     const val = prompt('Naya Selling Price (₹) daalein:', currentPrice);
     if (val === null) return;
     const num = parseFloat(val);
@@ -223,48 +216,83 @@ window.InventoryService = (function() {
       alert('Kripya valid price dalein.');
       return;
     }
-    const products = getProducts();
-    const p = products.find(i => i.id === id);
-    if (p) {
-      p.price = num;
-      saveProducts(products);
+    try {
+      if (window.HimoraApi) {
+        await window.HimoraApi.updateProduct(id, { price: num }, 'Quick Price Edit');
+        const prods = await window.HimoraApi.getProducts(true, true);
+        saveProducts(prods);
+      } else {
+        const products = getProducts();
+        const p = products.find(i => i.id === id);
+        if (p) { p.price = num; saveProducts(products); }
+      }
       renderInventoryTable();
-      if (window.showToast) window.showToast(`Price updated to ₹${num} for ${p.name}`);
+      if (window.showToast) window.showToast(`✅ Price updated to ₹${num} in Database!`);
+    } catch(err) {
+      alert('❌ Database update error: ' + err.message);
     }
   }
 
-  function toggleItemActive(id, isChecked) {
-    const products = getProducts();
-    const p = products.find(i => i.id === id);
-    if (p) {
-      p.active = isChecked;
-      p.inStock = isChecked;
-      saveProducts(products);
+  async function toggleItemActive(id, isChecked) {
+    try {
+      if (window.HimoraApi) {
+        await window.HimoraApi.updateProduct(id, { active: isChecked ? 1 : 0, inStock: isChecked }, 'Toggle Active');
+        const prods = await window.HimoraApi.getProducts(true, true);
+        saveProducts(prods);
+      } else {
+        const products = getProducts();
+        const p = products.find(i => i.id === id);
+        if (p) { p.active = isChecked; p.inStock = isChecked; saveProducts(products); }
+      }
       renderInventoryTable();
-      if (window.showToast) window.showToast(`${p.name} ${isChecked ? 'Enabled' : 'Disabled'}`);
+      if (window.showToast) window.showToast(`✅ Product ${isChecked ? 'Enabled' : 'Disabled'} in Database!`);
+    } catch(err) {
+      alert('❌ Database update error: ' + err.message);
     }
   }
 
-  function toggleLaunchStatus(id) {
-    const products = getProducts();
-    const p = products.find(i => i.id === id);
-    if (p) {
-      p.isLaunched = !(p.isLaunched !== false);
-      saveProducts(products);
-      renderInventoryTable();
-      if (window.showToast) window.showToast(`${p.name} ${p.isLaunched ? 'Launched' : 'Unlaunched'}`);
-    }
-  }
-
-  function deleteProduct(id) {
+  async function toggleLaunchStatus(id) {
     const products = getProducts();
     const p = products.find(i => i.id === id);
     if (!p) return;
-    if (confirm(`Kya aap "${p.name}" ko catalog se DELETE karna chahte hain?`)) {
-      const updated = products.filter(i => i.id !== id);
-      saveProducts(updated);
+    const isCur = p.is_launched !== undefined ? p.is_launched === 1 : (p.isLaunched !== false);
+    const newStatus = isCur ? 0 : 1;
+    try {
+      if (window.HimoraApi) {
+        await window.HimoraApi.updateProduct(id, { is_launched: newStatus, isLaunched: newStatus === 1 }, 'Toggle Launch');
+        const prods = await window.HimoraApi.getProducts(true, true);
+        saveProducts(prods);
+      } else {
+        p.isLaunched = newStatus === 1;
+        p.is_launched = newStatus;
+        saveProducts(products);
+      }
       renderInventoryTable();
-      if (window.showToast) window.showToast(`"${p.name}" deleted from catalog.`, 'info');
+      if (window.showToast) window.showToast(`✅ Launch status ${newStatus === 1 ? 'Live' : 'Paused'} in Database!`);
+    } catch(err) {
+      alert('❌ Database update error: ' + err.message);
+    }
+  }
+
+  async function deleteProduct(id) {
+    const products = getProducts();
+    const p = products.find(i => i.id === id);
+    if (!p) return;
+    if (confirm(`Kya aap "${p.name}" ko REAL DATABASE se DELETE karna chahte hain?`)) {
+      try {
+        if (window.HimoraApi) {
+          await window.HimoraApi.deleteProduct(id, 'Admin Deleted');
+          const prods = await window.HimoraApi.getProducts(true, true);
+          saveProducts(prods);
+        } else {
+          const updated = products.filter(i => i.id !== id);
+          saveProducts(updated);
+        }
+        renderInventoryTable();
+        if (window.showToast) window.showToast(`✅ "${p.name}" deleted from Database.`, 'info');
+      } catch(err) {
+        alert('❌ Database delete error: ' + err.message);
+      }
     }
   }
 

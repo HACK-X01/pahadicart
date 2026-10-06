@@ -5,16 +5,13 @@
 
 window.CategoriesService = (function() {
   function getCategories() {
-    if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-    if (!window.PAHADICART_DATA.categories) {
-      try {
-        const stored = localStorage.getItem('pahadicart_categories');
-        window.PAHADICART_DATA.categories = stored ? JSON.parse(stored) : [];
-      } catch (e) {
-        window.PAHADICART_DATA.categories = [];
-      }
+    if (window.HimoraApi && Array.isArray(window.HimoraApi.cache.categories) && window.HimoraApi.cache.categories.length > 0) {
+      return window.HimoraApi.cache.categories;
     }
-    return window.PAHADICART_DATA.categories;
+    if (window.PAHADICART_DATA && Array.isArray(window.PAHADICART_DATA.categories) && window.PAHADICART_DATA.categories.length > 0) {
+      return window.PAHADICART_DATA.categories;
+    }
+    return [];
   }
 
   function saveCategories(cats) {
@@ -299,7 +296,14 @@ window.CategoriesService = (function() {
   }
 
   function init() {
-    renderCategoriesTable();
+    if (window.HimoraApi) {
+      window.HimoraApi.getCategories(true).then(cats => {
+        saveCategories(cats);
+        renderCategoriesTable();
+      }).catch(() => renderCategoriesTable());
+    } else {
+      renderCategoriesTable();
+    }
   }
 
   return {

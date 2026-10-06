@@ -293,7 +293,7 @@ window.CmsService = (function() {
     `;
   }
 
-  function handleSaveCms(e) {
+  async function handleSaveCms(e) {
     if (e) e.preventDefault();
     const bannerActive = document.getElementById('cmsBannerActive').checked;
     const bannerTitle = document.getElementById('cmsBannerTitle').value.trim();
@@ -339,7 +339,11 @@ window.CmsService = (function() {
   }
 
   function init() {
-    renderCmsView();
+    if (window.HimoraApi) {
+      window.HimoraApi.getCms(true).then(() => renderCmsView()).catch(() => renderCmsView());
+    } else {
+      renderCmsView();
+    }
   }
 
   return {

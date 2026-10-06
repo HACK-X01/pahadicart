@@ -16,3 +16,9 @@ Thumbs.db
 .env.*.local
 
 .vercel
+
+# SQLite runtime databases
+data/*.db*
+*.db
+*.db-wal
+*.db-shm

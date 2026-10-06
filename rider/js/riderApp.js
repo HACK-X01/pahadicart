@@ -308,6 +308,7 @@
       this.activeMission = order;
 
       if (window.pahadiBus) {
+        if (window.HimoraApi) window.HimoraApi.updateOrder(orderId, { status: 'Rider Picked', riderId: this.riderId, riderName: this.riderName });
         window.pahadiBus.updateOrderStatus(orderId, 'Rider Picked', {
           riderId: this.riderId,
           riderName: this.riderName,
@@ -533,6 +534,7 @@
     markStorePickedUp() {
       if (!this.activeMission) return;
       if (window.pahadiBus) {
+        if (window.HimoraApi) window.HimoraApi.updateOrder(this.activeMission.id, { status: 'Out for Delivery', riderId: this.riderId, riderName: this.riderName });
         window.pahadiBus.updateOrderStatus(this.activeMission.id, 'Out for Delivery', {
           outForDeliveryAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
@@ -557,6 +559,7 @@
       const payMode = this.activeMission.paymentMode || 'COD';
 
       if (window.pahadiBus) {
+        if (window.HimoraApi) window.HimoraApi.updateOrder(deliveredId, { status: 'Delivered', paymentStatus: 'PAYMENT_VERIFIED' });
         window.pahadiBus.updateOrderStatus(deliveredId, 'Delivered', {
           completedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           deliveredBy: this.riderName,

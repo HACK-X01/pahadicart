@@ -298,7 +298,7 @@ window.SettingsService = (function() {
     `;
   }
 
-  function handleSaveRules(e) {
+  async function handleSaveRules(e) {
     if (e) e.preventDefault();
     const comm = parseInt(document.getElementById('ruleCommission').value, 10) || 8;
     const baseDelivery = parseFloat(document.getElementById('ruleBaseDelivery').value) || 25;
@@ -393,7 +393,11 @@ window.SettingsService = (function() {
   }
 
   function init() {
-    renderSettingsForm();
+    if (window.HimoraApi) {
+      window.HimoraApi.getBusinessRules(true).then(() => renderSettingsForm()).catch(() => renderSettingsForm());
+    } else {
+      renderSettingsForm();
+    }
   }
 
   return {
