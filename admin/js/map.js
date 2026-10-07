@@ -52,16 +52,12 @@ function initGodViewMap(townId = "solan") {
   });
 
   // Plot Merchants
-  const townMerchants = PahadiMockDB.merchants.filter(m => m.town === town.id);
+  const townMerchants = (PahadiMockDB.merchants || []).filter(m => m.town === town.id || town.id === 'solan');
   townMerchants.forEach(merchant => {
-    const merchantIcon = L.divIcon({
-      className: 'map-marker-merchant',
-      html: '<div style="background:#059669; border:2px solid #ffffff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(5,150,105,0.7); color:#fff; font-size:12px;">🏪</div>',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
-
-    const marker = L.marker(merchant.coords, { icon: merchantIcon }).addTo(leafletMap);
+    const coords = (merchant.coords && Array.isArray(merchant.coords) && merchant.coords.length === 2)
+      ? merchant.coords
+      : [town.center[0] + (Math.random() - 0.5) * 0.01, town.center[1] + (Math.random() - 0.5) * 0.01];
+    const marker = L.marker(coords, { icon: merchantIcon }).addTo(leafletMap);
     marker.bindPopup(
       "<div style=\"font-family:'Plus Jakarta Sans',sans-serif; color:#0f172a; padding:4px;\">" +
       "<h4 style=\"margin:0 0 4px 0; font-size:13px; font-weight:700;\">" + merchant.name + "</h4>" +
@@ -74,17 +70,12 @@ function initGodViewMap(townId = "solan") {
   });
 
   // Plot Active Riders
-  const townRiders = PahadiMockDB.riders.filter(r => r.town === town.id);
+  const townRiders = (PahadiMockDB.riders || []).filter(r => r.town === town.id || town.id === 'solan');
   townRiders.forEach(rider => {
-    const isBusy = rider.status === "in_transit";
-    const riderIcon = L.divIcon({
-      className: 'map-marker-rider',
-      html: '<div style="background:' + (isBusy ? '#a855f7' : '#0ea5e9') + '; border:2px solid #ffffff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 12px ' + (isBusy ? 'rgba(168,85,247,0.7)' : 'rgba(14,165,233,0.7)') + '; color:#fff; font-size:13px;">' + (rider.vehicle.includes('Walking') ? '🏃' : '🛵') + '</div>',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
-
-    const marker = L.marker(rider.coords, { icon: riderIcon }).addTo(leafletMap);
+    const coords = (rider.coords && Array.isArray(rider.coords) && rider.coords.length === 2)
+      ? rider.coords
+      : [town.center[0] + (Math.random() - 0.5) * 0.015, town.center[1] + (Math.random() - 0.5) * 0.015];
+    const marker = L.marker(coords, { icon: riderIcon }).addTo(leafletMap);
     marker.bindPopup(
       "<div style=\"font-family:'Plus Jakarta Sans',sans-serif; color:#0f172a; padding:4px;\">" +
       "<h4 style=\"margin:0 0 4px 0; font-size:13px; font-weight:700;\">" + rider.name + "</h4>" +

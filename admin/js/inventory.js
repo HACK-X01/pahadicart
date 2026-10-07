@@ -628,7 +628,16 @@ window.InventoryService = (function() {
 
   // --- Initializer & Filter Binders ---
   function init() {
-    renderInventoryTable();
+    // Auto-hydrate on init
+    if (window.HimoraApi && (!window.HimoraApi.cache.products || window.HimoraApi.cache.products.length === 0)) {
+      window.HimoraApi.getProducts(true, true).then(() => {
+        renderInventoryTable();
+      }).catch(() => {
+        renderInventoryTable();
+      });
+    } else {
+      renderInventoryTable();
+    }
 
     // Search input
     const searchInput = document.getElementById('inventorySearchInput');

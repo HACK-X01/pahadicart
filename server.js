@@ -43,6 +43,17 @@ const MIME_TYPES = {
 // In-Memory SSE Clients for Real-Time Cross-Device Sync
 const sseClients = new Set();
 
+// SSE Keep-Alive Heartbeat every 15s to keep connections alive without timeouts
+setInterval(() => {
+  for (const client of sseClients) {
+    try {
+      client.write(': heartbeat\n\n');
+    } catch (e) {
+      sseClients.delete(client);
+    }
+  }
+}, 15000);
+
 function broadcastSse(eventType, payload) {
   const message = 'event: ' + eventType + '\ndata: ' + JSON.stringify(payload) + '\n\n';
   for (const client of sseClients) {

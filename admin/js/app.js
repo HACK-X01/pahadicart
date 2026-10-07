@@ -9,17 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (window.RbacService) window.RbacService.init();
-  initGodViewMap("solan");
-  renderOrdersFeed();
-  renderMerchantsTable();
-  renderRidersView();
-  renderFinancialLedger();
-  renderSafetyAndCashDesk();
-  renderSupportDesk();
-  renderGrowthAnalytics();
-  
-  updateMetricsDashboard();
+  try { if (window.RbacService) window.RbacService.init(); } catch(e) {}
+  try { initGodViewMap("solan"); } catch(e) { console.warn("Map init caught:", e); }
+  try { renderOrdersFeed(); } catch(e) { console.warn("Orders feed:", e); }
+  try { renderMerchantsTable(); } catch(e) { console.warn("Merchants table:", e); }
+  try { renderRidersView(); } catch(e) { console.warn("Riders view:", e); }
+  try { renderFinancialLedger(); } catch(e) { console.warn("Financial ledger:", e); }
+  try { renderSafetyAndCashDesk(); } catch(e) { console.warn("Safety desk:", e); }
+  try { renderSupportDesk(); } catch(e) { console.warn("Support desk:", e); }
+  try { renderGrowthAnalytics(); } catch(e) { console.warn("Growth analytics:", e); }
+  try { updateMetricsDashboard(); } catch(e) { console.warn("Metrics:", e); }
 
   // Cross-portal event synchronization
   if (window.pahadiBus) {

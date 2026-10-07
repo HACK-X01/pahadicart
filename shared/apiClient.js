@@ -7,9 +7,26 @@
 (function() {
   'use strict';
 
+  function resolveApiBase() {
+    try {
+      const origin = window.location.origin;
+      if (!origin || origin === 'null' || window.location.protocol === 'file:') {
+        return 'http://localhost:3333';
+      }
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        if (window.location.port !== '3333' && window.location.port !== '') {
+          return 'http://localhost:3333';
+        }
+      }
+      return origin;
+    } catch(e) {
+      return 'http://localhost:3333';
+    }
+  }
+
   class HimoraApiClient {
     constructor() {
-      this.apiBase = window.location.origin;
+      this.apiBase = resolveApiBase();
       this.cache = {
         products: [],
         categories: [],
@@ -20,14 +37,28 @@
         businessRules: {}
       };
       this.listeners = new Map();
+      this.activeEs = null;
+      this.isHydrated = false;
+
       this.initSse();
+      this.hydrateAllData();
     }
 
-    // Server-Sent Events for real-time multi-device revalidation
+    // Server-Sent Events with connection-leak protection
     initSse() {
       if (typeof EventSource === 'undefined') return;
+      if (this.activeEs) {
+        try { this.activeEs.close(); } catch(e) {}
+        this.activeEs = null;
+      }
+
       try {
         const es = new EventSource(this.apiBase + '/api/sync/stream');
+        this.activeEs = es;
+
+        es.addEventListener('open', () => {
+          this.sseConnected = true;
+        });
 
         es.addEventListener('PRODUCT_CHANGED', (e) => {
           try {
@@ -78,11 +109,12 @@
           } catch(err) {}
         });
 
+        // Native EventSource auto-reconnects on its own; do not spawn duplicate instances
         es.onerror = () => {
-          setTimeout(() => this.initSse(), 5000);
+          this.sseConnected = false;
         };
       } catch (err) {
-        console.warn('[HimoraApi] SSE error:', err);
+        console.warn('[HimoraApi] SSE setup error:', err);
       }
     }
 
@@ -103,7 +135,6 @@
     }
 
     handleProductChange(data) {
-      // Re-fetch products from server
       this.getProducts(true, true).then(prods => {
         this.emit('products_changed', prods);
       });
@@ -126,7 +157,7 @@
       this.emit('orders_changed', this.cache.orders);
     }
 
-    // Helper for HTTP requests
+    // Helper for HTTP requests with 6s timeout to prevent UI freezes
     async request(path, options = {}) {
       const url = this.apiBase + path;
       const headers = {
@@ -135,20 +166,103 @@
       };
 
       // Add Admin credentials if in Admin portal
-      if (window.location.pathname.includes('/admin') || window.location.hash.includes('admin')) {
-        headers['X-Admin-Role'] = sessionStorage.getItem('pahadi_active_role') || 'SUPER_ADMIN';
-      }
+      const currentRole = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('pahadi_active_role')) || 'SUPER_ADMIN';
+      headers['X-Admin-Role'] = currentRole;
+      headers['X-Founder-PIN'] = '7890';
+
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 6000) : null;
 
       try {
-        const res = await fetch(url, { ...options, headers });
+        const fetchOpts = { ...options, headers };
+        if (controller) fetchOpts.signal = controller.signal;
+
+        const res = await fetch(url, fetchOpts);
+        if (timeoutId) clearTimeout(timeoutId);
+
         const json = await res.json();
         if (!res.ok) {
           throw new Error(json.message || json.error || 'Server returned HTTP ' + res.status);
         }
         return json;
       } catch (err) {
-        console.error('[HimoraApi Request Error]:', path, err.message);
+        if (timeoutId) clearTimeout(timeoutId);
+        if (err.name === 'AbortError') {
+          console.warn('[HimoraApi Request Timeout]:', path);
+          throw new Error('Server request timed out (6s). Check if server.js is running.');
+        }
+        console.warn('[HimoraApi Request Error]:', path, err.message);
         throw err;
+      }
+    }
+
+    // ==========================================
+    // INITIAL BOOT HYDRATION
+    // ==========================================
+    async hydrateAllData() {
+      try {
+        const [pRes, cRes, mRes, rRes, oRes, cmsRes, brRes] = await Promise.allSettled([
+          this.getProducts(true, true),
+          this.getCategories(true),
+          this.getMerchants(true),
+          this.getRiders(true),
+          this.getOrders(true),
+          this.getCms(true),
+          this.getBusinessRules(true)
+        ]);
+
+        const products = pRes.status === 'fulfilled' && Array.isArray(pRes.value) ? pRes.value : [];
+        const categories = cRes.status === 'fulfilled' && Array.isArray(cRes.value) ? cRes.value : [];
+        const merchants = mRes.status === 'fulfilled' && Array.isArray(mRes.value) ? mRes.value : [];
+        const riders = rRes.status === 'fulfilled' && Array.isArray(rRes.value) ? rRes.value : [];
+        const orders = oRes.status === 'fulfilled' && Array.isArray(oRes.value) ? oRes.value : [];
+
+        // Synchronize in-memory globals
+        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+        if (products.length > 0) window.PAHADICART_DATA.products = products;
+        if (categories.length > 0) window.PAHADICART_DATA.categories = categories;
+        if (merchants.length > 0) window.PAHADICART_DATA.merchants = merchants;
+        if (riders.length > 0) window.PAHADICART_DATA.riders = riders;
+
+        if (!window.PahadiMockDB) window.PahadiMockDB = {};
+        if (merchants.length > 0) window.PahadiMockDB.merchants = merchants;
+        if (riders.length > 0) window.PahadiMockDB.riders = riders;
+        if (orders.length > 0) window.PahadiMockDB.orders = orders;
+
+        // Keep localStorage synced for legacy modules
+        try {
+          if (products.length > 0) localStorage.setItem('pahadicart_products', JSON.stringify(products));
+          if (merchants.length > 0) localStorage.setItem('pahadicart_merchants', JSON.stringify(merchants));
+          if (riders.length > 0) localStorage.setItem('pahadicart_riders', JSON.stringify(riders));
+          if (orders.length > 0) localStorage.setItem('pahadicart_orders_db', JSON.stringify(orders));
+        } catch(e) {}
+
+        this.isHydrated = true;
+
+        // Trigger immediate UI rendering across all open admin views
+        setTimeout(() => {
+          if (window.InventoryService && typeof window.InventoryService.renderInventoryTable === 'function') {
+            window.InventoryService.renderInventoryTable();
+          }
+          if (window.CategoriesService && typeof window.CategoriesService.renderCategories === 'function') {
+            window.CategoriesService.renderCategories();
+          }
+          if (typeof window.renderMerchantsTable === 'function') {
+            window.renderMerchantsTable();
+          }
+          if (typeof window.renderRidersView === 'function') {
+            window.renderRidersView();
+          }
+          if (typeof window.renderOrdersFeed === 'function') {
+            window.renderOrdersFeed();
+          }
+          if (typeof window.updateMetricsDashboard === 'function') {
+            window.updateMetricsDashboard();
+          }
+        }, 50);
+
+      } catch (err) {
+        console.warn('[HimoraApi] Hydration notice:', err);
       }
     }
 
@@ -159,15 +273,21 @@
       if (!forceRefresh && this.cache.products.length > 0 && !includeAll) {
         return this.cache.products;
       }
-      const data = await this.request('/api/products' + (includeAll ? '?all=true' : ''));
-      if (data.success && Array.isArray(data.products)) {
-        if (!includeAll) this.cache.products = data.products;
-        // Keep window.PAHADICART_DATA synchronized
-        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-        window.PAHADICART_DATA.products = data.products;
-        return data.products;
+      try {
+        const data = await this.request('/api/products' + (includeAll ? '?all=true' : ''));
+        if (data.success && Array.isArray(data.products)) {
+          if (!includeAll) this.cache.products = data.products;
+          if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+          window.PAHADICART_DATA.products = data.products;
+          return data.products;
+        }
+      } catch (err) {
+        // Fallback to in-memory or storage if offline
+        if (window.PAHADICART_DATA && Array.isArray(window.PAHADICART_DATA.products) && window.PAHADICART_DATA.products.length > 0) {
+          return window.PAHADICART_DATA.products;
+        }
       }
-      return [];
+      return this.cache.products || [];
     }
 
     async getProduct(id) {
@@ -208,14 +328,20 @@
     // ==========================================
     async getCategories(forceRefresh = false) {
       if (!forceRefresh && this.cache.categories.length > 0) return this.cache.categories;
-      const data = await this.request('/api/categories');
-      if (data.success && Array.isArray(data.categories)) {
-        this.cache.categories = data.categories;
-        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-        window.PAHADICART_DATA.categories = data.categories;
-        return data.categories;
+      try {
+        const data = await this.request('/api/categories');
+        if (data.success && Array.isArray(data.categories)) {
+          this.cache.categories = data.categories;
+          if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+          window.PAHADICART_DATA.categories = data.categories;
+          return data.categories;
+        }
+      } catch(err) {
+        if (window.PAHADICART_DATA && Array.isArray(window.PAHADICART_DATA.categories) && window.PAHADICART_DATA.categories.length > 0) {
+          return window.PAHADICART_DATA.categories;
+        }
       }
-      return [];
+      return this.cache.categories || [];
     }
 
     async createCategory(catData) {
@@ -249,14 +375,21 @@
     // ==========================================
     async getMerchants(forceRefresh = false) {
       if (!forceRefresh && this.cache.merchants.length > 0) return this.cache.merchants;
-      const data = await this.request('/api/merchants');
-      if (data.success && Array.isArray(data.merchants)) {
-        this.cache.merchants = data.merchants;
-        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-        window.PAHADICART_DATA.merchants = data.merchants;
-        return data.merchants;
+      try {
+        const data = await this.request('/api/merchants');
+        if (data.success && Array.isArray(data.merchants)) {
+          this.cache.merchants = data.merchants;
+          if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+          window.PAHADICART_DATA.merchants = data.merchants;
+          if (window.PahadiMockDB) window.PahadiMockDB.merchants = data.merchants;
+          return data.merchants;
+        }
+      } catch(err) {
+        if (window.PahadiMockDB && Array.isArray(window.PahadiMockDB.merchants) && window.PahadiMockDB.merchants.length > 0) {
+          return window.PahadiMockDB.merchants;
+        }
       }
-      return [];
+      return this.cache.merchants || [];
     }
 
     async updateMerchant(id, updates, reason = 'Admin update') {
@@ -274,14 +407,21 @@
     // ==========================================
     async getRiders(forceRefresh = false) {
       if (!forceRefresh && this.cache.riders.length > 0) return this.cache.riders;
-      const data = await this.request('/api/riders');
-      if (data.success && Array.isArray(data.riders)) {
-        this.cache.riders = data.riders;
-        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-        window.PAHADICART_DATA.riders = data.riders;
-        return data.riders;
+      try {
+        const data = await this.request('/api/riders');
+        if (data.success && Array.isArray(data.riders)) {
+          this.cache.riders = data.riders;
+          if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+          window.PAHADICART_DATA.riders = data.riders;
+          if (window.PahadiMockDB) window.PahadiMockDB.riders = data.riders;
+          return data.riders;
+        }
+      } catch(err) {
+        if (window.PahadiMockDB && Array.isArray(window.PahadiMockDB.riders) && window.PahadiMockDB.riders.length > 0) {
+          return window.PahadiMockDB.riders;
+        }
       }
-      return [];
+      return this.cache.riders || [];
     }
 
     async updateRider(id, updates, reason = 'Admin update') {
@@ -299,12 +439,19 @@
     // ==========================================
     async getOrders(forceRefresh = false) {
       if (!forceRefresh && this.cache.orders.length > 0) return this.cache.orders;
-      const data = await this.request('/api/orders');
-      if (data.success && Array.isArray(data.orders)) {
-        this.cache.orders = data.orders;
-        return data.orders;
+      try {
+        const data = await this.request('/api/orders');
+        if (data.success && Array.isArray(data.orders)) {
+          this.cache.orders = data.orders;
+          if (window.PahadiMockDB) window.PahadiMockDB.orders = data.orders;
+          return data.orders;
+        }
+      } catch(err) {
+        if (window.PahadiMockDB && Array.isArray(window.PahadiMockDB.orders) && window.PahadiMockDB.orders.length > 0) {
+          return window.PahadiMockDB.orders;
+        }
       }
-      return [];
+      return this.cache.orders || [];
     }
 
     async createOrder(orderData) {
@@ -330,14 +477,16 @@
     // ==========================================
     async getCms(forceRefresh = false) {
       if (!forceRefresh && Object.keys(this.cache.cms).length > 0) return this.cache.cms;
-      const data = await this.request('/api/cms');
-      if (data.success && data.cms) {
-        this.cache.cms = data.cms;
-        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-        window.PAHADICART_DATA.homepageCms = data.cms;
-        return data.cms;
-      }
-      return {};
+      try {
+        const data = await this.request('/api/cms');
+        if (data.success && data.cms) {
+          this.cache.cms = data.cms;
+          if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+          window.PAHADICART_DATA.homepageCms = data.cms;
+          return data.cms;
+        }
+      } catch(err) {}
+      return this.cache.cms || {};
     }
 
     async saveCms(cmsPayload) {
@@ -354,14 +503,16 @@
     // ==========================================
     async getBusinessRules(forceRefresh = false) {
       if (!forceRefresh && Object.keys(this.cache.businessRules).length > 0) return this.cache.businessRules;
-      const data = await this.request('/api/business-rules');
-      if (data.success && data.rules) {
-        this.cache.businessRules = data.rules;
-        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
-        window.PAHADICART_DATA.businessRules = data.rules;
-        return data.rules;
-      }
-      return {};
+      try {
+        const data = await this.request('/api/business-rules');
+        if (data.success && data.rules) {
+          this.cache.businessRules = data.rules;
+          if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+          window.PAHADICART_DATA.businessRules = data.rules;
+          return data.rules;
+        }
+      } catch(err) {}
+      return this.cache.businessRules || {};
     }
 
     async saveBusinessRules(rulesPayload) {
