@@ -57,27 +57,46 @@
       localStorage.setItem(STORAGE_KEY_RIDERS, JSON.stringify(riders));
     }
 
-    // Place a new order from Customer App
+    // Place a new order from Customer App (Persisted to SQLite DB & Synced Across All Portals)
     placeOrder(orderData) {
       const orders = this.getOrders();
-      orders.unshift(orderData);
-      this.saveOrders(orders);
+      if (!orders.find(o => o.id === orderData.id)) {
+        orders.unshift(orderData);
+        this.saveOrders(orders);
+      }
       this.broadcast('ORDER_PLACED', orderData);
+
+      // Persist to real SQLite database via HimoraApi
+      if (window.HimoraApi && typeof window.HimoraApi.createOrder === 'function') {
+        window.HimoraApi.createOrder(orderData).catch(err => {
+          console.warn('[pahadiBus] Failed to persist order to SQLite:', err.message);
+        });
+      }
       return orderData;
     }
 
-    // Update status (e.g. Preparing, Ready for Handover, Rider Picked, Delivered)
+    // Update status (e.g. Preparing, Ready for Handover, Out for Delivery, Delivered)
     updateOrderStatus(orderId, newStatus, extraData = {}) {
       const orders = this.getOrders();
-      const order = orders.find(o => o.id === orderId);
+      let order = orders.find(o => o.id === orderId);
       if (order) {
         order.status = newStatus;
         Object.assign(order, extraData);
         this.saveOrders(orders);
-        this.broadcast('ORDER_STATUS_CHANGED', { orderId, newStatus, order });
-        return order;
+      } else {
+        order = { id: orderId, status: newStatus, ...extraData };
+        orders.unshift(order);
+        this.saveOrders(orders);
       }
-      return null;
+      this.broadcast('ORDER_STATUS_CHANGED', { orderId, newStatus, order });
+
+      // Persist status mutation to real SQLite database via HimoraApi
+      if (window.HimoraApi && typeof window.HimoraApi.updateOrder === 'function') {
+        window.HimoraApi.updateOrder(orderId, { status: newStatus, ...extraData }).catch(err => {
+          console.warn('[pahadiBus] Failed to update order status in SQLite:', err.message);
+        });
+      }
+      return order;
     }
 
     // Unified Zero-Leakage Platform Stats for Super Admin Command Center
@@ -128,13 +147,25 @@
     // Unified Zero-Leakage Merchant Terminal Stats
     getMerchantStats(merchantId) {
       const allOrders = this.getOrders();
-      const shopOrders = allOrders.filter(o => o.merchantId === merchantId || (o.merchant && o.merchant.id === merchantId));
+      const shopOrders = allOrders.filter(o => {
+        if (!merchantId || merchantId === 'all') return true;
+        const mId = o.merchantId || (o.merchant && o.merchant.id) || o.merchant_id || '';
+        if (mId === merchantId) return true;
+        if ((merchantId === 'm-101' || merchantId === 'shop-sharma') && (mId === 'm-101' || mId === 'shop-sharma' || !mId)) return true;
+        return false;
+      });
 
-      const placedList = shopOrders.filter(o => o.status === 'Placed');
-      const prepList = shopOrders.filter(o => o.status === 'Preparing');
+      const placedList = shopOrders.filter(o => {
+        const s = (o.status || '').toLowerCase();
+        return s === 'placed' || s === 'pending';
+      });
+      const prepList = shopOrders.filter(o => {
+        const s = (o.status || '').toLowerCase();
+        return s.includes('prep') || s.includes('pack');
+      });
       const deliveredList = shopOrders.filter(o => {
         const s = (o.status || '').toLowerCase();
-        return s.includes('deliv') || s.includes('pick') || s.includes('ready');
+        return s.includes('deliv') || s.includes('pick') || s.includes('ready') || s.includes('transit') || s.includes('out') || s.includes('route');
       });
 
       const gross = shopOrders.reduce((sum, o) => {

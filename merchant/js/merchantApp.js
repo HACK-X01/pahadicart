@@ -313,6 +313,24 @@
       if (window.pahadiBus) {
         window.pahadiBus.emit('PRODUCT_ADDED', newProd);
       }
+      // Persist to real SQLite database so Customers and Admin see it live!
+      if (window.HimoraApi && typeof window.HimoraApi.createProduct === 'function') {
+        window.HimoraApi.createProduct({
+          id: newProd.id,
+          name: newProd.name,
+          category_id: newProd.category || 'grocery',
+          price: newProd.price,
+          mrp: newProd.mrp,
+          stock: 30,
+          unit: newProd.unit || 'unit',
+          badge: newProd.badge || 'Fresh',
+          image_url: newProd.icon || '📦',
+          merchant_id: newProd.merchantId || this.currentMerchantId,
+          merchant_name: newProd.merchantName || 'Store',
+          active: 1,
+          is_launched: 1
+        }).catch(err => console.warn('[Merchant createProduct DB error]', err));
+      }
       nameEl.value = '';
       priceEl.value = '';
       this.openStockModal();

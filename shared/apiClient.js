@@ -136,25 +136,150 @@
 
     handleProductChange(data) {
       this.getProducts(true, true).then(prods => {
+        if (!window.PAHADICART_DATA) window.PAHADICART_DATA = {};
+        window.PAHADICART_DATA.products = prods;
+        try {
+          localStorage.setItem('pahadicart_products', JSON.stringify(prods));
+        } catch(e) {}
+
         this.emit('products_changed', prods);
+        if (window.pahadiBus) {
+          window.pahadiBus.broadcast('PRODUCTS_UPDATED', prods);
+          window.pahadiBus.broadcast('PRODUCT_STOCK_CHANGED', data);
+        }
+
+        // Live update Customer App catalog
+        if (window.customerApp && typeof window.customerApp.loadDatabaseCatalog === 'function') {
+          window.customerApp.loadDatabaseCatalog();
+        }
+        // Live update Admin Inventory table
+        if (window.InventoryService && typeof window.InventoryService.renderInventoryTable === 'function') {
+          window.InventoryService.renderInventoryTable();
+        }
+        // Live update Merchant stock list modal if open
+        if (window.merchantApp && typeof window.merchantApp.openStockModal === 'function') {
+          const m = document.getElementById('stockModal');
+          if (m && m.style.display !== 'none') {
+            window.merchantApp.openStockModal();
+          }
+        }
       });
     }
 
     handleOrderCreated(order) {
-      this.cache.orders.unshift(order);
+      if (!order || !order.id) return;
+      if (!this.cache.orders.find(o => o.id === order.id)) {
+        this.cache.orders.unshift(order);
+      }
+      if (window.PahadiMockDB) {
+        if (!window.PahadiMockDB.orders) window.PahadiMockDB.orders = [];
+        if (!window.PahadiMockDB.orders.find(o => o.id === order.id)) {
+          window.PahadiMockDB.orders.unshift(order);
+        }
+      }
+      try {
+        const live = JSON.parse(localStorage.getItem('pahadicart_live_orders') || '[]');
+        if (!live.find(o => o.id === order.id)) {
+          live.unshift(order);
+          localStorage.setItem('pahadicart_live_orders', JSON.stringify(live));
+        }
+        localStorage.setItem('pahadicart_orders_db', JSON.stringify(this.cache.orders));
+      } catch(e) {}
+
       this.emit('order_created', order);
       this.emit('orders_changed', this.cache.orders);
+      if (window.pahadiBus) {
+        window.pahadiBus.broadcast('ORDER_PLACED', order);
+      }
+
+      // Audio alerts for incoming orders
+      if (window.pahadiAudio) {
+        if (typeof window.pahadiAudio.playIncomingOrderAlert === 'function') window.pahadiAudio.playIncomingOrderAlert();
+        if (typeof window.pahadiAudio.playRiderPing === 'function') window.pahadiAudio.playRiderPing();
+      }
+
+      // Live update Admin Orders Kanban & Metrics
+      if (typeof renderOrdersFeed === 'function') renderOrdersFeed();
+      if (typeof updateMetricsDashboard === 'function') updateMetricsDashboard();
+
+      // Live update Merchant Orders column
+      if (window.merchantApp && typeof window.merchantApp.renderOrders === 'function') {
+        window.merchantApp.renderOrders();
+      }
+
+      // Live update Rider Radar / Available list
+      if (window.riderApp && typeof window.riderApp.renderRadarScreen === 'function') {
+        window.riderApp.renderRadarScreen();
+      }
     }
 
     handleOrderUpdated(order) {
+      if (!order || !order.id) return;
       const idx = this.cache.orders.findIndex(o => o.id === order.id);
       if (idx !== -1) {
         this.cache.orders[idx] = Object.assign(this.cache.orders[idx], order);
       } else {
         this.cache.orders.unshift(order);
       }
+
+      if (window.PahadiMockDB && window.PahadiMockDB.orders) {
+        const pIdx = window.PahadiMockDB.orders.findIndex(o => o.id === order.id);
+        if (pIdx !== -1) {
+          window.PahadiMockDB.orders[pIdx] = Object.assign(window.PahadiMockDB.orders[pIdx], order);
+        } else {
+          window.PahadiMockDB.orders.unshift(order);
+        }
+      }
+
+      try {
+        const live = JSON.parse(localStorage.getItem('pahadicart_live_orders') || '[]');
+        const lIdx = live.findIndex(o => o.id === order.id);
+        if (lIdx !== -1) {
+          live[lIdx] = Object.assign(live[lIdx], order);
+          localStorage.setItem('pahadicart_live_orders', JSON.stringify(live));
+        }
+      } catch(e) {}
+
       this.emit('order_updated', order);
       this.emit('orders_changed', this.cache.orders);
+      if (window.pahadiBus) {
+        window.pahadiBus.broadcast('ORDER_STATUS_CHANGED', { orderId: order.id, newStatus: order.status, order });
+      }
+
+      // Live update Customer Tracking screen
+      if (window.customerApp) {
+        if (window.customerApp.activeOrder && (window.customerApp.activeOrder.id === order.id || !window.customerApp.activeOrder.id)) {
+          window.customerApp.activeOrder = Object.assign(window.customerApp.activeOrder, order);
+          if (typeof window.customerApp.renderTrackingScreen === 'function') {
+            window.customerApp.renderTrackingScreen(window.customerApp.activeOrder);
+          }
+        }
+        if (typeof window.customerApp.renderOrdersScreen === 'function') {
+          window.customerApp.renderOrdersScreen('current');
+        }
+      }
+
+      // Live update Merchant Terminal
+      if (window.merchantApp && typeof window.merchantApp.renderOrders === 'function') {
+        window.merchantApp.renderOrders();
+      }
+
+      // Live update Rider Cockpit
+      if (window.riderApp) {
+        if (typeof window.riderApp.refreshActiveMissionFromStorage === 'function') {
+          window.riderApp.refreshActiveMissionFromStorage();
+        }
+        if (typeof window.riderApp.renderMissionScreen === 'function') {
+          window.riderApp.renderMissionScreen();
+        }
+      }
+
+      // Live update Admin Command Kanban & Payments Desk
+      if (typeof renderOrdersFeed === 'function') renderOrdersFeed();
+      if (typeof updateMetricsDashboard === 'function') updateMetricsDashboard();
+      if (window.PaymentsDesk && typeof window.PaymentsDesk.render === 'function') {
+        window.PaymentsDesk.render();
+      }
     }
 
     // Helper for HTTP requests with 6s timeout to prevent UI freezes

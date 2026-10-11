@@ -1062,6 +1062,9 @@
       } catch(e) {}
 
       // Save and broadcast across Super Admin, Merchant Terminal, and Rider Cockpit!
+      if (window.HimoraApi && typeof window.HimoraApi.createOrder === 'function') {
+        window.HimoraApi.createOrder(order).catch(err => console.warn('[Customer DB order error]', err));
+      }
       if (window.pahadiBus) {
         window.pahadiBus.placeOrder(order);
       }
