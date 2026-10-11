@@ -96,8 +96,9 @@ function sendJson(res, statusCode, data) {
 function checkAdminAuth(req) {
   const role = req.headers['x-admin-role'] || '';
   const pin = req.headers['x-founder-pin'] || '';
+  const adminPass = req.headers['x-admin-password'] || '';
   // Allowed if valid admin role or Founder PIN passed
-  if (role === 'SUPER_ADMIN' || role === 'OPERATIONS_ADMIN' || role === 'FINANCE_ADMIN' || pin === '7890') {
+  if (adminPass === 'Pahadi#123' || role === 'SUPER_ADMIN' || role === 'OPERATIONS_ADMIN' || role === 'FINANCE_ADMIN' || pin === '7890') {
     return { authorized: true, role: role || 'SUPER_ADMIN' };
   }
   // For local development / same-origin convenience, check referer

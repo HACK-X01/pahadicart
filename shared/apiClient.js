@@ -296,6 +296,7 @@
       if (isAdminContext) {
         const currentRole = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('pahadi_active_role')) || 'SUPER_ADMIN';
         headers['X-Admin-Role'] = currentRole;
+        headers['X-Admin-Password'] = 'Pahadi#123';
         try {
           const founderSession = JSON.parse(localStorage.getItem('jeevanix_founder_session') || '{}');
           if (founderSession && founderSession.authenticated && founderSession.founder && founderSession.founder.pin) {
