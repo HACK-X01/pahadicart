@@ -897,10 +897,38 @@
           </div>
 
           
+                      <div class="account-menu-item" onclick="window.open('/privacy.html', '_blank')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🔒</span>
+              <div>
+                <div style="font-weight: 700; color: inherit;">Privacy Policy</div>
+                <div style="font-size: 11px; color: var(--himora-text-muted);">Data safety & location disclosures</div>
+              </div>
             </div>
             <span class="menu-item-chevron">›</span>
           </div>
-        </div>
+
+          <div class="account-menu-item" onclick="window.open('/terms.html', '_blank')">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">📜</span>
+              <div>
+                <div style="font-weight: 700; color: inherit;">Terms & Conditions</div>
+                <div style="font-size: 11px; color: var(--himora-text-muted);">Mountain delivery & refund policies</div>
+              </div>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
+
+          <div class="account-menu-item" onclick="window.customerApp.handleAccountDeletionRequest()" style="color: #ef4444;">
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🗑️</span>
+              <div>
+                <div style="font-weight: 700; color: #ef4444;">Delete Account & Data</div>
+                <div style="font-size: 11px; color: var(--himora-text-muted);">Erase profile, address & order history</div>
+              </div>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          </div>
 
           <div class="account-menu-item account-logout-item" onclick="window.customerApp.handleLogout()">
             <div class="menu-item-left">

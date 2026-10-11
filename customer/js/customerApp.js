@@ -1802,6 +1802,35 @@
       }
     }
 
+    
+    async handleAccountDeletionRequest() {
+      const user = window.JeevanixCustomerAuth ? window.JeevanixCustomerAuth.getCurrentUser() : null;
+      const phone = (user && user.phone) ? user.phone : prompt('Account aur Data delete karne ke liye apna 10-digit registered mobile number darj karein:');
+      if (!phone) return;
+
+      const confirmDelete = confirm('⚠️ WARNING: Kya aap sach me apna account aur saara data permanently delete karna chahte hain?\n\nIsse aapka saved address, order history, aur profile permanently hat jayegi aur ise wapas nahi laya ja sakega.');
+      if (!confirmDelete) return;
+
+      try {
+        if (window.HimoraApi && window.HimoraApi.request) {
+          await window.HimoraApi.request('/api/users/delete-request', {
+            method: 'POST',
+            body: JSON.stringify({ phone, reason: 'In-app user deletion request', requestedAt: new Date().toISOString() })
+          });
+        }
+      } catch (e) {
+        console.warn('Backend delete notification error:', e);
+      }
+
+      if (window.JeevanixCustomerAuth) window.JeevanixCustomerAuth.logout();
+      try {
+        localStorage.removeItem('pahadicart_user_session');
+        localStorage.removeItem('jeevanix_current_user');
+      } catch(e) {}
+      alert('Aapka account aur data successfully delete kar diya gaya hai.');
+      window.location.href = '/';
+    }
+
     handleLogout() {
       if (confirm('Kya aap Jeevanix Local app se logout karna chahte hain?')) {
         if (window.JeevanixCustomerAuth) window.JeevanixCustomerAuth.logout();

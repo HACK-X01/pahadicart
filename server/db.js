@@ -725,6 +725,17 @@ const CouponsRepo = {
 const AuditLogsRepo = {
   getAll(limit = 100) {
     return db.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT ?').all(limit);
+  },
+  log(entry) {
+    return recordAudit(
+      entry.admin_id || 'SYSTEM',
+      entry.action,
+      entry.entity_type,
+      entry.entity_id,
+      entry.prev || null,
+      entry.details || null,
+      entry.reason || 'Audit log event'
+    );
   }
 };
 
@@ -743,7 +754,43 @@ function exportFullDatabase() {
   };
 }
 
+
+const UsersRepo = {
+  getByPhone(phone) {
+    const stmt = db.prepare('SELECT * FROM users WHERE phone = ? LIMIT 1');
+    return stmt.get(String(phone));
+  },
+  create(u) {
+    const stmt = db.prepare(`
+      INSERT INTO users (id, name, phone, password, address, colony, staircase_note, town, role, status, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    stmt.run(
+      u.id || ('u-' + Date.now()),
+      u.name,
+      String(u.phone),
+      u.password || 'temp123',
+      u.address || '',
+      u.colony || '',
+      u.staircase_note || '',
+      u.town || 'Solan',
+      u.role || 'CUSTOMER',
+      u.status || 'ACTIVE',
+      u.created_at || new Date().toISOString()
+    );
+    return this.getByPhone(u.phone);
+  },
+  deleteByPhone(phone) {
+    const stmt = db.prepare('DELETE FROM users WHERE phone = ?');
+    return stmt.run(String(phone));
+  },
+  list() {
+    return db.prepare('SELECT id, name, phone, address, town, role, status, created_at FROM users').all();
+  }
+};
+
 module.exports = {
+  UsersRepo,
   db,
   ProductsRepo,
   CategoriesRepo,

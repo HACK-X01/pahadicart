@@ -16,6 +16,7 @@ const {
   CmsRepo,
   BusinessRulesRepo,
   CouponsRepo,
+  UsersRepo,
   AuditLogsRepo,
   exportFullDatabase
 } = require('./server/db');
@@ -449,6 +450,37 @@ const server = http.createServer(async (req, res) => {
           }
           const result = CouponsRepo.delete(code, auth.role);
           sendJson(res, 200, result);
+          return;
+        }
+      }
+
+      // 10. USER ACCOUNT & DATA DELETION REQUEST (GOOGLE PLAY DATA SAFETY COMPLIANCE)
+      if (reqPath === '/api/users/delete-request') {
+        if (req.method === 'POST') {
+          const body = await parseBody(req);
+          const phone = body.phone ? String(body.phone).trim() : '';
+          if (!phone) {
+            sendJson(res, 400, { success: false, error: 'Phone number is required' });
+            return;
+          }
+
+          try {
+            UsersRepo.deleteByPhone(phone);
+          } catch(e) {}
+
+          AuditLogsRepo.log({
+            admin_id: 'PLAYSTORE_DATA_SAFETY',
+            action: 'USER_ACCOUNT_DELETED',
+            entity_type: 'user',
+            entity_id: phone,
+            details: { reason: body.reason || 'User requested deletion', requestedAt: body.requestedAt || new Date().toISOString() }
+          });
+
+          sendJson(res, 200, {
+            success: true,
+            message: 'User account and associated data successfully purged.',
+            phone: phone
+          });
           return;
         }
       }

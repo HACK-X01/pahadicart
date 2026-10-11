@@ -90,6 +90,11 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
+  // PLAY STORE REAL-TIME API BYPASS: Never cache or intercept dynamic API routes or SSE stream
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+
   // Network only for dynamic version checks to ensure instant update detection
   if (url.pathname.includes('/version.json')) {
     event.respondWith(

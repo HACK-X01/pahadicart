@@ -290,10 +290,19 @@
         ...(options.headers || {})
       };
 
-      // Add Admin credentials if in Admin portal
-      const currentRole = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('pahadi_active_role')) || 'SUPER_ADMIN';
-      headers['X-Admin-Role'] = currentRole;
-      headers['X-Founder-PIN'] = '7890';
+      // Add Admin credentials ONLY if in Admin portal or active authenticated founder session
+      const isAdminContext = (typeof window !== 'undefined' && window.location.pathname.includes('/admin/')) ||
+                             (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('pahadi_active_role'));
+      if (isAdminContext) {
+        const currentRole = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('pahadi_active_role')) || 'SUPER_ADMIN';
+        headers['X-Admin-Role'] = currentRole;
+        try {
+          const founderSession = JSON.parse(localStorage.getItem('jeevanix_founder_session') || '{}');
+          if (founderSession && founderSession.authenticated && founderSession.founder && founderSession.founder.pin) {
+            headers['X-Founder-PIN'] = founderSession.founder.pin;
+          }
+        } catch(e) {}
+      }
 
       const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
       const timeoutId = controller ? setTimeout(() => controller.abort(), 6000) : null;
