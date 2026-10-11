@@ -8,12 +8,13 @@ const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
 const fs = require('fs');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY;
+const DATA_DIR = process.env.DATA_DIR || (isServerless ? path.join(require('os').tmpdir(), 'himora-data') : path.join(__dirname, '..', 'data'));
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-const DB_PATH = path.join(DATA_DIR, 'himora.db');
+const DB_PATH = process.env.DB_PATH || path.join(DATA_DIR, 'himora.db');
 const db = new DatabaseSync(DB_PATH);
 
 // Enable WAL Mode & High-Performance Pragmas

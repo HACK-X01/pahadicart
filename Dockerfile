@@ -1,5 +1,5 @@
 # PahadiCart Ultra-Lightweight Himalayan Hyperlocal Server
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY . .
 ENV PORT=3333

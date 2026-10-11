@@ -127,7 +127,7 @@ const server = http.createServer(async (req, res) => {
   // ==========================================
   // REAL-TIME CLOUD API ROUTES (SQLITE BACKED)
   // ==========================================
-  if (reqPath.startsWith('/api/')) {
+  if (reqPath.startsWith('/api/') || reqPath === '/healthz' || reqPath === '/health') {
     try {
       // 1. SSE Stream for Real-Time Cross-Device Events
       if (reqPath === '/api/sync/stream') {
@@ -144,7 +144,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       // 2. Health & DB Status
-      if (reqPath === '/api/health') {
+      if (reqPath === '/api/health' || reqPath === '/healthz' || reqPath === '/health') {
         sendJson(res, 200, {
           status: 'ok',
           app: 'Himora Master SQLite Engine',
@@ -551,7 +551,7 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+if (require.main === module || (!process.env.VERCEL && !process.env.AWS_LAMBDA_FUNCTION_NAME)) {
   server.listen(PORT, '0.0.0.0', () => {
     console.log('Himora Master Engine (SQLite) listening on port ' + PORT);
   });
