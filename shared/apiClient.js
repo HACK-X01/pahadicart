@@ -1,5 +1,5 @@
 /**
- * Himora / Jeevanix Local — Universal Client API Layer (HimoraApi)
+ * Himora / Jeevanix — Universal Client API Layer (HimoraApi)
  * Connects Customer App, Merchant Panel, Rider Cockpit, and Founder Admin
  * to the SQLite Single Source of Truth backend (/api/*).
  */

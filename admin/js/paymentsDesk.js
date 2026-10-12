@@ -1,5 +1,5 @@
 /**
- * Jeevanix Local — Founder Payment Verification & Settlement Desk
+ * Jeevanix — Founder Payment Verification & Settlement Desk
  * Real-time queue for UPI QR Payments with UTR Check, Screenshot Lightbox,
  * and Manual Verification State Machine.
  */
@@ -43,7 +43,7 @@ window.PaymentsDesk = (function() {
     const payments = getPaymentList();
 
     // Populate Founder UPI Inputs
-    const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank', businessName: 'Jeevanix Local' };
+    const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank', businessName: 'Jeevanix' };
     const inpVpa = document.getElementById('founderUpiVpaInput');
     const inpName = document.getElementById('founderUpiNameInput');
     if (inpVpa && !inpVpa.value) inpVpa.value = upiSettings.upiVpa || '';
@@ -215,7 +215,7 @@ window.PaymentsDesk = (function() {
       return;
     }
     if (window.JeevanixCloudSync) {
-      window.JeevanixCloudSync.saveUpiSettings(vpa, name || 'Jeevanix Local');
+      window.JeevanixCloudSync.saveUpiSettings(vpa, name || 'Jeevanix');
     }
     if (typeof showToast === 'function') {
       showToast('✅ Founder Real UPI VPA Saved: ' + vpa);

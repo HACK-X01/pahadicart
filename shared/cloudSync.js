@@ -1,5 +1,5 @@
 /**
- * Jeevanix Local — Universal Real-Time Cloud Sync Engine
+ * Jeevanix — Universal Real-Time Cloud Sync Engine
  * Enables multi-phone synchronization across Customer, Merchant, Rider, and Founder Admin.
  * Uses native Server-Sent Events (SSE) with automatic fallback to offline local cache.
  */
@@ -272,7 +272,7 @@
       } catch(e) {}
       return {
         upiVpa: 'jeevanix@okhdfcbank',
-        businessName: 'Jeevanix Local'
+        businessName: 'Jeevanix'
       };
     }
 

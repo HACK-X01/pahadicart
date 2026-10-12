@@ -1,5 +1,5 @@
 /**
- * Jeevanix Local — Zero-Cost Customer Authentication Engine
+ * Jeevanix — Zero-Cost Customer Authentication Engine
  * Pure Client-Side Secure Storage (Zero Paid SMS/OTP API)
  * Handles Registration, Login, Session Persistence, and Address Sync
  */
@@ -86,7 +86,7 @@
         window.pahadiBus.broadcast('CUSTOMER_REGISTERED', { userId: newUser.id, name: newUser.name, phone: newUser.phone });
       }
 
-      return { success: true, user: newUser, message: 'Jeevanix Local me aapka swagat hai!' };
+      return { success: true, user: newUser, message: 'Jeevanix me aapka swagat hai!' };
     }
 
     login(phone, password) {

@@ -971,7 +971,7 @@
         }
 
         if (mode === 'UPI_QR') {
-          const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank', businessName: 'Jeevanix Local' };
+          const upiSettings = window.JeevanixCloudSync ? window.JeevanixCloudSync.getUpiSettings() : { upiVpa: 'jeevanix@okhdfcbank', businessName: 'Jeevanix' };
           const rawAmount = totalEl ? totalEl.innerText.replace(/[^0-9.]/g, '') : '250';
           const upiUrl = 'upi://pay?pa=' + encodeURIComponent(upiSettings.upiVpa) + '&pn=' + encodeURIComponent(upiSettings.businessName) + '&am=' + encodeURIComponent(rawAmount) + '&cu=INR&tn=Jeevanix Order';
           const qrImg = document.getElementById('checkoutUpiQrImg');
@@ -1874,7 +1874,7 @@
     }
 
     handleLogout() {
-      if (confirm('Kya aap Jeevanix Local app se logout karna chahte hain?')) {
+      if (confirm('Kya aap Jeevanix app se logout karna chahte hain?')) {
         if (window.JeevanixCustomerAuth) window.JeevanixCustomerAuth.logout();
         try {
           localStorage.removeItem('pahadicart_user_session');

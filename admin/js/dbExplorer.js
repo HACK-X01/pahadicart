@@ -1,5 +1,5 @@
 /**
- * Jeevanix Local — Sovereign Protected Database Explorer
+ * Jeevanix — Sovereign Protected Database Explorer
  * Complete collection view, record inspection, search/filter,
  * safe edits, soft-delete, and 1-click JSON/CSV export.
  */
@@ -209,7 +209,7 @@ window.DbExplorer = (function() {
         }
       } catch(e) {}
       const snapshot = {
-        platform: 'Jeevanix Local',
+        platform: 'Jeevanix',
         exportedAt: new Date().toISOString(),
         version: '1.0.0-mvp',
         collections: {}

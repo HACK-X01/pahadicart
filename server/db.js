@@ -1,5 +1,5 @@
 /**
- * Himora / Jeevanix Local — Master SQLite Database Engine
+ * Himora / Jeevanix — Master SQLite Database Engine
  * SINGLE SOURCE OF TRUTH for Products, Categories, Merchants, Riders, Orders, CMS, and Business Rules.
  * Built with Node.js 24 native node:sqlite.
  */
@@ -312,7 +312,7 @@ function seedIfEmpty() {
       codEnabled: true,
       upiEnabled: true,
       upiVpa: 'jeevanix@okhdfcbank',
-      businessName: 'Jeevanix Local'
+      businessName: 'Jeevanix'
     }), new Date().toISOString());
   }
 }

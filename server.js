@@ -1,5 +1,5 @@
 /**
- * Himora / Jeevanix Local — Master Production Server & REST API
+ * Himora / Jeevanix — Master Production Server & REST API
  * Single Source of Truth: SQLite Database (data/himora.db)
  * Real-Time Broadcast: Native Server-Sent Events (SSE)
  */

@@ -1,5 +1,5 @@
 /**
- * Jeevanix Local — Sovereign Founder / CEO Authentication & Security Gate
+ * Jeevanix — Sovereign Founder / CEO Authentication & Security Gate
  * Master Admin Password Protection: 'Pahadi#123'
  * Dedicated Founder Verification with 4-Digit Master PIN for Critical Operations
  */

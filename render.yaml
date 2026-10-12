@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: jeevanix-local
+    name: jeevanix
     env: node
     plan: free
     buildCommand: ""
