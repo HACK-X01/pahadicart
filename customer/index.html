@@ -197,30 +197,38 @@
       </div>
 
       <div class="desktop-nav-right">
-        <!-- Desktop Theme Toggle -->
-        <button class="theme-toggle-btn desktop-theme-toggle" id="themeToggleBtnDesktop" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
-          <span class="theme-toggle-icon"></span>
-          <span class="theme-toggle-label">Dark</span>
-        </button>
         <button class="desktop-nav-link active" id="desktopNavHome" onclick="window.customerApp.navigateTo('home')">
           <span>🏠</span> Home
         </button>
-        <button class="desktop-nav-link" id="desktopNavCategories" onclick="window.customerApp.navigateTo('categories')">
+        <button class="desktop-nav-link desktop-hide-md" id="desktopNavCategories" onclick="window.customerApp.navigateTo('categories')">
           <span>🔲</span> Categories
         </button>
-        <button class="desktop-nav-link" id="desktopNavOffers" onclick="window.customerApp.navigateTo('offers')">
+        <button class="desktop-nav-link desktop-hide-md" id="desktopNavOffers" onclick="window.customerApp.navigateTo('offers')">
           <span>🏷️</span> Offers <span class="desktop-badge-discount">50%</span>
         </button>
-        <button class="desktop-nav-link" id="desktopNavJeevanix" onclick="window.customerApp.navigateTo('jeevanix')">
+        <button class="desktop-nav-link desktop-hide-md" id="desktopNavJeevanix" onclick="window.customerApp.navigateTo('jeevanix')">
           <span>🌿</span> Jeevanix
         </button>
         <button class="desktop-nav-link" id="desktopNavOrders" onclick="window.customerApp.navigateTo('orders')">
-          <span>📋</span> My Orders
+          <span>📋</span> Orders
         </button>
-        <button class="desktop-nav-link" id="desktopNavAccount" onclick="window.customerApp.navigateTo('profile')">
-          <span>👤</span> Account
+
+        <!-- Desktop Theme Toggle -->
+        <button class="theme-toggle-btn desktop-theme-toggle" id="themeToggleBtnDesktop" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
+          <span class="theme-toggle-icon"></span>
         </button>
-        <button class="desktop-cart-btn" onclick="window.customerApp.navigateTo('cart')">
+
+        <!-- Dedicated Prominent User Profile Pill Button -->
+        <button class="desktop-profile-pill" id="desktopNavAccount" onclick="window.customerApp.navigateTo('profile')" title="My Profile & Account">
+          <div class="desktop-profile-avatar-circle" id="desktopProfileAvatar">👤</div>
+          <div class="desktop-profile-meta">
+            <span class="desktop-profile-name" id="desktopProfileName">Amar Thakur</span>
+          </div>
+          <span class="desktop-profile-chevron">▾</span>
+        </button>
+
+        <!-- Prominent Desktop Cart Button -->
+        <button class="desktop-cart-btn" id="desktopCartBtn" onclick="window.customerApp.navigateTo('cart')" title="View Cart">
           <span>🛒</span>
           <span id="desktopCartBtnLabel">Cart</span>
           <span class="desktop-cart-badge" id="desktopCartBadge">3</span>
@@ -248,13 +256,18 @@
               <div class="brand-tagline">Local Shopping. Made for the Hills.</div>
             </div>
           </div>
-          <button class="theme-toggle-btn mobile-theme-toggle" id="themeToggleBtnMobile" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode" style="margin-right: 8px;">
-            <span class="theme-toggle-icon"></span>
-          </button>
-          <button class="bell-notice-btn" onclick="window.customerApp.navigateTo('offers')" title="Notifications & Offers">
-            <span>🔔</span>
-            <span class="bell-dot"></span>
-          </button>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="theme-toggle-btn mobile-theme-toggle" id="themeToggleBtnMobile" onclick="window.toggleTheme()" title="Switch Theme" aria-label="Toggle Dark and Light Mode">
+              <span class="theme-toggle-icon"></span>
+            </button>
+            <button class="bell-notice-btn" onclick="window.customerApp.navigateTo('offers')" title="Notifications & Offers">
+              <span>🔔</span>
+              <span class="bell-dot"></span>
+            </button>
+            <button class="top-mobile-profile-btn" id="mobileTopProfileBtn" onclick="window.customerApp.navigateTo('profile')" title="My Profile & Account">
+              <div class="top-profile-avatar-circle" id="mobileTopProfileAvatar">👤</div>
+            </button>
+          </div>
         </div>
 
         <!-- Delivering to Selector -->

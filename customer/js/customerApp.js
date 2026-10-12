@@ -1793,12 +1793,27 @@
       const contactSubEl = document.querySelector('.account-contact-sub');
       const checkoutAddressEl = document.getElementById('checkoutAddress');
 
-      if (user) {
+      const desktopNameEl = document.getElementById('desktopProfileName');
+      const desktopAvatarEl = document.getElementById('desktopProfileAvatar');
+      const mobileAvatarEl = document.getElementById('mobileTopProfileAvatar');
+
+      if (user && user.name) {
         if (nameEl) nameEl.innerText = user.name;
         if (contactSubEl) contactSubEl.innerText = (user.email || user.phone + '@jeevanix.in') + ' • ' + user.phone;
         if (checkoutAddressEl && user.address) {
           checkoutAddressEl.innerText = user.address;
         }
+
+        const firstName = user.name.split(' ')[0] || user.name;
+        const initial = (user.name[0] || 'A').toUpperCase();
+
+        if (desktopNameEl) desktopNameEl.innerText = firstName;
+        if (desktopAvatarEl) desktopAvatarEl.innerText = initial;
+        if (mobileAvatarEl) mobileAvatarEl.innerText = initial;
+      } else {
+        if (desktopNameEl) desktopNameEl.innerText = 'Account';
+        if (desktopAvatarEl) desktopAvatarEl.innerText = '👤';
+        if (mobileAvatarEl) mobileAvatarEl.innerText = '👤';
       }
     }
 
