@@ -2,6 +2,26 @@
 let activeTab = "overview";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Enable smooth horizontal wheel scrolling over top-header
+  const topHeaderEl = document.querySelector('.top-header');
+  if (topHeaderEl) {
+    topHeaderEl.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0 && !e.deltaX) {
+        topHeaderEl.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }, { passive: false });
+  }
+
+  window.openMobileSidebar = function() {
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    if (sidebar && backdrop) {
+      sidebar.classList.add("mobile-open");
+      backdrop.classList.add("active");
+    }
+  };
+
   const townSelect = document.getElementById("townSelect");
   if (townSelect) {
     townSelect.addEventListener("change", (e) => {

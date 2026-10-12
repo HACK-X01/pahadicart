@@ -15,6 +15,18 @@
       return navigator.onLine;
     }
 
+    exitTunnel() {
+      this.isSimulatedOffline = false;
+      try {
+        localStorage.removeItem(SIMULATED_OFFLINE_KEY);
+        localStorage.setItem(SIMULATED_OFFLINE_KEY, 'false');
+      } catch(e) {}
+      const banner = document.getElementById('deepValleyOfflineBanner');
+      if (banner) banner.style.display = 'none';
+      this.flushQueue();
+      this.showToast('✅ Signal restored! Normal mode active.');
+    }
+
     toggleSimulatedTunnel() {
       this.isSimulatedOffline = !this.isSimulatedOffline;
       localStorage.setItem(SIMULATED_OFFLINE_KEY, this.isSimulatedOffline ? 'true' : 'false');
@@ -93,6 +105,10 @@
 
     checkAndRenderBanner() {
       let banner = document.getElementById('deepValleyOfflineBanner');
+      if (window.location.pathname.includes('/admin')) {
+        if (banner) banner.style.display = 'none';
+        return;
+      }
       const online = this.isOnline();
 
       if (!online) {
@@ -107,7 +123,8 @@
             </div>
             <div style="display:flex; align-items:center; gap:12px;">
               <span id="offlineQueueCounter" style="background:rgba(0,0,0,0.3); padding:4px 10px; border-radius:12px; font-size:11.5px;">Queue: ${this.getQueue().length} Orders</span>
-              <button onclick="window.pahadiOffline.toggleSimulatedTunnel()" style="background:#ffffff; color:#0f172a; border:none; padding:4px 12px; border-radius:6px; font-weight:800; cursor:pointer; font-size:11px;">Exit Tunnel</button>
+              <button onclick="window.pahadiOffline.exitTunnel()" style="background:#ffffff; color:#0f172a; border:none; padding:4px 12px; border-radius:6px; font-weight:800; cursor:pointer; font-size:11px;">Exit Tunnel</button>
+     <button onclick="window.pahadiOffline.exitTunnel()" title="Close Banner" style="background:transparent; border:none; color:#ffffff; font-size:16px; cursor:pointer; padding:0 4px; font-weight:700;">&times;</button>
             </div>
           `;
           document.body.prepend(banner);

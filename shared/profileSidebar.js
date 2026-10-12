@@ -42,7 +42,10 @@
   };
 
   const user = {
-    name: session.name || defaultProfiles[role]?.name || 'Pahadi User',
+    name: (function() {
+      if (role === 'admin' || window.location.pathname.includes('/admin')) return 'Admin';
+      return session.name || defaultProfiles[role]?.name || 'Pahadi User';
+    })(),
     phone: session.phone ? ('+91 ' + session.phone.replace('+91', '').trim()) : defaultProfiles[role]?.phone,
     town: (session.town || defaultProfiles[role]?.town || 'SOLAN').toUpperCase(),
     badge: defaultProfiles[role]?.badge || 'Verified Member'
