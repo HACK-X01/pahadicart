@@ -770,10 +770,17 @@
           </div>
 
           <!-- Confidential Delivery OTP Card -->
-          <div style="margin: 0 0 16px; background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 16px; padding: 14px; text-align: center;">
+          <div id="trackOtpCard" style="margin: 0 0 16px; background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 16px; padding: 14px; text-align: center;">
             <div style="font-size: 10.5px; font-weight: 800; color: #065F46; letter-spacing: 0.5px; text-transform: uppercase;">CONFIDENTIAL DELIVERY OTP</div>
             <div style="font-family: var(--font-heading); font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #0D7C66; margin: 4px 0;" id="trackOtpDisplay">5570</div>
             <div style="font-size: 11px; color: #047857;">Share with rider only when order is delivered to your hands</div>
+          </div>
+
+          <!-- Cancelled Notice Card (Shown if order is cancelled) -->
+          <div id="trackCancelledCard" style="display: none; margin: 0 0 16px; background: #FEF2F2; border: 1.5px solid #FECACA; border-radius: 16px; padding: 16px; text-align: center;">
+            <div style="font-size: 12px; font-weight: 800; color: #991B1B; text-transform: uppercase; letter-spacing: 0.5px;">❌ ORDER CANCELLED</div>
+            <div style="font-family: var(--font-heading); font-size: 15px; font-weight: 800; color: #DC2626; margin: 6px 0;" id="trackCancelReasonText">Order cancel ho gaya hai</div>
+            <div style="font-size: 11.5px; color: #7F1D1D; line-height: 1.4;">Agar aapne online UPI se payment ki thi, toh refund 2-4 ghante mein aapke source account mein waapas credit ho jayega.</div>
           </div>
 
           <!-- Delivery Partner Contact Card -->
@@ -791,7 +798,11 @@
             </div>
           </div>
 
-          <div style="padding: 0;">
+          <div style="padding: 0; display: flex; flex-direction: column; gap: 10px;">
+            <button id="trackCancelOrderBtn" class="btn-cancel-order" onclick="window.customerApp.handleCancelActiveOrder()">
+              <span>🚫</span>
+              <span>Cancel Order</span>
+            </button>
             <button class="btn-primary-green" onclick="window.customerApp.navigateTo('home')" style="background: #F1F5F9; color: #0F172A; border: 1px solid #E2E8F0; box-shadow: none;">Back to Home</button>
           </div>
         </div>
@@ -1235,5 +1246,48 @@
   </div>
 
 <script src="js/customerAuth.js?v=4.6.0"></script>
+
+  <!-- Modal: Cancel Order Confirmation -->
+  <div id="customerCancelOrderModal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 99999; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #ffffff; border-radius: 20px; max-width: 420px; width: 100%; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); box-sizing: border-box; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+        <div style="font-weight: 800; font-size: 17px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+          <span>🚫</span>
+          <span>Order Cancel Karein?</span>
+        </div>
+        <button onclick="window.customerApp.closeCancelModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #94a3b8;">&times;</button>
+      </div>
+
+      <p style="font-size: 12.5px; color: #64748b; margin: 0 0 14px; line-height: 1.45;">
+        Kya aap sach me apna order cancel karna chahte hain? Kripya cancellation ka kaaran chunein:
+      </p>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Karan (Reason):</label>
+        <select id="cancelReasonSelect" style="width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 13px; font-weight: 600; color: #0f172a; background: #f8fafc; outline: none;">
+          <option value="Galti se order ho gaya (Ordered by mistake)">Galti se order ho gaya (Ordered by mistake)</option>
+          <option value="Delivery me jyada time lag raha hai">Delivery me jyada time lag raha hai</option>
+          <option value="Items ya Quantity change karni hai">Items ya Quantity change karni hai</option>
+          <option value="Galat delivery address select ho gaya">Galat delivery address select ho gaya</option>
+          <option value="Plan change ho gaya / Ab zaroorat nahi hai">Plan change ho gaya / Ab zaroorat nahi hai</option>
+          <option value="Other reason">Other reason</option>
+        </select>
+      </div>
+
+      <div style="background: #FEF2F2; border-left: 3px solid #EF4444; padding: 10px 12px; border-radius: 8px; font-size: 11.5px; color: #991B1B; margin-bottom: 18px; line-height: 1.4;">
+        ℹ️ Agar aap online payment kar chuke hain toh amount automatic 2-4 ghante me aapke source account me refund ho jayega.
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button onclick="window.customerApp.closeCancelModal()" style="flex: 1; height: 42px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #475569; font-size: 13px; font-weight: 700; cursor: pointer;">
+          Nahi, Rakhein
+        </button>
+        <button id="btnConfirmOrderCancel" onclick="window.customerApp.confirmCancelOrder()" style="flex: 1; height: 42px; border-radius: 10px; border: none; background: #dc2626; color: #ffffff; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+          Haan, Cancel Karein
+        </button>
+      </div>
+    </div>
+  </div>
+  
 </body>
 </html>

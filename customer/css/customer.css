@@ -2809,3 +2809,43 @@ html[data-theme="dark"] .top-mobile-profile-btn {
     max-width: 180px;
   }
 }
+
+
+/* Order Cancellation Buttons & Cards */
+.btn-cancel-order {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 800;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1.5px solid #ef4444;
+  color: #dc2626;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.btn-cancel-order:hover, .btn-cancel-order:active {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: #dc2626;
+}
+.btn-order-cancel {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  font-size: 12px;
+  font-weight: 700;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.btn-order-cancel:hover {
+  background: rgba(239, 68, 68, 0.16);
+}

@@ -356,7 +356,20 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (reqPath.startsWith('/api/orders/')) {
-        const id = decodeURIComponent(reqPath.split('/')[3]);
+        const parts = reqPath.split('/');
+        const id = decodeURIComponent(parts[3]);
+
+        // Customer / App Order Cancellation Endpoint
+        if (reqPath.endsWith('/cancel') && req.method === 'POST') {
+          const body = await parseBody(req).catch(() => ({}));
+          const reason = body.reason || 'Customer requested cancellation';
+          const updated = OrdersRepo.update(id, { status: 'cancelled', raw_status: 'cancelled', rejection_reason: reason }, 'CUSTOMER');
+          broadcastSse('ORDER_CANCELLED', updated);
+          broadcastSse('ORDER_UPDATED', updated);
+          sendJson(res, 200, { success: true, message: 'Order cancelled successfully', order: updated });
+          return;
+        }
+
         if (req.method === 'GET') {
           const o = OrdersRepo.getById(id);
           sendJson(res, o ? 200 : 404, o ? { success: true, order: o } : { success: false, message: 'Order not found' });

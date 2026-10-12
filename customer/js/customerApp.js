@@ -1104,10 +1104,13 @@
       }
 
       const rawStatus = (order.status || 'placed').toLowerCase();
+      const isCancelled = rawStatus.includes('cancel');
       let activeStep = 1; // 1 to 6
       let statusLabel = 'Order Confirmed';
 
-      if (rawStatus.includes('deliv')) {
+      if (isCancelled) {
+        statusLabel = 'Cancelled';
+      } else if (rawStatus.includes('deliv')) {
         activeStep = 6;
         statusLabel = 'Delivered';
       } else if (rawStatus.includes('out') || rawStatus.includes('route')) {
@@ -1135,7 +1138,10 @@
       const badge = document.getElementById('trackStatusBadge');
       if (badge) {
         badge.innerText = statusLabel;
-        if (activeStep === 6) {
+        if (isCancelled) {
+          badge.style.background = '#FEE2E2';
+          badge.style.color = '#991B1B';
+        } else if (activeStep === 6) {
           badge.style.background = '#DEF7EC';
           badge.style.color = '#03543F';
         } else {
@@ -1144,9 +1150,52 @@
         }
       }
 
+      const otpCard = document.getElementById('trackOtpCard');
+      const cancelCard = document.getElementById('trackCancelledCard');
+      const cancelReasonEl = document.getElementById('trackCancelReasonText');
+      const cancelBtn = document.getElementById('trackCancelOrderBtn');
+
+      if (isCancelled) {
+        if (otpCard) otpCard.style.display = 'none';
+        if (cancelCard) {
+          cancelCard.style.display = 'block';
+          if (cancelReasonEl) {
+            cancelReasonEl.innerText = order.cancelReason || order.rejection_reason || 'Order cancel ho gaya hai';
+          }
+        }
+        if (cancelBtn) cancelBtn.style.display = 'none';
+      } else {
+        if (otpCard) otpCard.style.display = 'block';
+        if (cancelCard) cancelCard.style.display = 'none';
+        if (cancelBtn) {
+          // Can cancel as long as not delivered
+          cancelBtn.style.display = activeStep === 6 ? 'none' : 'flex';
+        }
+      }
+
       // Render 6-Stage Timeline
       const stepperContainer = document.querySelector('.tracking-stepper-box');
       if (stepperContainer) {
+        if (isCancelled) {
+          stepperContainer.innerHTML = `
+            <div class="track-step-row completed">
+              <div class="step-circle" style="background: #10B981; color: #fff;">✓</div>
+              <div>
+                <div class="step-text-title">Order Confirmed</div>
+                <div class="step-text-time">${order.time || '10:24 AM'} • Verified with merchant</div>
+              </div>
+            </div>
+            <div class="track-step-row" style="opacity: 1;">
+              <div class="step-circle" style="background: #FEE2E2; color: #DC2626; border-color: #EF4444; font-weight: 800;">✕</div>
+              <div>
+                <div class="step-text-title" style="color: #DC2626; font-weight: 800;">Order Cancelled</div>
+                <div class="step-text-time">${order.cancelledAt || 'Abhi'} • ${order.cancelReason || order.rejection_reason || 'Cancelled by customer'}</div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
         const steps = [
           { title: 'Order Confirmed', time: order.time || '10:24 AM', note: 'Verified with merchant' },
           { title: 'Shop Preparing', time: 'In Progress', note: 'Spill-proof packing sealed' },
@@ -1166,7 +1215,7 @@
             circleIcon = '✓';
           } else if (stepNum === activeStep) {
             stateClass = activeStep === 6 ? 'completed' : 'active';
-            circleIcon = activeStep === 6 ? '✓' : '🔄';
+            circleIcon = activeStep === 6 ? '✓' : '🛵';
           }
 
           return `
@@ -1287,7 +1336,8 @@
           </div>
 
           <div class="order-actions-row">
-            <button class="btn-order-view" onclick="window.customerApp.openTrackingForOrder('${o.id}')">View Details</button>
+            <button class="btn-order-view" onclick="window.customerApp.openTrackingForOrder('${o.id}')">${o.statusType === 'transit' ? 'Track Order' : 'View Details'}</button>
+            ${o.statusType === 'transit' ? `<button class="btn-order-cancel" onclick="event.stopPropagation(); window.customerApp.openCancelModal('${o.id}')">Cancel</button>` : ''}
             <button class="btn-order-reorder" onclick="window.customerApp.reorderPastItems('${o.id}')">Reorder</button>
           </div>
         </div>
@@ -1891,5 +1941,100 @@
     }
   }
 
-    window.customerApp = new HimoraApp();
+  
+    // Customer Order Cancellation Controllers
+    openCancelModal(orderId = null) {
+      this.pendingCancelOrderId = orderId || (this.activeOrder ? this.activeOrder.id : null);
+      const modal = document.getElementById('customerCancelOrderModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    closeCancelModal() {
+      const modal = document.getElementById('customerCancelOrderModal');
+      if (modal) modal.style.display = 'none';
+      this.pendingCancelOrderId = null;
+    }
+
+    handleCancelActiveOrder() {
+      if (!this.activeOrder) {
+        alert('Koi active order nahi mila.');
+        return;
+      }
+      const rawStatus = (this.activeOrder.status || '').toLowerCase();
+      if (rawStatus.includes('deliv')) {
+        alert('Yeh order already deliver ho chuka hai aur cancel nahi kiya ja sakta.');
+        return;
+      }
+      if (rawStatus.includes('cancel')) {
+        alert('Yeh order pehle se hi cancel hai.');
+        return;
+      }
+      this.openCancelModal(this.activeOrder.id);
+    }
+
+    async confirmCancelOrder() {
+      const orderId = this.pendingCancelOrderId || (this.activeOrder ? this.activeOrder.id : null);
+      if (!orderId) {
+        this.closeCancelModal();
+        return;
+      }
+
+      const reasonSelect = document.getElementById('cancelReasonSelect');
+      const reason = reasonSelect ? reasonSelect.value : 'Customer requested cancellation';
+
+      // 1. Update activeOrder if matched
+      if (this.activeOrder && (this.activeOrder.id === orderId || !this.activeOrder.id)) {
+        this.activeOrder.status = 'Cancelled';
+        this.activeOrder.cancelReason = reason;
+        this.activeOrder.cancelledAt = new Date().toLocaleTimeString();
+        localStorage.setItem('pahadicart_active_order', JSON.stringify(this.activeOrder));
+      }
+
+      // 2. Update orders in localStorage history
+      try {
+        const histKey = 'pahadicart_orders_history';
+        const history = JSON.parse(localStorage.getItem(histKey) || '[]');
+        const idx = history.findIndex(o => o.id === orderId);
+        if (idx !== -1) {
+          history[idx].status = 'Cancelled';
+          history[idx].cancelReason = reason;
+          localStorage.setItem(histKey, JSON.stringify(history));
+        }
+      } catch(e) {}
+
+      // 3. Post to backend SQLite API
+      try {
+        if (window.HimoraApi && typeof window.HimoraApi.cancelOrder === 'function') {
+          await window.HimoraApi.cancelOrder(orderId, reason);
+        } else if (window.HimoraApi && window.HimoraApi.request) {
+          await window.HimoraApi.request('/api/orders/' + encodeURIComponent(orderId) + '/cancel', {
+            method: 'POST',
+            body: JSON.stringify({ reason: reason })
+          });
+        }
+      } catch(e) {
+        console.warn('Backend cancel error:', e);
+      }
+
+      // 4. Broadcast via EventBus to sync Admin, Merchant & Rider screens
+      if (window.pahadiBus) {
+        window.pahadiBus.updateOrderStatus(orderId, 'cancelled', {
+          cancelReason: reason,
+          cancelledBy: 'CUSTOMER'
+        });
+      }
+
+      this.closeCancelModal();
+
+      // 5. Re-render screen
+      if (this.currentScreen === 'tracking') {
+        this.renderTrackingScreen(this.activeOrder);
+      } else if (this.currentScreen === 'orders') {
+        this.renderOrdersScreen('current');
+      }
+
+      alert('✅ Order #' + orderId + ' safaltapoorvak cancel kar diya gaya hai.');
+    }
+
+  window.customerApp = new HimoraApp();
 })();

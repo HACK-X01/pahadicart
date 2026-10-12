@@ -635,7 +635,8 @@ const OrdersRepo = {
       riderName: 'rider_name',
       verifiedBy: 'verified_by',
       verifiedAt: 'verified_at',
-      rejectionReason: 'rejection_reason'
+      rejectionReason: 'rejection_reason',
+      cancelReason: 'rejection_reason'
     };
     for (const [camel, snake] of Object.entries(mappings)) {
       if (updates[camel] !== undefined && updates[snake] === undefined) {

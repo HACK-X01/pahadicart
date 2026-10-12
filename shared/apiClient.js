@@ -607,6 +607,19 @@
       return data.order;
     }
 
+    async cancelOrder(id, reason = 'Customer cancelled order') {
+      try {
+        const data = await this.request('/api/orders/' + encodeURIComponent(id) + '/cancel', {
+          method: 'POST',
+          body: JSON.stringify({ reason })
+        });
+        await this.getOrders(true);
+        return data.order;
+      } catch (e) {
+        return this.updateOrder(id, { status: 'cancelled', rejection_reason: reason });
+      }
+    }
+
     // ==========================================
     // CMS & HOMEPAGE BANNERS
     // ==========================================
