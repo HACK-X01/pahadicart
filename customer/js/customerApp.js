@@ -441,6 +441,8 @@
         // static offer deals
       } else if (screenId === 'jeevanix') {
         this.renderJeevanixScreen();
+      } else if (screenId === 'profile') {
+        this.syncUserProfileUI();
       }
 
       // Switch active class
@@ -1796,6 +1798,7 @@
       const desktopNameEl = document.getElementById('desktopProfileName');
       const desktopAvatarEl = document.getElementById('desktopProfileAvatar');
       const mobileAvatarEl = document.getElementById('mobileTopProfileAvatar');
+      const logoutItem = document.querySelector('.account-logout-item');
 
       if (user && user.name) {
         if (nameEl) nameEl.innerText = user.name;
@@ -1810,14 +1813,38 @@
         if (desktopNameEl) desktopNameEl.innerText = firstName;
         if (desktopAvatarEl) desktopAvatarEl.innerText = initial;
         if (mobileAvatarEl) mobileAvatarEl.innerText = initial;
+
+        if (logoutItem) {
+          logoutItem.innerHTML = `
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🚪</span>
+              <span>Logout</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          `;
+          logoutItem.onclick = () => window.customerApp.handleLogout();
+        }
       } else {
-        if (desktopNameEl) desktopNameEl.innerText = 'Account';
+        if (nameEl) nameEl.innerText = 'Guest User';
+        if (contactSubEl) contactSubEl.innerText = 'Login karein apne orders aur profile dekhne ke liye';
+        if (desktopNameEl) desktopNameEl.innerText = 'Login';
         if (desktopAvatarEl) desktopAvatarEl.innerText = '👤';
         if (mobileAvatarEl) mobileAvatarEl.innerText = '👤';
+
+        if (logoutItem) {
+          logoutItem.innerHTML = `
+            <div class="menu-item-left">
+              <span class="menu-item-icon">🔑</span>
+              <span style="font-weight: 700; color: var(--himora-primary, #059669);">Login / Register</span>
+            </div>
+            <span class="menu-item-chevron">›</span>
+          `;
+          logoutItem.onclick = () => window.customerApp.openAuthModal('login');
+        }
       }
     }
 
-    
+    // Google Play Account & Data Deletion Compliance
     async handleAccountDeletionRequest() {
       const user = window.JeevanixCustomerAuth ? window.JeevanixCustomerAuth.getCurrentUser() : null;
       const phone = (user && user.phone) ? user.phone : prompt('Account aur Data delete karne ke liye apna 10-digit registered mobile number darj karein:');
@@ -1849,10 +1876,20 @@
     handleLogout() {
       if (confirm('Kya aap Jeevanix Local app se logout karna chahte hain?')) {
         if (window.JeevanixCustomerAuth) window.JeevanixCustomerAuth.logout();
-        this.openAuthModal('login');
+        try {
+          localStorage.removeItem('pahadicart_user_session');
+          localStorage.removeItem('jeevanix_current_user');
+        } catch(e) {}
+
+        const authModal = document.getElementById('customerAuthModal');
+        if (authModal) authModal.style.display = 'none';
+
+        this.syncUserProfileUI();
+        this.navigateTo('home');
+        alert('Aap safaltapoorvak logout ho gaye hain.');
       }
     }
   }
 
-  window.customerApp = new HimoraApp();
+    window.customerApp = new HimoraApp();
 })();
